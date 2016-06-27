@@ -16,6 +16,10 @@ If you want a local copy of Microstocks, just fork the repository, and set this 
 
 Please create a pull request containing your code so I can review and get your fix into the source! :)
 
+## Current Version
+
+Microstock's [latest stable release is 1.0.0](https://github.com/evangipson/microstocks/releases/tag/1.0.0).
+
 ## Authors
 
 * **Evan Gipson** - *[Evan's Github Page](https://github.com/evangipson)* 
