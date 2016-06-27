@@ -1,4 +1,8 @@
-| [Microstocks Readme](https://github.com/evangipson/microstocks/blob/master/README.md#microstocks) |
+# Microstocks
+Microstocks is an arcade stock simulator written in Javascript. Try and make the most money by selling high and buying low! This came about while I was reading "[Javascript: The Good Parts](https://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742)" by Douglas Crockford (great stuff, I recommend it). Initially, it was going to just be a way to generate stock names, but I haven't stopped exploring javascript. 
+This is the result.
+
+| Microstocks Readme |
 |---|
 | [Getting Started](https://github.com/evangipson/microstocks/blob/master/README.md#getting-started) |
 | [Built With](https://github.com/evangipson/microstocks/blob/master/README.md#getting-started) |
@@ -7,9 +11,6 @@
 | [Authors](https://github.com/evangipson/microstocks/blob/master/README.md#authors)  |
 | [License](https://github.com/evangipson/microstocks/blob/master/README.md#license) |
 | [Acknowledgements](https://github.com/evangipson/microstocks/blob/master/README.md#acknowledgments) |
-
-# Microstocks
-Microstocks is an arcade stock simulator written in Javascript. Try and make the most money by selling high and buying low! This came about while I was reading "[Javascript: The Good Parts](https://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742)" by Douglas Crockford (great stuff, I recommend it). Initially, it was going to just be a way to generate stock names, but I haven't stopped exploring javascript. This is the result.
 
 ## Getting Started
 If you want a local copy of Microstocks, just fork the repository, and set this up in a folder somewhere on your computer, then open the index.html file in any browser. 
