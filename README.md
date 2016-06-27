@@ -1,3 +1,13 @@
+| [Microstocks Readme](https://github.com/evangipson/microstocks/blob/master/README.md#microstocks) |
+|---|
+| [Getting Started](https://github.com/evangipson/microstocks/blob/master/README.md#getting-started) |
+| [Built With](https://github.com/evangipson/microstocks/blob/master/README.md#getting-started) |
+| [Contributing](https://github.com/evangipson/microstocks/blob/master/README.md#contributing)  |
+| [Versioning](https://github.com/evangipson/microstocks/blob/master/README.md#versioning) |
+| [Authors](https://github.com/evangipson/microstocks/blob/master/README.md#authors)  |
+| [License](https://github.com/evangipson/microstocks/blob/master/README.md#license) |
+| [Acknowledgements](https://github.com/evangipson/microstocks/blob/master/README.md#acknowledgments) |
+
 # Microstocks
 Microstocks is an arcade stock simulator written in Javascript. Try and make the most money by selling high and buying low! This came about while I was reading "[Javascript: The Good Parts](https://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742)" by Douglas Crockford (great stuff, I recommend it). Initially, it was going to just be a way to generate stock names, but I haven't stopped exploring javascript. This is the result.
 
