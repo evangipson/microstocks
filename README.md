@@ -4,13 +4,13 @@ This is the result.
 
 | Microstocks Readme |
 |---|
-| [Getting Started](https://github.com/evangipson/microstocks/blob/master/README.md#getting-started) |
-| [Built With](https://github.com/evangipson/microstocks/blob/master/README.md#getting-started) |
-| [Contributing](https://github.com/evangipson/microstocks/blob/master/README.md#contributing)  |
-| [Versioning](https://github.com/evangipson/microstocks/blob/master/README.md#versioning) |
-| [Authors](https://github.com/evangipson/microstocks/blob/master/README.md#authors)  |
-| [License](https://github.com/evangipson/microstocks/blob/master/README.md#license) |
-| [Acknowledgements](https://github.com/evangipson/microstocks/blob/master/README.md#acknowledgments) |
+| [Getting Started](#getting-started) |
+| [Built With](#built-with) |
+| [Contributing](#contributing)  |
+| [Versioning](#versioning) |
+| [Authors](#authors)  |
+| [License](#license) |
+| [Acknowledgements](#acknowledgments) |
 
 ## Getting Started
 If you want a local copy of Microstocks, just fork the repository, and set this up in a folder somewhere on your computer, then open the index.html file in any browser. 
