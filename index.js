@@ -545,24 +545,6 @@ document.addEventListener("DOMContentLoaded", function() {
         updateInventory();
       }
     }
-    // Creates a carousel for the Player's stocks
-  var createStockCarousel = function() {
-      // Now we can add the Event Listener for the Stock Hide/Show
-      var stockHeader = document.getElementsByClassName("stocks-header")[0];
-      stockHeader.addEventListener("click", function() {
-        var stocks = document.getElementsByClassName("stock");
-        var displayValue = 'block';
-        var currentDisplay = stocks[randomNum(stocks.length)].style.display;
-        if (currentDisplay === "none" || currentDisplay === "") {
-          displayValue = "block";
-        } else {
-          displayValue = "none";
-        }
-        for (var i = 0; i < stocks.length; i++) {
-          stocks[i].style.display = displayValue;
-        }
-      });
-    }
     // This adds all the stock button event listeners
     // to buy and sell those invididual stocks
   var addStockEventListeners = function() {
@@ -624,7 +606,5 @@ document.addEventListener("DOMContentLoaded", function() {
   createInventory();
   // Add the stock event listeners for buying/selling
   addStockEventListeners();
-  // And finally make the "STOCKS" clickable to show our collection
-  createStockCarousel();
 
 });
