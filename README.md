@@ -1,5 +1,5 @@
 # Microstocks
-Microstocks is an arcade stock simulator written in Javascript. Try and make the most money by selling high and buying low! This came about while I was reading "Javascript: The Good Parts" by Douglas Crockford (great stuff, I recommend it). Initially, it was going to just be a way to generate stock names, but I haven't stopped exploring javascript. This is the result.
+Microstocks is an arcade stock simulator written in Javascript. Try and make the most money by selling high and buying low! This came about while I was reading "[Javascript: The Good Parts](https://www.amazon.com/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742)" by Douglas Crockford (great stuff, I recommend it). Initially, it was going to just be a way to generate stock names, but I haven't stopped exploring javascript. This is the result.
 
 ## Getting Started
 
