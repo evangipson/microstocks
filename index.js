@@ -108,6 +108,8 @@ document.addEventListener("DOMContentLoaded", function() {
   // Let's pull in the log and ul.
   var log = document.getElementsByClassName("log")[0];
   var logList = document.getElementsByClassName("log-list")[0];
+  // We need to set how much it is to move
+  var moveFee = 10;
   // Change this variable to modify the amount of stocks the player has
   var stockAmount = randomNum(10,15);
   // Create some variables to fill up player JSON with
@@ -518,7 +520,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Location logging functionality
   var travelMessage = function() {
       // if the player doesn't have $10, don't let him travel.
-      if (playerObject["stats"].money < 10) {
+      if (playerObject["stats"].money < moveFee) {
         return "Can't afford to move! Why don't you sell some stock?";
       }
       // make sure we have a valid stock index for potentially selling
@@ -532,13 +534,14 @@ document.addEventListener("DOMContentLoaded", function() {
         newNum = randomNum(locations.length);
       }
       updateLocationIndex(newNum);
-      return "Player moved to " + locations[playerObject["stats"].location];
+      return ["Player moved to " + locations[playerObject["stats"].location],
+              "Charged $" + moveFee + " to go!"];
     }
     // Subsequent function, update screen
   var travelAction = function() {
       // if the player has $10 (he should, we just checked this in travelMessage).
-      if (playerObject["stats"].money >= 10) {
-        playerObject["stats"].money = parseInt(playerObject["stats"].money) - 10;
+      if (playerObject["stats"].money >= moveFee) {
+        playerObject["stats"].money = parseInt(playerObject["stats"].money) - moveFee;
         updateInventory();
       }
     }
