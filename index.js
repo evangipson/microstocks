@@ -110,11 +110,11 @@ document.addEventListener("DOMContentLoaded", function() {
   var logList = document.getElementsByClassName("log-list")[0];
   // We need to set how much it is to move
   var moveFee = 10;
-  // Change this variable to modify the amount of stocks the player has
-  var stockAmount = randomNum(10,15);
+  // Change this variable to modify the amount of stocks generated
+  var stockAmount = randomNum(12,20);
   // Create some variables to fill up player JSON with
   var stocks = createStocks(stockAmount);
-  // Fill up the stock array w/ amounts for the player
+  // Fill up the playerObject stock array w/ amounts for the player
   givePlayerStocks(stocks, stockAmount);
   // Now sort the stocks array by Amount
   // Before applying to the player
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var buyButton = document.getElementsByClassName("buy-button")[0];
   var sellButton = document.getElementsByClassName("sell-button")[0];
   var travelButton = document.getElementsByClassName("travel-button")[0];
-  var dataButton = document.getElementsByClassName("data-button")[0];
+  //var dataButton = document.getElementsByClassName("data-button")[0];
 
   // Functions needed for stocks & log
   // ---------------------------------
@@ -357,14 +357,14 @@ document.addEventListener("DOMContentLoaded", function() {
         // If our total value has increased, show it!
         changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(playerObject["stats"].money)) + " --- Up!");
       }
-    else if (parseInt(oldNetWorth[1]) === portfolioTotal + parseInt(playerObject["stats"].money)) {
-        // No increase!
-        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(playerObject["stats"].money)));
-    }
-    else {
-        // We lost money!
-        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(playerObject["stats"].money)) + " --- Down!");
-    }
+      else if (parseInt(oldNetWorth[1]) === portfolioTotal + parseInt(playerObject["stats"].money)) {
+          // No increase!
+          changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(playerObject["stats"].money)));
+      }
+      else {
+          // We lost money!
+          changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(playerObject["stats"].money)) + " --- Down!");
+      }
       changeListElement("location", "Location: " + locations[playerObject["stats"].location]);
       // Sort out the player's stock array 
       playerObject["stats"].stocks.sort(function(a, b) {
