@@ -19,8 +19,8 @@ If you want a local copy of Microstocks, just fork the repository, and set this 
 
 ## Built With
 * JavaScript
-* jQuery
-* jQuery UI
+* jQuery 2.2.4 
+* jQuery-UI 1.11.4
 * SCSS
 * HTML
 * Visual Studio Code
