@@ -559,6 +559,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var sliderStep = 0;
       var sliderValue = 0;
       var slideAmount = 0;
+      var startingBuyValue = 0;
       var stockName = playerObject["stats"].stocks[index].name;
       $(".buy-sell-dialogue").text("Would you like to buy or sell " + stockName + " stock today?");
       // Initialize the buy-dialog modal
@@ -626,11 +627,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 maxStocks = Math.floor(playerObject["stats"].money / playerObject["stats"].stocks[index].cost);
                 // Get out slider step amount
                 sliderStep = (maxStocks >= 50) ? 5 : 1;
+                // Figure out where the slider should start
+                // We should AT LEAST buy 1.
+                startingBuyValue = Math.floor(maxStocks * 0.33) > 0 ? Math.floor(maxStocks * 0.33) : 1;
                 // Initialize the buy-stock-slider
                 $(".buy-stock-slider").slider({
                     // Set initial value to 1/3 of what they can afford
-                    value: Math.floor(maxStocks * 0.33),
-                    min: 0,
+                    value: startingBuyValue,
+                    min: 1,
                     max: maxStocks,
                     step: sliderStep,
                     // Taken from https://jqueryui.com/slider/#steps
@@ -643,7 +647,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 sliderValue = $(".stock-slider").slider( "value" );
                 // Before we open the buy dialog, set the value
                 // Shown on the slider to be what it is because it do
-                $(".buy-stock-amount").text("Buying " + Math.floor(maxStocks * 0.33) + " " + stockName + " stock!");
+                $(".buy-stock-amount").text("Buying " + startingBuyValue + " " + stockName + " stock!");
                 // Open up the buy dialog
                 $(".buy-dialog").dialog("open");
             },
@@ -654,8 +658,8 @@ document.addEventListener("DOMContentLoaded", function() {
                   sliderStep = (playerObject["stats"].stocks[index].amount >= 50) ? 5 : 1;
                   // Initialize the sell-stock-sliderß
                   $(".sell-stock-slider").slider({
-                      value: 0,
-                      min: 0,
+                      value: 1,
+                      min: 1,
                       // Our max is the amount of stock we have for that certain stock
                       max: playerObject["stats"].stocks[index].amount,
                       step: sliderStep,
@@ -669,7 +673,7 @@ document.addEventListener("DOMContentLoaded", function() {
                   sliderValue = $( ".stock-slider" ).slider( "value" );
                   // Before we open the sell dialog, set the value
                   // Shown on the slider to be what it is because it do
-                  $(".sell-stock-amount").text("Selling no " + stockName +  " stock.");
+                  $(".sell-stock-amount").text("Selling 1 " + stockName +  " stock.");
                   // Open up the sell dialog
                   $(".sell-dialog").dialog("open");
                 }
