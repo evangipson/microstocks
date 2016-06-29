@@ -558,6 +558,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var maxStocks = 0;
       var sliderStep = 0;
       var sliderValue = 0;
+      var slideAmount = 0;
       var stockName = playerObject["stats"].stocks[index].name;
       $(".buy-sell-dialogue").text("Would you like to buy or sell " + stockName + " stock today?");
       // Initialize the buy-dialog modal
@@ -569,11 +570,11 @@ document.addEventListener("DOMContentLoaded", function() {
           buttons: {
               "Are you sure?": function() {
                   // if amount is correctly retrieved by jquery-ui
-                  if (amount !== null && amount !== undefined) {
+                  if (slideAmount !== null && slideAmount !== undefined) {
                     // So let's buy it!
-                    var buyLogMessage = buyMessage(index, amount);
+                    var buyLogMessage = buyMessage(index, slideAmount);
                     addListElement(logList, buyLogMessage);
-                    buyAction(amount);
+                    buyAction(slideAmount);
                   } else {
                     throw "buySellDialogue exception: Stock purchase amount undefined or null, please try again!";
                   }
@@ -597,11 +598,11 @@ document.addEventListener("DOMContentLoaded", function() {
           buttons: { 
              "Are you sure?": function() {
                   // if the user didn't try any tricky stuff
-                  if (amount !== null && amount !== undefined) {
+                  if (slideAmount !== null && slideAmount !== undefined) {
                     // Let's actually sell the thing
-                    var sellLogMessage = sellMessage(index, amount);
+                    var sellLogMessage = sellMessage(index, slideAmount);
                     addListElement(logList, sellLogMessage);
-                    sellAction(amount);
+                    sellAction(slideAmount);
                   } else {
                     throw "buySellDialogue exception: Stock sell amount undefined or null, please try again!";
                   }
@@ -626,7 +627,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Get out slider step amount
                 sliderStep = (maxStocks >= 50) ? 5 : 1;
                 // Initialize the buy-stock-slider
-                $( ".buy-stock-slider" ).slider({
+                $(".buy-stock-slider").slider({
                     // Set initial value to 1/3 of what they can afford
                     value: Math.floor(maxStocks * 0.33),
                     min: 0,
@@ -635,6 +636,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     // Taken from https://jqueryui.com/slider/#steps
                     slide: function(event,ui) {
                       $(".buy-stock-amount").text("Buying " + ui.value + " " + stockName + " stock!");
+                      slideAmount = ui.value;
                     }
                 });
                 // get value from slider
@@ -643,7 +645,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Shown on the slider to be what it is because it do
                 $(".buy-stock-amount").text("Buying " + Math.floor(maxStocks * 0.33) + " " + stockName + " stock!");
                 // Open up the buy dialog
-                $( ".buy-dialog" ).dialog("open");
+                $(".buy-dialog").dialog("open");
             },
             "Sell": function() {
                 // If the player actually has some of that stock...
@@ -651,7 +653,7 @@ document.addEventListener("DOMContentLoaded", function() {
                   // Figure out how much to step the slider
                   sliderStep = (playerObject["stats"].stocks[index].amount >= 50) ? 5 : 1;
                   // Initialize the sell-stock-sliderß
-                  $( ".sell-stock-slider" ).slider({
+                  $(".sell-stock-slider").slider({
                       value: 0,
                       min: 0,
                       // Our max is the amount of stock we have for that certain stock
@@ -660,6 +662,7 @@ document.addEventListener("DOMContentLoaded", function() {
                       // Taken from https://jqueryui.com/slider/#steps
                       slide: function(event,ui) {
                         $(".sell-stock-amount").text("Selling " + ui.value + " " + stockName +  " stock.");
+                        slideAmount = ui.value;
                       }
                   });
                   // Get slider's value
