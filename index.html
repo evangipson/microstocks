@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
-    <title>evngpsn ~ microstocks</title>    
+    <title>evngpsn ~ microstocks</title>
+    <!-- *Ugh* I hate using libraries -->    
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/redmond/jquery-ui.css">
+    <!-- Yay let's link in my style -->
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
@@ -33,7 +36,28 @@
       <h2>STOCKS</h2>
       <ul class="stock-list">
       </ul>
-    </section>    
+    </section>   
+    <!-- Define modal for buying/selling decision -->
+    <div class="buy-sell">
+      <p class="buy-sell-dialogue"></p>
+    </div>
+    <!-- Define modal for buying -->
+    <div class="buy-dialog">
+      <p class="buy-stock-amount"></p>
+      <p class="buy-money-left"></p>
+      <div class="buy-stock-slider"></div>
+    </div>
+    <!-- Define modal for selling -->
+    <div class="sell-dialog">
+      <p class="sell-stock-amount"></p>
+      <p class="sell-money-left"></p>
+      <div class="sell-stock-slider"></div>
+    </div>
+    <!-- *Sigh* Let's call in jquery and jquery-ui -->
+    <!-- at least I'm doing it via CDN so I don't have to download it -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <!-- Load in my javascript -->
     <script src="index.js"></script>
   </body>
 </html>
