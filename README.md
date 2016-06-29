@@ -18,10 +18,13 @@ If you want a local copy of Microstocks, just fork the repository, and set this 
 *Note: The SCSS file is optional to take, if you'd like to use the CSS preprocessor; if not, you can just take the style.css file instead.*
 
 ## Built With
-* Native Javascript - no libraries!
-* Visual Studio Code
+* JavaScript
+* jQuery
+* jQuery UI
 * SCSS
 * HTML
+* Visual Studio Code
+* Google Chrome
 
 ## Contributing
 Have a look at the [issues with Microstocks](https://github.com/evangipson/microstocks/issues), and create a pull request containing your code so it can be reviewed be merged into the source!
