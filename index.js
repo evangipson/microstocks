@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", function() {
           }
           // Or if we pass yet another random check, let's lower the value
           // if we are above the variant amount
-          else if ((randomNum(100) > randomNum(45,60)) && (playerObject["stats"].stocks[i].cost > variant)) {
+          else if ((randomNum(100) < randomNum(30,48)) && (playerObject["stats"].stocks[i].cost > variant)) {
             variant = randomNum(5);
             addListElement(logList, playerObject["stats"].stocks[i].name + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
           }
@@ -299,8 +299,8 @@ document.addEventListener("DOMContentLoaded", function() {
           addListElement(logList, playerObject["stats"].stocks[i].name + " has risen $" + variant + " dollars.", "stock-increase");
         }
         // And if that shift never happens, then the comapny is doomed at a
-        // 0.8% chance for the it's value to drop by up to 1/5th
-        else if (randomNum(1000) < 8) {
+        // 0.5% chance for the it's value to drop by up to 1/5th
+        else if (randomNum(1000) < 5) {
           variant = -1 * Math.floor(playerObject["stats"].stocks[i].cost * (randomNum(1,20)*.1));
           // If we have more than the variant amount as our value
           if(playerObject["stats"].stocks[i].cost > (Math.abs(variant) + 1)) {
@@ -318,14 +318,14 @@ document.addEventListener("DOMContentLoaded", function() {
           }
         }
         // Check if the stock is super high
-        if(parseInt(playerObject["stats"].stocks[i].cost) > stockMax) {
+        if(parseInt(playerObject["stats"].stocks[i].cost) >= stockMax) {
           // 33% to make the stock bottom out a bit
           if(randomNum(100) < 33) {
-            playerObject["stats"].stocks[i].cost = parseInt(playerObject["stats"].stocks[i].cost) - randomNum(Math.floor(stockMax * 0.15));
+            playerObject["stats"].stocks[i].cost = parseInt(playerObject["stats"].stocks[i].cost) - randomNum(1,Math.floor(stockMax * 0.15));
           }
           // Otherwise let's just set it to stockMax
           else {
-            playerObject["stats"].stocks[i].cost = randomNum(stockMax,stockMax+40);
+            playerObject["stats"].stocks[i].cost = stockMax;
           }
         }
       }
