@@ -666,7 +666,7 @@ document.addEventListener("DOMContentLoaded", function() {
                   sliderValue = $( ".stock-slider" ).slider( "value" );
                   // Before we open the sell dialog, set the value
                   // Shown on the slider to be what it is because it do
-                  $( ".sell-stock-amount" ).text("selling no stocks.");
+                  $(".sell-stock-amount").text("Selling no " + stockName +  " stock.");
                   // Open up the sell dialog
                   $(".sell-dialog").dialog("open");
                 }
