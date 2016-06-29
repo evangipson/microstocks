@@ -635,7 +635,7 @@ document.addEventListener("DOMContentLoaded", function() {
                   sliderStep = (maxStocks >= 50) ? 5 : 1;
                   // Figure out where the slider should start
                   // We should AT LEAST buy 1.
-                  startingBuyValue = (maxStocks * 0.33) > 0 ? Math.floor(maxStocks * 0.33) : 1;
+                  startingBuyValue = (maxStocks * 0.33) > 1 ? Math.floor(maxStocks * 0.33) : 1;
                   // Initialize the buy-stock-slider
                   $(".buy-stock-slider").slider({
                       // Set initial value to 1/3 of what they can afford
