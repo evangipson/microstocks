@@ -275,53 +275,53 @@ document.addEventListener("DOMContentLoaded", function() {
     // called everytime inventory is updated.
   var updateStockPrices = function() {
       var variant = 0;
-      var stockMax = 300;
+      var stockMax = 250;
       // We'd like to evaluate every stock per update
       for (var i = 0; i < playerObject["stats"].stocks.length; i++) {
         // ~20% chance for the company's value to potentially shift
         if (randomNum(100) < 18) {
           // Let's pass another check (sort of random) to increase stock price
-          if (randomNum(100) < randomNum(40,58)) {
-            variant = randomNum(9);
+          if (randomNum(100) < randomNum(30,48)) {
+            variant = randomNum(5);
             addListElement(logList, playerObject["stats"].stocks[i].name + " has risen $" + variant + " dollars.", "stock-increase");
           }
           // Or if we pass yet another random check, let's lower the value
-          else if (randomNum(100) > randomNum(45,60)) {
+          // if we are above the variant amount
+          else if ((randomNum(100) > randomNum(45,60)) && (playerObject["stats"].stocks[i].cost > variant)) {
             variant = randomNum(5);
             addListElement(logList, playerObject["stats"].stocks[i].name + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
           }
         } 
+        // If there was no regular shift, there is a
         // 0.5% chance for the company's value to grow by up to 1/5th.
         else if (randomNum(1000) < 5) {
           variant = Math.floor(playerObject["stats"].stocks[i].cost * (randomNum(1,20)*.1));
           addListElement(logList, playerObject["stats"].stocks[i].name + " has risen $" + variant + " dollars.", "stock-increase");
         }
-        // 0.8% chance for the company's value to drop by up to 1/5th.
+        // And if that shift never happens, then the comapny is doomed at a
+        // 0.8% chance for the it's value to drop by up to 1/5th
         else if (randomNum(1000) < 8) {
           variant = -1 * Math.floor(playerObject["stats"].stocks[i].cost * (randomNum(1,20)*.1));
-          addListElement(logList, playerObject["stats"].stocks[i].name + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
+          // If we have more than the variant amount as our value
+          if(playerObject["stats"].stocks[i].cost > (Math.abs(variant) + 1)) {
+            // Subtract it from the stock value
+            addListElement(logList, playerObject["stats"].stocks[i].name + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
+          }
         }
-        // Apply the variant (in most cases this will probably be 0)
-        // If the stock cost is more than the variant amount
-        if(variant < 0 && playerObject["stats"].stocks[i].cost <= variant) {
-          // 33% to make the stock bounce back
-          if(randomNum(100) > 33) {
+        // Then just alter the amount like normal
+        playerObject["stats"].stocks[i].cost = parseInt(playerObject["stats"].stocks[i].cost) + variant;
+        // Check if the stock is really low
+        if(playerObject["stats"].stocks[i].cost <= variant) {
+          // 15% to make the stock bounce back
+          if(randomNum(100) < 25) {
             playerObject["stats"].stocks[i].cost = parseInt(playerObject["stats"].stocks[i].cost) + randomNum(11);
           }
-          // Otherwise it's bottomed out
-          else {
-            playerObject["stats"].stocks[i].cost = 1;
-          }
-        }
-        // Otherwise, let's just alter the amount like normal
-        else {
-          playerObject["stats"].stocks[i].cost = parseInt(playerObject["stats"].stocks[i].cost) + variant;
         }
         // Check if the stock is super high
         if(parseInt(playerObject["stats"].stocks[i].cost) > stockMax) {
           // 33% to make the stock bottom out a bit
-          if(randomNum(100) > 33) {
-            playerObject["stats"].stocks[i].cost = parseInt(playerObject["stats"].stocks[i].cost) - randomNum(40);
+          if(randomNum(100) < 33) {
+            playerObject["stats"].stocks[i].cost = parseInt(playerObject["stats"].stocks[i].cost) - randomNum(Math.floor(stockMax * 0.15));
           }
           // Otherwise let's just set it to stockMax
           else {
