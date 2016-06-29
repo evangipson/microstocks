@@ -624,32 +624,39 @@ document.addEventListener("DOMContentLoaded", function() {
           buttons: {
             "Buy": function() {
                 // Set how many stocks we can buy
-                maxStocks = Math.floor(playerObject["stats"].money / playerObject["stats"].stocks[index].cost);
-                // Get out slider step amount
-                sliderStep = (maxStocks >= 50) ? 5 : 1;
-                // Figure out where the slider should start
-                // We should AT LEAST buy 1.
-                startingBuyValue = Math.floor(maxStocks * 0.33) > 0 ? Math.floor(maxStocks * 0.33) : 1;
-                // Initialize the buy-stock-slider
-                $(".buy-stock-slider").slider({
-                    // Set initial value to 1/3 of what they can afford
-                    value: startingBuyValue,
-                    min: 1,
-                    max: maxStocks,
-                    step: sliderStep,
-                    // Taken from https://jqueryui.com/slider/#steps
-                    slide: function(event,ui) {
-                      $(".buy-stock-amount").text("Buying " + ui.value + " " + stockName + " stock!");
-                      slideAmount = ui.value;
-                    }
-                });
-                // get value from slider
-                sliderValue = $(".stock-slider").slider( "value" );
-                // Before we open the buy dialog, set the value
-                // Shown on the slider to be what it is because it do
-                $(".buy-stock-amount").text("Buying " + startingBuyValue + " " + stockName + " stock!");
-                // Open up the buy dialog
-                $(".buy-dialog").dialog("open");
+                maxStocks = parseInt(playerObject["stats"].money) / parseInt(playerObject["stats"].stocks[index].cost);
+                // If we don't have any money, let the player know
+                if(maxStocks < 1) {
+                      $(".buy-sell-dialogue").text("Can't afford any " + stockName + " stock!");
+                }
+                // Otherwise, we have stock to buy!
+                else {
+                  // Get out slider step amount
+                  sliderStep = (maxStocks >= 50) ? 5 : 1;
+                  // Figure out where the slider should start
+                  // We should AT LEAST buy 1.
+                  startingBuyValue = (maxStocks * 0.33) > 0 ? Math.floor(maxStocks * 0.33) : 1;
+                  // Initialize the buy-stock-slider
+                  $(".buy-stock-slider").slider({
+                      // Set initial value to 1/3 of what they can afford
+                      value: startingBuyValue,
+                      min: 1,
+                      max: maxStocks,
+                      step: sliderStep,
+                      // Taken from https://jqueryui.com/slider/#steps
+                      slide: function(event,ui) {
+                        $(".buy-stock-amount").text("Buying " + ui.value + " " + stockName + " stock!");
+                        slideAmount = ui.value;
+                      }
+                  });
+                  // get value from slider
+                  sliderValue = $(".stock-slider").slider( "value" );
+                  // Before we open the buy dialog, set the value
+                  // Shown on the slider to be what it is because it do
+                  $(".buy-stock-amount").text("Buying " + startingBuyValue + " " + stockName + " stock!");
+                  // Open up the buy dialog
+                  $(".buy-dialog").dialog("open");
+                }
             },
             "Sell": function() {
                 // If the player actually has some of that stock...
