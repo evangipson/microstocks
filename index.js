@@ -145,13 +145,6 @@ var MICROSTOCKS = (function () {
   // Get the object with JSON.parse
   playerObject = JSON.parse(playerString);
 
-  // Public Variables
-  // ----------------
-  // Now lets pull in the buttons
-  microstocksModule.buyButton = document.getElementsByClassName("buy-button")[0];
-  microstocksModule.sellButton = document.getElementsByClassName("sell-button")[0];
-  microstocksModule.travelButton = document.getElementsByClassName("travel-button")[0];
-
   // Private functions needed for stocks & log
   // ---------------------------------
   // Add list element to object
@@ -364,152 +357,6 @@ var MICROSTOCKS = (function () {
   var updateLocationIndex = function(newLocation) {
       playerObject["stats"].location = newLocation;
     }
-    // Function to call buy/sell alert box
-  var buySellDialogue = function(index) {
-    // pull in playerObject to this method
-    var player = playerObject["stats"];
-    // instantiate variables needed for jquery-ui elements
-    var maxStocks = 0;
-    var sliderStep = 0;
-    var sliderValue = 0;
-    var slideAmount = 0;
-    var startingBuyValue = 0;
-    var stockName = player.stocks[index].name;
-    $(".buy-sell-dialogue").text("Would you like to buy or sell " + stockName + " stock today?");
-    // Initialize the buy-dialog modal
-    $( ".buy-dialog" ).dialog({
-        // The magic line right here
-        // Don't open unless called to
-        autoOpen: false,
-        modal: true,
-        buttons: {
-            "Are you sure?": function() {
-                // if amount is correctly retrieved by jquery-ui
-                if (slideAmount !== null && slideAmount !== undefined) {
-                  // So let's buy it!
-                  var buyLogMessage = buyMessage(index, slideAmount);
-                  addListElement(logList, buyLogMessage);
-                  buyAction(slideAmount);
-                } else {
-                  console.error("buySellDialogue exception: Stock purchase amount undefined or null, please try again!");
-                }
-                // Close up the buy-sell dialog too
-                $(".buy-sell").dialog("close");
-                $(this).dialog('close');
-            },
-            Cancel: function() {
-                // Close up the buy-sell dialog too
-                $(".buy-sell").dialog("close");
-                $(this).dialog('close');
-            }
-        }
-    });
-    // Initialize the sell-dialog modal
-    $( ".sell-dialog" ).dialog({
-        // The magic line right here
-        // Don't open unless called to
-        autoOpen: false,
-        modal: true,
-        buttons: { 
-            "Are you sure?": function() {
-                // if the user didn't try any tricky stuff
-                if (slideAmount !== null && slideAmount !== undefined) {
-                  // Let's actually sell the thing
-                  var sellLogMessage = sellMessage(index, slideAmount);
-                  addListElement(logList, sellLogMessage);
-                  sellAction(slideAmount);
-                } else {
-                  console.error("buySellDialogue exception: Stock sell amount undefined or null, please try again!");
-                }
-                // Close up the buy-sell dialog too
-                $(".buy-sell").dialog("close");
-                $(this).dialog("close");
-            },
-            Cancel: function() {
-                // Close up the buy-sell dialog too
-                $(".buy-sell").dialog("close");
-                $(this).dialog("close");
-            }
-        }
-    });
-    // Initialize the buy-sell dialogue modal
-    $(".buy-sell").dialog({
-        modal: true,
-        buttons: {
-          "Buy": function() {
-              // Set how many stocks we can buy
-              maxStocks = parseInt(player.money) / parseInt(player.stocks[index].cost);
-              // If we don't have any money, let the player know
-              if(maxStocks < 1) {
-                    $(".buy-sell-dialogue").text("Can't afford any " + stockName + " stock!");
-              }
-              // Otherwise, we have stock to buy!
-              else {
-                // Get out slider step amount
-                sliderStep = (maxStocks >= 50) ? 5 : 1;
-                // Figure out where the slider should start
-                // We should AT LEAST buy 1.
-                startingBuyValue = (maxStocks * 0.33) > 1 ? Math.floor(maxStocks * 0.33) : 1;
-                // Initialize the buy-stock-slider
-                $(".buy-stock-slider").slider({
-                    // Set initial value to 1/3 of what they can afford
-                    value: startingBuyValue,
-                    min: 1,
-                    max: maxStocks,
-                    step: sliderStep,
-                    // Taken from https://jqueryui.com/slider/#steps
-                    slide: function(event,ui) {
-                      $(".buy-stock-amount").text("Buying " + ui.value + " " + stockName + " stock!");
-                      slideAmount = ui.value;
-                    }
-                });
-                // get value from slider
-                sliderValue = $(".stock-slider").slider( "value" );
-                // Before we open the buy dialog, set the value
-                // Shown on the slider to be what it is because it do
-                $(".buy-stock-amount").text("Buying " + startingBuyValue + " " + stockName + " stock!");
-                // Open up the buy dialog
-                $(".buy-dialog").dialog("open");
-              }
-          },
-          "Sell": function() {
-              // If the player actually has some of that stock...
-              if(player.stocks[index].amount > 0) {
-                // Figure out how much to step the slider
-                sliderStep = (player.stocks[index].amount >= 50) ? 5 : 1;
-                // Initialize the sell-stock-sliderß
-                $(".sell-stock-slider").slider({
-                    value: 1,
-                    min: 1,
-                    // Our max is the amount of stock we have for that certain stock
-                    max: player.stocks[index].amount,
-                    step: sliderStep,
-                    // Taken from https://jqueryui.com/slider/#steps
-                    slide: function(event,ui) {
-                      $(".sell-stock-amount").text("Selling " + ui.value + " " + stockName +  " stock.");
-                      slideAmount = ui.value;
-                    }
-                });
-                // Get slider's value
-                sliderValue = $( ".stock-slider" ).slider( "value" );
-                // Before we open the sell dialog, set the value
-                // Shown on the slider to be what it is because it do
-                $(".sell-stock-amount").text("Selling 1 " + stockName +  " stock.");
-                // Open up the sell dialog
-                $(".sell-dialog").dialog("open");
-              }
-              // Otherwise, just tell them they can't.
-              // I should probably not have the sell button if they can't use it.
-              else {
-                $(".buy-sell-dialogue").text("You don't have any " + stockName + " to sell!");
-              }
-          },
-          "Cancel": function() {
-            $(this).dialog("close");
-          }
-        }
-    });
-  }
 
   // Public functions that are used outside
   // of this module
@@ -727,7 +574,154 @@ var MICROSTOCKS = (function () {
       this.addButtonEvent(stocks[i], [buySellDialogue, i]);
     }
   }
-
+  // Function to call buy/sell alert box
+  // We have to call this last because it uses 
+  // buyAction, sellAction, buyMessage & sellMessage
+  var buySellDialogue = function(index) {
+    // pull in playerObject to this method
+    var player = playerObject["stats"];
+    // instantiate variables needed for jquery-ui elements
+    var maxStocks = 0;
+    var sliderStep = 0;
+    var sliderValue = 0;
+    var slideAmount = 0;
+    var startingBuyValue = 0;
+    var stockName = player.stocks[index].name;
+    $(".buy-sell-dialogue").text("Would you like to buy or sell " + stockName + " stock today?");
+    // Initialize the buy-dialog modal
+    $( ".buy-dialog" ).dialog({
+        // The magic line right here
+        // Don't open unless called to
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            "Are you sure?": function() {
+                // if amount is correctly retrieved by jquery-ui
+                if (slideAmount !== null && slideAmount !== undefined) {
+                  // So let's buy it!
+                  var buyLogMessage = microstocksModule.buyMessage(index, slideAmount);
+                  addListElement(logList, buyLogMessage);
+                  microstocksModule.buyAction(slideAmount);
+                } else {
+                  console.error("buySellDialogue exception: Stock purchase amount undefined or null, please try again!");
+                }
+                // Close up the buy-sell dialog too
+                $(".buy-sell").dialog("close");
+                $(this).dialog('close');
+            },
+            Cancel: function() {
+                // Close up the buy-sell dialog too
+                $(".buy-sell").dialog("close");
+                $(this).dialog('close');
+            }
+        }
+    });
+    // Initialize the sell-dialog modal
+    $( ".sell-dialog" ).dialog({
+        // The magic line right here
+        // Don't open unless called to
+        autoOpen: false,
+        modal: true,
+        buttons: { 
+            "Are you sure?": function() {
+                // if the user didn't try any tricky stuff
+                if (slideAmount !== null && slideAmount !== undefined) {
+                  // Let's actually sell the thing
+                  var sellLogMessage = microstocksModule.sellMessage(index, slideAmount);
+                  addListElement(logList, sellLogMessage);
+                  microstocksModule.sellAction(slideAmount);
+                } else {
+                  console.error("buySellDialogue exception: Stock sell amount undefined or null, please try again!");
+                }
+                // Close up the buy-sell dialog too
+                $(".buy-sell").dialog("close");
+                $(this).dialog("close");
+            },
+            Cancel: function() {
+                // Close up the buy-sell dialog too
+                $(".buy-sell").dialog("close");
+                $(this).dialog("close");
+            }
+        }
+    });
+    // Initialize the buy-sell dialogue modal
+    $(".buy-sell").dialog({
+        modal: true,
+        buttons: {
+          "Buy": function() {
+              // Set how many stocks we can buy
+              maxStocks = parseInt(player.money) / parseInt(player.stocks[index].cost);
+              // If we don't have any money, let the player know
+              if(maxStocks < 1) {
+                    $(".buy-sell-dialogue").text("Can't afford any " + stockName + " stock!");
+              }
+              // Otherwise, we have stock to buy!
+              else {
+                // Get out slider step amount
+                sliderStep = (maxStocks >= 50) ? 5 : 1;
+                // Figure out where the slider should start
+                // We should AT LEAST buy 1.
+                startingBuyValue = (maxStocks * 0.33) > 1 ? Math.floor(maxStocks * 0.33) : 1;
+                // Initialize the buy-stock-slider
+                $(".buy-stock-slider").slider({
+                    // Set initial value to 1/3 of what they can afford
+                    value: startingBuyValue,
+                    min: 1,
+                    max: maxStocks,
+                    step: sliderStep,
+                    // Taken from https://jqueryui.com/slider/#steps
+                    slide: function(event,ui) {
+                      $(".buy-stock-amount").text("Buying " + ui.value + " " + stockName + " stock!");
+                      slideAmount = ui.value;
+                    }
+                });
+                // get value from slider
+                sliderValue = $(".stock-slider").slider( "value" );
+                // Before we open the buy dialog, set the value
+                // Shown on the slider to be what it is because it do
+                $(".buy-stock-amount").text("Buying " + startingBuyValue + " " + stockName + " stock!");
+                // Open up the buy dialog
+                $(".buy-dialog").dialog("open");
+              }
+          },
+          "Sell": function() {
+              // If the player actually has some of that stock...
+              if(player.stocks[index].amount > 0) {
+                // Figure out how much to step the slider
+                sliderStep = (player.stocks[index].amount >= 50) ? 5 : 1;
+                // Initialize the sell-stock-sliderß
+                $(".sell-stock-slider").slider({
+                    value: 1,
+                    min: 1,
+                    // Our max is the amount of stock we have for that certain stock
+                    max: player.stocks[index].amount,
+                    step: sliderStep,
+                    // Taken from https://jqueryui.com/slider/#steps
+                    slide: function(event,ui) {
+                      $(".sell-stock-amount").text("Selling " + ui.value + " " + stockName +  " stock.");
+                      slideAmount = ui.value;
+                    }
+                });
+                // Get slider's value
+                sliderValue = $( ".stock-slider" ).slider( "value" );
+                // Before we open the sell dialog, set the value
+                // Shown on the slider to be what it is because it do
+                $(".sell-stock-amount").text("Selling 1 " + stockName +  " stock.");
+                // Open up the sell dialog
+                $(".sell-dialog").dialog("open");
+              }
+              // Otherwise, just tell them they can't.
+              // I should probably not have the sell button if they can't use it.
+              else {
+                $(".buy-sell-dialogue").text("You don't have any " + stockName + " to sell!");
+              }
+          },
+          "Cancel": function() {
+            $(this).dialog("close");
+          }
+        }
+    });
+  }
   // give back our module!
 	return microstocksModule;
 
@@ -736,10 +730,16 @@ var MICROSTOCKS = (function () {
 // Don't do any javascript until the HTML DOMContent is loaded
 // on the page, because we need to ineract with it.
 document.addEventListener("DOMContentLoaded", function() {
+  // Get the Controls
+  // ----------------
+  // Now lets pull in the buttons
+  var buyButton = document.getElementsByClassName("buy-button")[0];
+  var sellButton = document.getElementsByClassName("sell-button")[0];
+  var travelButton = document.getElementsByClassName("travel-button")[0];
   // Now let's set up the event listeners
-  MICROSTOCKS.addButtonEvent(MICROSTOCKS.buyButton, MICROSTOCKS.buyMessage, MICROSTOCKS.buyAction);
-  MICROSTOCKS.addButtonEvent(MICROSTOCKS.sellButton, MICROSTOCKS.sellMessage, MICROSTOCKS.sellAction);
-  MICROSTOCKS.addButtonEvent(MICROSTOCKS.travelButton, MICROSTOCKS.travelMessage, MICROSTOCKS.travelAction); 
+  MICROSTOCKS.addButtonEvent(buyButton, MICROSTOCKS.buyMessage, MICROSTOCKS.buyAction);
+  MICROSTOCKS.addButtonEvent(sellButton, MICROSTOCKS.sellMessage, MICROSTOCKS.sellAction);
+  MICROSTOCKS.addButtonEvent(travelButton, MICROSTOCKS.travelMessage, MICROSTOCKS.travelAction); 
   // Now let's create the inventory panel!
   MICROSTOCKS.createInventory();
   // Add the stock event listeners for buying/selling
