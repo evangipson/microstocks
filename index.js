@@ -191,13 +191,13 @@ document.addEventListener("DOMContentLoaded", function() {
             // the scroll for the log so it's on the bottom.
             obj.scrollTop = obj.scrollHeight;
           }
-          // Otherwise let's throw an exception
+          // Otherwise let's print out the error to the console
           else {
-            throw "addListElement exception: obj was null. Please call addListELement with a non-null, defined object as the first argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional."
+            console.error("addListElement exception: obj was null. Please call addListELement with a non-null, defined object as the first argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional.");
           }
         }
       } else {
-        throw "addListElement exception: text was null. Please call addListELement with a non-null, defined text string as the second argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional."
+        console.error("addListElement exception: text was null. Please call addListELement with a non-null, defined text string as the second argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional.");
       }
       // If we HAVE a class coming in and it's valid
       if (cssClass !== undefined && cssClass !== null) {
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Set message to incoming text
         listElement.innerText = text;
       } else {
-        throw "changeListElement needs to be called with a valid cssClass and incoming text. Check your syntax: changeListElement(cssClass, text);"
+        console.error("changeListElement needs to be called with a valid cssClass and incoming text. Check your syntax: changeListElement(cssClass, text);");
       }
     }
     // Add button event listener function, takes 2 optional functions 
@@ -245,10 +245,10 @@ document.addEventListener("DOMContentLoaded", function() {
           else if (typeof logMessage === "function") {
             logText = logMessage();
           }
-          // If it's neither, I don't want it, so throw an exception
+          // If it's neither, I don't want it, so print out the error in the console
           else {
-            console.log(typeof logMessage);
-            throw "addButtonEvent called with undefined logMessage function. logMessage function should return a string. See syntax: addButtonEvent(button, logFunction, moreBehavior), with moreBehavior being an optional function.";
+            console.error("addButtonEvent called with undefined logMessage function. logMessage function should return a string. See syntax: addButtonEvent(button, logFunction, moreBehavior), with moreBehavior being an optional function.");
+            console.error("typeof logMessage = " + typeof logMessage);
           }
           // Add the list element (no cssClass yet)
           if (logText !== undefined) {
@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function() {
           }
         });
       } else {
-        throw "addButtonEvent needs a defined, non-null button as it's first argument. See syntax: addButtonEvent(button, logFunction, moreBehavior), with moreBehavior being an optional function."
+        console.error("addButtonEvent needs a defined, non-null button as it's first argument. See syntax: addButtonEvent(button, logFunction, moreBehavior), with moreBehavior being an optional function.");
       }
     }
     // Function to fluctuate stock prices
@@ -422,7 +422,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (stockIndex < playerObject["stats"].stocks.length) {
           playerObject["stats"].stockIndex = stockIndex;
         } else {
-          throw "updateStockIndex exception: Incoming stockIndex outside of bounds of stocks array.";
+          console.error("updateStockIndex exception: Incoming stockIndex outside of bounds of stocks array.");
         }
       }
       // We don't have a suitable stock index, so let's randomly shuffle the stock index
@@ -475,7 +475,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Update the player's stock amount
         playerObject["stats"].stocks[stockIndex].amount += parseInt(stockAmount);
       } else {
-        throw "buyAction exception: Not enough money to make purchase.";
+        console.error("buyAction exception: Not enough money to make purchase.");
       }
       updateInventory();
     }
@@ -577,7 +577,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     addListElement(logList, buyLogMessage);
                     buyAction(slideAmount);
                   } else {
-                    throw "buySellDialogue exception: Stock purchase amount undefined or null, please try again!";
+                    console.error("buySellDialogue exception: Stock purchase amount undefined or null, please try again!");
                   }
                   // Close up the buy-sell dialog too
                   $(".buy-sell").dialog("close");
@@ -605,7 +605,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     addListElement(logList, sellLogMessage);
                     sellAction(slideAmount);
                   } else {
-                    throw "buySellDialogue exception: Stock sell amount undefined or null, please try again!";
+                    console.error("buySellDialogue exception: Stock sell amount undefined or null, please try again!");
                   }
                   // Close up the buy-sell dialog too
                   $(".buy-sell").dialog("close");
