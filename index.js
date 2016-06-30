@@ -230,58 +230,68 @@ var MICROSTOCKS = (function () {
     // Function to fluctuate stock prices
     // called everytime inventory is updated.
   var updateStockPrices = function() {
+      // Pull playerObject's stocks in locally
+      var playerStocks = playerObject["stats"].stocks;
+      // Amount stocks should be flucuating
       var variant = 0;
+      // Max $ amount stocks can be
       var stockMax = 250;
+      // Declare a couple variables to use inside the for loop
+      var stockCost = 0;
+      var stockName = "";
       // We'd like to evaluate every stock per update
-      for (var i = 0; i < playerObject["stats"].stocks.length; i++) {
+      for (var i = 0; i < playerStocks.length; i++) {
+        // Pull cost in so we only have to query playerStocks array once
+        stockCost = playerStocks[i].cost;
+        stockName = playerStocks[i].name;
         // ~20% chance for the company's value to potentially shift
         if (randomNum(100) < 18) {
           // Let's pass another check (sort of random) to increase stock price
           if (randomNum(100) < randomNum(30,48)) {
             variant = randomNum(5);
-            addListElement(logList, playerObject["stats"].stocks[i].name + " has risen $" + variant + " dollars.", "stock-increase");
+            addListElement(logList, stockName + " has risen $" + variant + " dollars.", "stock-increase");
           }
           // Or if we pass yet another random check, let's lower the value
           // if we are above the variant amount
-          else if ((randomNum(100) < randomNum(30,48)) && (playerObject["stats"].stocks[i].cost > variant)) {
+          else if ((randomNum(100) < randomNum(30,48)) && (stockCost > variant)) {
             variant = randomNum(5);
-            addListElement(logList, playerObject["stats"].stocks[i].name + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
+            addListElement(logList, stockName + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
           }
         } 
         // If there was no regular shift, there is a
         // 0.5% chance for the company's value to grow by up to 1/5th.
         else if (randomNum(1000) < 5) {
-          variant = Math.floor(playerObject["stats"].stocks[i].cost * (randomNum(1,20)*.1));
-          addListElement(logList, playerObject["stats"].stocks[i].name + " has risen $" + variant + " dollars.", "stock-increase");
+          variant = Math.floor(stockCost * (randomNum(1,20)*.1));
+          addListElement(logList, stockName + " has risen $" + variant + " dollars.", "stock-increase");
         }
         // And if that shift never happens, then the comapny is doomed at a
         // 0.5% chance for the it's value to drop by up to 1/5th
         else if (randomNum(1000) < 5) {
-          variant = -1 * Math.floor(playerObject["stats"].stocks[i].cost * (randomNum(1,20)*.1));
+          variant = -1 * Math.floor(stockCost * (randomNum(1,20)*.1));
           // If we have more than the variant amount as our value
-          if(playerObject["stats"].stocks[i].cost > (Math.abs(variant) + 1)) {
+          if(stockCost > (Math.abs(variant) + 1)) {
             // Subtract it from the stock value
-            addListElement(logList, playerObject["stats"].stocks[i].name + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
+            addListElement(logList, stockName + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
           }
         }
         // Then just alter the amount like normal
-        playerObject["stats"].stocks[i].cost = parseInt(playerObject["stats"].stocks[i].cost) + variant;
+        stockCost = parseInt(stockCost) + variant;
         // Check if the stock is really low
-        if(playerObject["stats"].stocks[i].cost <= variant) {
+        if(stockCost <= variant) {
           // 15% to make the stock bounce back
           if(randomNum(100) < 25) {
-            playerObject["stats"].stocks[i].cost = parseInt(playerObject["stats"].stocks[i].cost) + randomNum(11);
+            stockCost = parseInt(stockCost) + randomNum(11);
           }
         }
         // Check if the stock is super high
-        if(parseInt(playerObject["stats"].stocks[i].cost) >= stockMax) {
+        if(parseInt(stockCost) >= stockMax) {
           // 33% to make the stock bottom out a bit
           if(randomNum(100) < 33) {
-            playerObject["stats"].stocks[i].cost = parseInt(playerObject["stats"].stocks[i].cost) - randomNum(1,Math.floor(stockMax * 0.15));
+            stockCost = parseInt(stockCost) - randomNum(1,Math.floor(stockMax * 0.15));
           }
           // Otherwise let's just set it to stockMax
           else {
-            playerObject["stats"].stocks[i].cost = stockMax;
+            stockCost = stockMax;
           }
         }
       }
@@ -289,15 +299,17 @@ var MICROSTOCKS = (function () {
     // Function to update the inventory box.
     // Called when controls are interacted with.
   var updateInventory = function() {
+    // Bring player in locally
+    var player = playerObject["stats"];
     // Get the updated stock prices
     updateStockPrices();
     // Draw out the new inventory
-    changeListElement("cash", "Money: $" + playerObject["stats"].money);
+    changeListElement("cash", "Money: $" + player.money);
     // Variable to display the total amount of the portfolio
     var portfolioTotal = 0;
     // Display portfolio total
-    for (var i = 0; i < playerObject["stats"].stocks.length; i++) {
-      portfolioTotal += playerObject["stats"].stocks[i].amount * playerObject["stats"].stocks[i].cost;
+    for (var i = 0; i < player.stocks.length; i++) {
+      portfolioTotal += player.stocks[i].amount * player.stocks[i].cost;
     }
     // We need to display our portfolio
     changeListElement("portfolio", "Total Portfolio: $" + portfolioTotal);
@@ -309,31 +321,31 @@ var MICROSTOCKS = (function () {
     // Grab the net worth amount off of the textContent
     oldNetWorth = oldNetWorth.split("\$");
     // We need to display our total worth
-    if(parseInt(oldNetWorth[1]) < portfolioTotal + parseInt(playerObject["stats"].money)) {
+    if(parseInt(oldNetWorth[1]) < portfolioTotal + parseInt(player.money)) {
       // If our total value has increased, show it!
-      changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(playerObject["stats"].money)) + " --- Up!");
+      changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Up!");
     }
-    else if (parseInt(oldNetWorth[1]) === portfolioTotal + parseInt(playerObject["stats"].money)) {
+    else if (parseInt(oldNetWorth[1]) === portfolioTotal + parseInt(player.money)) {
         // No increase!
-        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(playerObject["stats"].money)));
+        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)));
     }
     else {
         // We lost money!
-        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(playerObject["stats"].money)) + " --- Down!");
+        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
     }
-    changeListElement("location", "Location: " + locations[playerObject["stats"].location]);
+    changeListElement("location", "Location: " + locations[player.location]);
     // Sort out the player's stock array 
-    playerObject["stats"].stocks.sort(function(a, b) {
+    player.stocks.sort(function(a, b) {
       return b.amount - a.amount;
     });
     // Update the player's stock amounts and change any owned to have said css class
-    for (var i = 0; i < playerObject["stats"].stocks.length; i++) {
+    for (var i = 0; i < player.stocks.length; i++) {
       var theStock = document.getElementsByClassName("stocks-"+i)[0];
-      changeListElement("stocks-" + i, playerObject["stats"].stocks[i].name + " | " + playerObject["stats"].stocks[i].amount + " owned | $" + playerObject["stats"].stocks[i].cost);
-      if(playerObject["stats"].stocks[i].amount > 0 && !theStock.classList.contains("owned")) {
+      changeListElement("stocks-" + i, player.stocks[i].name + " | " + player.stocks[i].amount + " owned | $" + player.stocks[i].cost);
+      if(player.stocks[i].amount > 0 && !theStock.classList.contains("owned")) {
         theStock.classList.add("owned");
       }
-      else if(playerObject["stats"].stocks[i].amount === 0 && theStock.classList.contains("owned")) {
+      else if(player.stocks[i].amount === 0 && theStock.classList.contains("owned")) {
         theStock.classList.remove("owned");
       }
     }
