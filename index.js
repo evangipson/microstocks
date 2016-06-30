@@ -352,17 +352,19 @@ var MICROSTOCKS = (function () {
   }  
   // Update stock index globally
   var updateStockIndex = function(stockIndex) {
+      // Pull in playerObject to this method
+      var player = playerObject["stats"];
       // If we have a stockIndex, let's set it accordingly (the click came from stock button)
       if (typeof stockIndex !== "undefined" && typeof stockIndex !== "object") {
-        if (stockIndex < playerObject["stats"].stocks.length) {
-          playerObject["stats"].stockIndex = stockIndex;
+        if (stockIndex < player.stocks.length) {
+          player.stockIndex = stockIndex;
         } else {
           console.error("updateStockIndex exception: Incoming stockIndex outside of bounds of stocks array.");
         }
       }
       // We don't have a suitable stock index, so let's randomly shuffle the stock index
       else {
-          playerObject["stats"].stockIndex = randomNum(0,stocks.length);
+          player.stockIndex = randomNum(0,stocks.length);
         }
       }
     // Update location index globally
@@ -371,12 +373,15 @@ var MICROSTOCKS = (function () {
     }
     // Function to call buy/sell alert box
   var buySellDialogue = function(index) {
+    // pull in playerObject to this method
+    var player = playerObject["stats"];
+    // instantiate variables needed for jquery-ui elements
     var maxStocks = 0;
     var sliderStep = 0;
     var sliderValue = 0;
     var slideAmount = 0;
     var startingBuyValue = 0;
-    var stockName = playerObject["stats"].stocks[index].name;
+    var stockName = player.stocks[index].name;
     $(".buy-sell-dialogue").text("Would you like to buy or sell " + stockName + " stock today?");
     // Initialize the buy-dialog modal
     $( ".buy-dialog" ).dialog({
@@ -440,7 +445,7 @@ var MICROSTOCKS = (function () {
         buttons: {
           "Buy": function() {
               // Set how many stocks we can buy
-              maxStocks = parseInt(playerObject["stats"].money) / parseInt(playerObject["stats"].stocks[index].cost);
+              maxStocks = parseInt(player.money) / parseInt(player.stocks[index].cost);
               // If we don't have any money, let the player know
               if(maxStocks < 1) {
                     $(".buy-sell-dialogue").text("Can't afford any " + stockName + " stock!");
@@ -476,15 +481,15 @@ var MICROSTOCKS = (function () {
           },
           "Sell": function() {
               // If the player actually has some of that stock...
-              if(playerObject["stats"].stocks[index].amount > 0) {
+              if(player.stocks[index].amount > 0) {
                 // Figure out how much to step the slider
-                sliderStep = (playerObject["stats"].stocks[index].amount >= 50) ? 5 : 1;
+                sliderStep = (player.stocks[index].amount >= 50) ? 5 : 1;
                 // Initialize the sell-stock-sliderß
                 $(".sell-stock-slider").slider({
                     value: 1,
                     min: 1,
                     // Our max is the amount of stock we have for that certain stock
-                    max: playerObject["stats"].stocks[index].amount,
+                    max: player.stocks[index].amount,
                     step: sliderStep,
                     // Taken from https://jqueryui.com/slider/#steps
                     slide: function(event,ui) {
@@ -632,16 +637,18 @@ var MICROSTOCKS = (function () {
     }
   }
   microstocksModule.buyAction = function(amount) {
+    // Pull in playerObject to this method
+    var player = playerObject["stats"];
     // Check amount
     var stockAmount = (amount === undefined) ? 1 : amount;
       // Pull in stockIndex
-      var stockIndex = playerObject["stats"].stockIndex;
+      var stockIndex = player.stockIndex;
       // If the player can afford the stock
-      if (playerObject["stats"].money >= (playerObject["stats"].stocks[stockIndex].cost * stockAmount)) {
+      if (player.money >= (player.stocks[stockIndex].cost * stockAmount)) {
         // Update the player's money
-        playerObject["stats"].money = playerObject["stats"].money - (playerObject["stats"].stocks[stockIndex].cost * stockAmount);
+        player.money = player.money - (player.stocks[stockIndex].cost * stockAmount);
         // Update the player's stock amount
-        playerObject["stats"].stocks[stockIndex].amount += parseInt(stockAmount);
+        player.stocks[stockIndex].amount += parseInt(stockAmount);
       } else {
         console.error("buyAction exception: Not enough money to make purchase.");
       }
@@ -671,24 +678,28 @@ var MICROSTOCKS = (function () {
     }
   }
   microstocksModule.sellAction = function(amount) {
+    // Pull in playerObject to this method
+    var player = playerObject["stats"];
     // Check amount
     var stockAmount = (amount === undefined) ? 1 : amount;
       // Pull in stockIndex
-      var tmpStockIndex = playerObject["stats"].stockIndex;
+      var tmpStockIndex = player.stockIndex;
       // If you have the stock amount, go ahead and sell it!
-      if (playerObject["stats"].stocks[tmpStockIndex].amount >= stockAmount) {
+      if (player.stocks[tmpStockIndex].amount >= stockAmount) {
         // Update players stock
-        playerObject["stats"].stocks[tmpStockIndex].amount -= parseInt(stockAmount);
+        player.stocks[tmpStockIndex].amount -= parseInt(stockAmount);
         // Update player's money
-        playerObject["stats"].money = playerObject["stats"].money + (playerObject["stats"].stocks[tmpStockIndex].cost * stockAmount);
+        player.money = player.money + (player.stocks[tmpStockIndex].cost * stockAmount);
         // Update the inventory box
         updateInventory();
       } 
     }
     // Location logging functionality
   microstocksModule.travelMessage = function() {
+      // Pull in playerObject to this method
+      var player = playerObject["stats"];
       // if the player doesn't have $10, don't let him travel.
-      if (playerObject["stats"].money < moveFee) {
+      if (player.money < moveFee) {
         return "Can't afford to move! Why don't you sell some stock?";
       }
       // make sure we have a valid stock index for potentially selling
@@ -697,19 +708,21 @@ var MICROSTOCKS = (function () {
       // Try and generate a new locationIndex. 
       var newNum = randomNum(locations.length);
       // Make sure we don't get the same locationIndex that we have
-      while (newNum === playerObject["stats"].location) {
+      while (newNum === player.location) {
         // Make sure we generate a NEW location
         newNum = randomNum(locations.length);
       }
       updateLocationIndex(newNum);
-      return ["Player moved to " + locations[playerObject["stats"].location],
+      return ["Player moved to " + locations[player.location],
               "Charged $" + moveFee + " to go!"];
     }
     // Subsequent function, update screen
   microstocksModule.travelAction = function() {
+      // Pull in playerObject to this method
+      var player = playerObject["stats"];
       // if the player has $10 (he should, we just checked this in travelMessage).
-      if (playerObject["stats"].money >= moveFee) {
-        playerObject["stats"].money = parseInt(playerObject["stats"].money) - moveFee;
+      if (player.money >= moveFee) {
+        player.money = parseInt(player.money) - moveFee;
         updateInventory();
       }
     }
