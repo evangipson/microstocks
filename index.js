@@ -407,44 +407,8 @@ var MICROSTOCKS = (function () {
   // Public functions that are used outside
   // of this module
   // --------------------------------------
-  // Function to create the initial display of the inventory box
-  microstocksModule.createInventory = function() {
-      // Bring in microstocks playerObject
-      var player = playerObject["stats"];
-      // Get the player's inventory list, since we are adding elements to it.
-      var invList = document.getElementsByClassName("inventory-list")[0];
-      var stockList = document.getElementsByClassName("stock-list")[0];
-      // Need a variable for the for loop later
-      var className = "";
-      // We need to display our money
-      addListElement(invList, "Cash: $" + player.money, "money cash");
-      // Variable to display the total amount of the portfolio
-      var portfolioTotal = 0;
-      // Display portfolio total
-      for (var i = 0; i < player.stocks.length; i++) {
-        portfolioTotal += player.stocks[i].amount * player.stocks[i].cost;
-      }
-      // We need to display our portfolio
-      addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio");
-      // We need to display our total worth
-      addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth");
-      // Our location
-      addListElement(invList, "Location: " + locations[player.location], "location");
-      // And our stocks.
-      // Loop through all the current stocks
-      for (var i = 0; i < stocks.length; i++) {
-        className = "stock stocks-" + i + " under-hover";
-        if(player.stocks[i].amount > 0) {
-          className += " owned";
-        }
-        // Add a stock box
-        // and if the player has any, fill that in with a special class
-        addListElement(stockList, player.stocks[i].name + " | " + player.stocks[i].amount + " owned | $" + player.stocks[i].cost, className);
-      }
-    }
-  
-    // Add button event listener function, takes 2 optional functions 
-    // (logMessage and moreBehavior)
+  // Add button event listener function, takes 2 optional functions 
+  // (logMessage and moreBehavior)
   microstocksModule.addButtonEvent = function(button, logMessage, moreBehavior) {
       var logText = "";
       if (button !== undefined && button !== null) {
@@ -594,7 +558,7 @@ var MICROSTOCKS = (function () {
       } 
     }
   }
-    // Location logging functionality
+  // Location logging functionality
   microstocksModule.travelMessage = function() {
       // Pull in playerObject to this method
       var player = playerObject["stats"];
@@ -626,14 +590,6 @@ var MICROSTOCKS = (function () {
         updateInventory();
       }
     }
-    // This adds all the stock button event listeners
-    // to buy and sell those invididual stocks
-  microstocksModule.addStockEventListeners = function() {
-    var stocks = document.getElementsByClassName("stock");
-    for (var i = 0; i < stocks.length; i++) {
-      this.addButtonEvent(stocks[i], [buySellDialogue, i]);
-    }
-  }
   // Function to call buy/sell alert box
   // We have to call this last because it uses 
   // buyAction, sellAction, buyMessage & sellMessage
@@ -777,6 +733,56 @@ var MICROSTOCKS = (function () {
         }
     });
   }
+  // This adds all the stock button event listeners
+  // to buy and sell those invididual stocks
+  // and it's declared down here because it needs
+  // buySellDialogue
+  var addStockEventListeners = function() {
+    var stockArray = document.getElementsByClassName("stock");
+    for (var i = 0; i < stockArray.length; i++) {
+      addButtonEvent(stockArray[i], [buySellDialogue, i]);
+    }
+  }
+  // And now our last public method that will utilize the previous
+  // private methods. 
+  // This function creates the initial display of the inventory box
+  microstocksModule.createInventory = function() {
+      // Bring in microstocks playerObject
+      var player = playerObject["stats"];
+      // Get the player's inventory list, since we are adding elements to it.
+      var invList = document.getElementsByClassName("inventory-list")[0];
+      var stockList = document.getElementsByClassName("stock-list")[0];
+      // Need a variable for the for loop later
+      var className = "";
+      // We need to display our money
+      addListElement(invList, "Cash: $" + player.money, "money cash");
+      // Variable to display the total amount of the portfolio
+      var portfolioTotal = 0;
+      // Display portfolio total
+      for (var i = 0; i < player.stocks.length; i++) {
+        portfolioTotal += player.stocks[i].amount * player.stocks[i].cost;
+      }
+      // We need to display our portfolio
+      addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio");
+      // We need to display our total worth
+      addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth");
+      // Our location
+      addListElement(invList, "Location: " + locations[player.location], "location");
+      // And our stocks.
+      // Loop through all the current stocks
+      for (var i = 0; i < stocks.length; i++) {
+        className = "stock stocks-" + i + " under-hover";
+        if(player.stocks[i].amount > 0) {
+          className += " owned";
+        }
+        // Add a stock box
+        // and if the player has any, fill that in with a special class
+        addListElement(stockList, player.stocks[i].name + " | " + player.stocks[i].amount + " owned | $" + player.stocks[i].cost, className);
+      }
+      // Now add the event listeners for buying & selling those stocks
+      addStockEventListeners();
+    }
+  
   // give back our module!
   return microstocksModule;
 
@@ -797,6 +803,4 @@ document.addEventListener("DOMContentLoaded", function() {
   MICROSTOCKS.addButtonEvent(travelButton, MICROSTOCKS.travelMessage, MICROSTOCKS.travelAction); 
   // Now let's create the inventory panel!
   MICROSTOCKS.createInventory();
-  // Add the stock event listeners for buying/selling
-  MICROSTOCKS.addStockEventListeners();
 });
