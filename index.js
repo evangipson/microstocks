@@ -227,6 +227,8 @@ var MICROSTOCKS = (function () {
       var stockName = "";
       // We'd like to evaluate every stock per update
       for (var i = 0; i < playerStocks.length; i++) {
+        // Reset variant
+        variant = 0;
         // Pull cost in so we only have to query playerStocks array once
         stockCost = playerStocks[i].cost;
         stockName = playerStocks[i].name;
@@ -235,49 +237,57 @@ var MICROSTOCKS = (function () {
           // Let's pass another check (sort of random) to increase stock price
           if (randomNum(100) < randomNum(30,48)) {
             variant = randomNum(5);
+            // Show the increase in value on the log
             addListElement(logList, stockName + " has risen $" + variant + " dollars.", "stock-increase");
           }
           // Or if we pass yet another random check, let's lower the value
-          // if we are above the variant amount
-          else if ((randomNum(100) < randomNum(30,48)) && (stockCost > variant)) {
-            variant = randomNum(5);
+          // if we are above 0
+          else if ((randomNum(100) < randomNum(30,48)) && (stockCost > 0)) {
+            // Turn variant negative
+            variant = randomNum(5) * -1;
+            // Show the decrease in value on the log
             addListElement(logList, stockName + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
           }
         } 
-        // If there was no regular shift, there is a
-        // 0.5% chance for the company's value to grow by up to 1/5th.
-        else if (randomNum(1000) < 5) {
-          variant = Math.floor(stockCost * (randomNum(1,20)*.1));
-          addListElement(logList, stockName + " has risen $" + variant + " dollars.", "stock-increase");
-        }
-        // And if that shift never happens, then the comapny is doomed at a
-        // 0.5% chance for the it's value to drop by up to 1/5th
-        else if (randomNum(1000) < 5) {
-          variant = -1 * Math.floor(stockCost * (randomNum(1,20)*.1));
-          // If we have more than the variant amount as our value
-          if(stockCost > (Math.abs(variant) + 1)) {
-            // Subtract it from the stock value
+        // Or we don't hit the shift chance, but
+        // there is a tiny chance something drastic happens...
+        else {
+          // If there was no regular shift, there is a
+          // 0.5% chance for the company's value to grow by up to 1/5th.
+          if(randomNum(1000) < 5) {
+            // Set variant to up to 1/5 of stockCost
+            variant = Math.floor(stockCost * (randomNum(1,20)*.01));
+            // Show the cost hike on the log
+            addListElement(logList, stockName + " has risen $" + variant + " dollars.", "stock-increase");
+          }
+          // And if that shift never happens, then the comapny is doomed at a
+          // 0.5% chance for the it's value to drop by up to 1/5th
+          else if (randomNum(1000) < 5 && stockCost > 0) {
+            // Set variant to up to negative 1/5 of stockCost
+            variant = Math.floor(stockCost * (randomNum(1,20)*.01)) * -1;
+            // Show the subtraction on the log
             addListElement(logList, stockName + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
           }
         }
-        // Then just alter the amount like normal
-        stockCost = parseInt(stockCost) + variant;
+        // Now that we have the variant for sure, modify the playerObject
+        playerObject["stats"].stocks[i].cost = parseInt(stockCost) + variant;
         // Check if the stock is really low
-        if(stockCost <= variant) {
+        if(stockCost <= 1) {
           // 15% to make the stock bounce back
           if(randomNum(100) < 25) {
-            stockCost = parseInt(stockCost) + randomNum(11);
+            playerObject["stats"].stocks[i].cost = randomNum(5,11);
           }
         }
         // Check if the stock is super high
         if(parseInt(stockCost) >= stockMax) {
           // 33% to make the stock bottom out a bit
           if(randomNum(100) < 33) {
-            stockCost = parseInt(stockCost) - randomNum(1,Math.floor(stockMax * 0.15));
+            // Bottom out, retain only 55-70% of cost for this stock
+            playerObject["stats"].stocks[i].cost = stockCost * (randomNum(55,70) * 0.01);
           }
           // Otherwise let's just set it to stockMax
           else {
-            stockCost = stockMax;
+            playerObject["stats"].stocks[i].cost = stockMax;
           }
         }
       }
@@ -308,8 +318,8 @@ var MICROSTOCKS = (function () {
     oldNetWorth = oldNetWorth.split("\$");
     // We need to display our total worth
     if(parseInt(oldNetWorth[1]) < portfolioTotal + parseInt(player.money)) {
-      // If our total value has increased, show it!
-      changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Up!");
+        // If our total value has increased, show it!
+        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Up!");
     }
     else if (parseInt(oldNetWorth[1]) === portfolioTotal + parseInt(player.money)) {
         // No increase!
@@ -466,8 +476,8 @@ var MICROSTOCKS = (function () {
     var stockAmount = (amount === undefined) ? 1 : amount;
 
     // If they can't buy the stock, fuck them.
-    if (playerObject["stats"].money < (stocks[stockIndex].cost * stockAmount)) {
-      return ["Can't afford share(s) of " + stocks[stockIndex].name + ".",
+    if (playerObject["stats"].money < (playerObject["stats"][stockIndex].cost * stockAmount)) {
+      return ["Can't afford share(s) of " + playerObject["stats"][stockIndex].name + ".",
         "(Attempted to purchase " + stockAmount + ".)"
       ];
     }
@@ -486,9 +496,9 @@ var MICROSTOCKS = (function () {
       // If the player can afford the stock
       if (player.money >= (player.stocks[stockIndex].cost * stockAmount)) {
         // Update the player's money
-        player.money = player.money - (player.stocks[stockIndex].cost * stockAmount);
+        playerObject["stats"].money = player.money - (player.stocks[stockIndex].cost * stockAmount);
         // Update the player's stock amount
-        player.stocks[stockIndex].amount += parseInt(stockAmount);
+        playerObject["stats"].stocks[stockIndex].amount += parseInt(stockAmount);
       } else {
         console.error("buyAction exception: Not enough money to make purchase.");
       }
@@ -527,9 +537,9 @@ var MICROSTOCKS = (function () {
       // If you have the stock amount, go ahead and sell it!
       if (player.stocks[tmpStockIndex].amount >= stockAmount) {
         // Update players stock
-        player.stocks[tmpStockIndex].amount -= parseInt(stockAmount);
+        playerObject["stats"].stocks[tmpStockIndex].amount -= parseInt(stockAmount);
         // Update player's money
-        player.money = player.money + (player.stocks[tmpStockIndex].cost * stockAmount);
+        playerObject["stats"].money = player.money + (player.stocks[tmpStockIndex].cost * stockAmount);
         // Update the inventory box
         updateInventory();
       } 
@@ -562,7 +572,7 @@ var MICROSTOCKS = (function () {
       var player = playerObject["stats"];
       // if the player has $10 (he should, we just checked this in travelMessage).
       if (player.money >= moveFee) {
-        player.money = parseInt(player.money) - moveFee;
+        playerObject["stats"].money = parseInt(player.money) - moveFee;
         updateInventory();
       }
     }
