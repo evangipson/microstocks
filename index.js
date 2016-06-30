@@ -594,66 +594,9 @@ var MICROSTOCKS = (function () {
     var maxStocks = 0;
     var sliderStep = 0;
     var sliderValue = 0;
-    var slideAmount = 0;
-    var startingBuyValue = 0;
+    var slideAmount = 1;
     var stockName = player.stocks[index].name;
     $(".buy-sell-dialogue").text("Would you like to buy or sell " + stockName + " stock today?");
-    // Initialize the buy-dialog modal
-    $( ".buy-dialog" ).dialog({
-        // The magic line right here
-        // Don't open unless called to
-        autoOpen: false,
-        modal: true,
-        buttons: {
-            "Are you sure?": function() {
-                // if amount is correctly retrieved by jquery-ui
-                if (slideAmount !== null && slideAmount !== undefined) {
-                  // So let's buy it!
-                  var buyLogMessage = microstocksModule.buyMessage(index, slideAmount);
-                  addListElement(logList, buyLogMessage);
-                  microstocksModule.buyAction(slideAmount);
-                } else {
-                  console.error("buySellDialogue exception: Stock purchase amount undefined or null, please try again!");
-                }
-                // Close up the buy-sell dialog too
-                $(".buy-sell").dialog("close");
-                $(this).dialog('close');
-            },
-            Cancel: function() {
-                // Close up the buy-sell dialog too
-                $(".buy-sell").dialog("close");
-                $(this).dialog('close');
-            }
-        }
-    });
-    // Initialize the sell-dialog modal
-    $( ".sell-dialog" ).dialog({
-        // The magic line right here
-        // Don't open unless called to
-        autoOpen: false,
-        modal: true,
-        buttons: { 
-            "Are you sure?": function() {
-                // if the user didn't try any tricky stuff
-                if (slideAmount !== null && slideAmount !== undefined) {
-                  // Let's actually sell the thing
-                  var sellLogMessage = microstocksModule.sellMessage(index, slideAmount);
-                  addListElement(logList, sellLogMessage);
-                  microstocksModule.sellAction(slideAmount);
-                } else {
-                  console.error("buySellDialogue exception: Stock sell amount undefined or null, please try again!");
-                }
-                // Close up the buy-sell dialog too
-                $(".buy-sell").dialog("close");
-                $(this).dialog("close");
-            },
-            Cancel: function() {
-                // Close up the buy-sell dialog too
-                $(".buy-sell").dialog("close");
-                $(this).dialog("close");
-            }
-        }
-    });
     // Initialize the buy-sell dialogue modal
     $(".buy-sell").dialog({
         modal: true,
@@ -669,13 +612,9 @@ var MICROSTOCKS = (function () {
               else {
                 // Get out slider step amount
                 sliderStep = (maxStocks >= 50) ? 5 : 1;
-                // Figure out where the slider should start
-                // We should AT LEAST buy 1.
-                startingBuyValue = (maxStocks * 0.33) > 1 ? Math.floor(maxStocks * 0.33) : 1;
                 // Initialize the buy-stock-slider
                 $(".buy-stock-slider").slider({
-                    // Set initial value to 1/3 of what they can afford
-                    value: startingBuyValue,
+                    value: 1,
                     min: 1,
                     max: maxStocks,
                     step: sliderStep,
@@ -689,7 +628,7 @@ var MICROSTOCKS = (function () {
                 sliderValue = $(".stock-slider").slider( "value" );
                 // Before we open the buy dialog, set the value
                 // Shown on the slider to be what it is because it do
-                $(".buy-stock-amount").text("Buying " + startingBuyValue + " " + stockName + " stock!");
+                $(".buy-stock-amount").text("Buying 1 " + stockName + " stock!");
                 // Open up the buy dialog
                 $(".buy-dialog").dialog("open");
               }
@@ -729,6 +668,62 @@ var MICROSTOCKS = (function () {
           "Cancel": function() {
             $(this).dialog("close");
           }
+        }
+    });
+    // Initialize the buy-dialog modal
+    $( ".buy-dialog" ).dialog({
+        // The magic line right here
+        // Don't open unless called to
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            "Buy": function() {
+                // if amount is correctly retrieved by jquery-ui
+                if (slideAmount !== null && slideAmount !== undefined) {
+                  // So let's buy it!
+                  var buyLogMessage = microstocksModule.buyMessage(index, slideAmount);
+                  addListElement(logList, buyLogMessage);
+                  microstocksModule.buyAction(slideAmount);
+                } else {
+                  console.error("buySellDialogue exception: Stock purchase amount undefined or null, please try again!");
+                }
+                // Close up the buy-sell dialog too
+                $(".buy-sell").dialog("close");
+                $(this).dialog('close');
+            },
+            Cancel: function() {
+                // Close up the buy-sell dialog too
+                $(".buy-sell").dialog("close");
+                $(this).dialog('close');
+            }
+        }
+    });
+    // Initialize the sell-dialog modal
+    $( ".sell-dialog" ).dialog({
+        // The magic line right here
+        // Don't open unless called to
+        autoOpen: false,
+        modal: true,
+        buttons: { 
+            "Sell": function() {
+                // if the user didn't try any tricky stuff
+                if (slideAmount !== null && slideAmount !== undefined) {
+                  // Let's actually sell the thing
+                  var sellLogMessage = microstocksModule.sellMessage(index, slideAmount);
+                  addListElement(logList, sellLogMessage);
+                  microstocksModule.sellAction(slideAmount);
+                } else {
+                  console.error("buySellDialogue exception: Stock sell amount undefined or null, please try again!");
+                }
+                // Close up the buy-sell dialog too
+                $(".buy-sell").dialog("close");
+                $(this).dialog("close");
+            },
+            Cancel: function() {
+                // Close up the buy-sell dialog too
+                $(".buy-sell").dialog("close");
+                $(this).dialog("close");
+            }
         }
     });
   }
