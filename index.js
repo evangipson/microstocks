@@ -723,7 +723,7 @@ var MICROSTOCKS = (function () {
     });
   }
   // give back our module!
-	return microstocksModule;
+  return microstocksModule;
 
 }()); // Execute MICROSTOCKS function enclosure immediately
 
