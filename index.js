@@ -476,14 +476,14 @@ var MICROSTOCKS = (function () {
     var stockAmount = (amount === undefined) ? 1 : amount;
 
     // If they can't buy the stock, fuck them.
-    if (playerObject["stats"].money < (playerObject["stats"][stockIndex].cost * stockAmount)) {
-      return ["Can't afford share(s) of " + playerObject["stats"][stockIndex].name + ".",
+    if (playerObject["stats"].money < (playerObject["stats"].stocks[stockIndex].cost * stockAmount)) {
+      return ["Can't afford share(s) of " + playerObject["stats"].stocks[stockIndex].name + ".",
         "(Attempted to purchase " + stockAmount + ".)"
       ];
     }
     // If the player can afford it, let's buy it!
     else {
-      return "You bought " + stockAmount + " share(s) of " + stocks[stockIndex].name + ".";
+      return "You bought " + stockAmount + " share(s) of " + playerObject["stats"].stocks[stockIndex].name + ".";
     }
   }
   microstocksModule.buyAction = function(amount) {
