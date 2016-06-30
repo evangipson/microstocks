@@ -740,7 +740,7 @@ var MICROSTOCKS = (function () {
   var addStockEventListeners = function() {
     var stockArray = document.getElementsByClassName("stock");
     for (var i = 0; i < stockArray.length; i++) {
-      addButtonEvent(stockArray[i], [buySellDialogue, i]);
+      microstocksModule.addButtonEvent(stockArray[i], [buySellDialogue, i]);
     }
   }
   // And now our last public method that will utilize the previous
