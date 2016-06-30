@@ -210,9 +210,6 @@ var MICROSTOCKS = (function () {
         console.error("changeListElement needs to be called with a valid cssClass and incoming text. Check your syntax: changeListElement(cssClass, text);");
       }
     }
-    // Add button event listener function, takes 2 optional functions 
-    // (logMessage and moreBehavior)
-
     // Function to fluctuate stock prices
     // called everytime inventory is updated.
   var updateStockPrices = function() {
@@ -345,7 +342,46 @@ var MICROSTOCKS = (function () {
         theStock.classList.remove("owned");
       }
     }
-  }  
+  } 
+  // Will return true if player owns any stock,
+  // and false otherwise 
+  var playerOwnsStock = function() {
+      var ownedStocks = [];
+      // For every stock we have
+      for(var i = 0; i < playerObject["stats"].stocks.length; i++) {
+        // If we own that stock
+        if(playerObject["stats"].stocks[i].amount > 0) {
+          // Push the index into that ownedStocks array
+          ownedStocks.push(i);
+        }
+      }
+      // Now the moment of truth
+      if(ownedStocks.length !== 0) {
+        return true;
+      }
+      return false;
+  }
+  // Set random stock index, based on ownership
+  var setRandomStockIndex = function() {
+      // Empty array holding stocks index's that we own
+      var ownedStocksIndex = [];
+      // If we have more than 1 stock
+      if(playerObject["stats"].stocks.length > 1) {
+        // For every stock we have
+        for(var i = 0; i < playerObject["stats"].stocks.length; i++) {
+          // If we own that stock
+          if(playerObject["stats"].stocks[i].amount > 0) {
+            // Push the index into that ownedStocksIndex array
+            ownedStocksIndex.push(i);
+          }
+        }
+      }
+      // Pick a random value in ownedStocksIndex and
+      // now set playerObject's stockIndex for permanence
+      // And let's default this value to 0 if there are no owned stocks
+      // so we'll just try and sell the first stock on the list.
+      playerObject["stats"].stockIndex = (ownedStocksIndex.length === 0) ? 0 : ownedStocksIndex[randomNum(0,ownedStocksIndex.length)];
+  }
   // Update stock index globally
   var updateStockIndex = function(stockIndex) {
       // Pull in playerObject to this method
@@ -406,7 +442,9 @@ var MICROSTOCKS = (function () {
         addListElement(stockList, player.stocks[i].name + " | " + player.stocks[i].amount + " owned | $" + player.stocks[i].cost, className);
       }
     }
-  // Called when we need to add Button Events
+  
+    // Add button event listener function, takes 2 optional functions 
+    // (logMessage and moreBehavior)
   microstocksModule.addButtonEvent = function(button, logMessage, moreBehavior) {
       var logText = "";
       if (button !== undefined && button !== null) {
@@ -508,8 +546,17 @@ var MICROSTOCKS = (function () {
   microstocksModule.sellMessage = function(stockIndex, amount) { 
     // Check stockIndex
     if (typeof stockIndex === "undefined" || stockIndex === null) {
-      // if we are null or empty, make one up.
-      updateStockIndex();
+      // If the player owns NO stock, return a log message indicating
+      // that before messing with stockIndex
+      if(!playerOwnsStock()) {
+        return "You don't have any stock to sell! Try buying some.";
+      }
+      // if I'm calling this function with no stockIndex, it's
+      // safe to assume it's from the sell random button, since the
+      // stocks will always call sellMessage with their index, so just
+      // set a new random stock index.
+      setRandomStockIndex();
+      // Set stockIndex for this function
       stockIndex = playerObject["stats"].stockIndex;
     } else {
       // Pull in stockIndex
@@ -520,18 +567,20 @@ var MICROSTOCKS = (function () {
 
     // If you have the stock amount, go ahead and sell it!
     if (playerObject["stats"].stocks[stockIndex].amount >= stockAmount) {
-      return "You sold " + stockAmount + " share(s) of " + stocks[stockIndex].name + ".";
+      return "You sold " + stockAmount + " share(s) of " + playerObject["stats"].stocks[stockIndex].name + ".";
     }
     // If the player can't afford it, fuck off!
     else {
-      return "You don't have " + stockAmount + " share(s) of " + stocks[stockIndex].name + ".";
+      return "You don't have " + stockAmount + " share(s) of " + playerObject["stats"].stocks[stockIndex].name + ".";
     }
   }
   microstocksModule.sellAction = function(amount) {
-    // Pull in playerObject to this method
-    var player = playerObject["stats"];
-    // Check amount
-    var stockAmount = (amount === undefined) ? 1 : amount;
+    // If the player owns stock, continue on with this action
+    if(playerOwnsStock()) {
+      // Pull in playerObject to this method
+      var player = playerObject["stats"];
+      // Check amount
+      var stockAmount = (amount === undefined) ? 1 : amount;
       // Pull in stockIndex
       var tmpStockIndex = player.stockIndex;
       // If you have the stock amount, go ahead and sell it!
@@ -544,6 +593,7 @@ var MICROSTOCKS = (function () {
         updateInventory();
       } 
     }
+  }
     // Location logging functionality
   microstocksModule.travelMessage = function() {
       // Pull in playerObject to this method
