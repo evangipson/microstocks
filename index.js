@@ -1,15 +1,8 @@
-// TO DO LIST
-// ----------
-// 1. Put JSON data server side and use AJAX calls so people can get unique games? I'm not fully sure what I mean here.  If i encapsulate the JS it should work locally just fine.
-// 2. Make stock fluctuations more realistic or at least more predictable!
-// 3. Ability to Travel where you want (maybe solve it the same was as buy/sell? i don't think it applies though)
-// 5. Flush out Data and make it awesome, add a "Data" or "Stats" section maybe.
-// 6. Create graph visualization of net worth/portfolio worth/stock worth over time BEHIND log (perhaps using spans)
-// 7. Add sfx!  When you press travel you hear either a car screech, a plane passby, or a tugboat 
-
-
+// Our public variable containing our module
+// for other parts of this program to interact
+// with, but ensuring all private variables in here
+// get the full scope with no confusion possible.
 var MICROSTOCKS = (function () {
-	
   // Private functions necessary for initial variables
   // ------------------------------------------------
   // JSON packager for an array
@@ -738,7 +731,7 @@ var MICROSTOCKS = (function () {
   // give back our module!
 	return microstocksModule;
 
-}()); // Execute function immediately to provide closure for MICROSTOCKS
+}()); // Execute MICROSTOCKS function enclosure immediately
 
 // Don't do any javascript until the HTML DOMContent is loaded
 // on the page, because we need to ineract with it.
