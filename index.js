@@ -353,14 +353,14 @@ var MICROSTOCKS = (function () {
       // If we have a stockIndex, let's set it accordingly (the click came from stock button)
       if (typeof stockIndex !== "undefined" && typeof stockIndex !== "object") {
         if (stockIndex < player.stocks.length) {
-          player.stockIndex = stockIndex;
+          playerObject["stats"].stockIndex = stockIndex;
         } else {
           console.error("updateStockIndex exception: Incoming stockIndex outside of bounds of stocks array.");
         }
       }
       // We don't have a suitable stock index, so let's randomly shuffle the stock index
       else {
-          player.stockIndex = randomNum(0,stocks.length);
+          playerObject["stats"].stockIndex = randomNum(0,player.stocks.length);
         }
       }
     // Update location index globally
