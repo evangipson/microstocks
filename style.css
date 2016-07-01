@@ -1,174 +1,219 @@
+/* line 19, style.scss */
 body {
   color: black;
-  background-color: #eee;
+  background-color: #eeeeee;
   font-size: 16px;
   font-weight: 300;
   font-family: sans-serif;
 }
-body a {
+
+/* line 26, style.scss */
+a {
   color: #ff85cb;
   text-decoration: none;
   font-weight: bold;
 }
-body a:hover {
+/* line 30, style.scss */
+a:hover {
   background: #ff85cb;
   color: white;
   text-decoration: underline;
   border-bottom: .25rem solid white;
 }
-body h1,
-body h2 {
+
+/* line 38, style.scss */
+h1,
+h2 {
   text-align: center;
   font-weight: 300;
   letter-spacing: .25rem;
   padding: 0;
   margin: 0;
 }
-body h1 {
+
+/* line 45, style.scss */
+h1 {
   font-size: 1.33rem;
 }
-body h2 {
+
+/* line 48, style.scss */
+h2 {
   font-size: 1rem;
 }
-body p {
+
+/* line 51, style.scss */
+p {
   width: 75%;
   margin: 1rem auto;
   padding: 0;
 }
-body ul {
+
+/* line 56, style.scss */
+ul {
   list-style-type: none;
   margin-left: 0;
   padding-left: 0;
 }
-body ul li {
+/* line 61, style.scss */
+ul li {
   margin-left: 0;
   margin-top: .5rem;
 }
-body .under-hover::after {
+
+/* line 70, style.scss */
+.under-hover::after {
   content: "";
-  background: #eee;
+  background: #eeeeee;
   height: 0;
   width: 0;
   top: 0.3rem;
   position: relative;
   display: block;
 }
-body .under-hover:hover::after {
+/* line 80, style.scss */
+.under-hover:hover::after {
   width: 100%;
   height: 0.3rem;
   transition: width 0.1s ease-out;
 }
-body section {
+
+/* line 87, style.scss */
+section {
   float: left;
   width: calc(100% - 4rem);
   background-color: #fff;
   margin: 1rem;
   position: relative;
 }
-body section.log, body section.controls, body section.inventory, body section.stocks {
+/* line 96, style.scss */
+section.log, section.controls, section.inventory, section.stocks {
   padding: 1rem;
 }
 @media only screen and (min-width: 600px) {
-  body section.inventory, body section.controls {
+  /* line 100, style.scss */
+  section.inventory, section.controls {
     width: calc(30% - 4rem);
   }
 }
-body section.log, body section.controls {
+/* line 106, style.scss */
+section.log, section.controls {
   height: 18rem;
   font-size: 0.8rem;
 }
-body section.title {
+/* line 110, style.scss */
+section.title {
   width: calc(100% - 2rem);
 }
-body section.title h1 {
+/* line 112, style.scss */
+section.title h1 {
   background: #53bbf4;
   color: white;
   font-weight: bold;
   padding: .5rem 0;
 }
-body section.inventory ul {
+/* line 120, style.scss */
+section.inventory ul {
   width: 100%;
 }
-body section.inventory ul li {
+/* line 122, style.scss */
+section.inventory ul li {
   margin-top: .25rem;
   padding: .75rem .5rem;
 }
-body section.inventory .money,
-body section.inventory .location {
+/* line 128, style.scss */
+section.inventory .money,
+section.inventory .location {
   color: white;
   font-weight: bold;
 }
-body section.inventory .money {
+/* line 132, style.scss */
+section.inventory .money {
   background: #83ad00;
 }
-body section.inventory .location {
+/* line 135, style.scss */
+section.inventory .location {
   background: #ffac00;
 }
-body section.log {
+/* line 139, style.scss */
+section.log {
   font-size: 14px;
   font-family: monospace;
   line-height: 20px;
 }
-body section.log h2 {
+/* line 143, style.scss */
+section.log h2 {
   font-family: sans-serif;
 }
 @media only screen and (min-width: 600px) {
-  body section.log {
+  /* line 139, style.scss */
+  section.log {
     width: calc(70% - 4rem);
     height: 33rem;
   }
 }
-body section.log ul {
+/* line 150, style.scss */
+section.log ul {
   overflow-y: scroll;
   max-height: 15rem;
 }
 @media only screen and (min-width: 600px) {
-  body section.log ul {
+  /* line 150, style.scss */
+  section.log ul {
     max-height: 30rem;
   }
 }
-body section.log ul li {
+/* line 156, style.scss */
+section.log ul li {
   padding: .5rem;
   float: left;
   width: calc(100% - 2rem);
 }
-body section.log .stock-increase,
-body section.log .stock-decrease {
+/* line 163, style.scss */
+section.log .stock-increase,
+section.log .stock-decrease {
   margin-right: 1rem;
   margin-bottom: 0.5rem;
   font-size: .8rem;
 }
 @media only screen and (min-width: 600px) {
-  body section.log .stock-increase,
-  body section.log .stock-decrease {
+  /* line 163, style.scss */
+  section.log .stock-increase,
+  section.log .stock-decrease {
     width: calc(50% - 2rem);
   }
 }
 @media only screen and (min-width: 1000px) {
-  body section.log .stock-increase,
-  body section.log .stock-decrease {
+  /* line 163, style.scss */
+  section.log .stock-increase,
+  section.log .stock-decrease {
     width: calc(33% - 2rem);
   }
 }
-body section.log .stock-increase:nth-first-child, body section.log .stock-increase:nth-last-child,
-body section.log .stock-decrease:nth-first-child,
-body section.log .stock-decrease:nth-last-child {
+/* line 173, style.scss */
+section.log .stock-increase:nth-first-child, section.log .stock-increase:nth-last-child,
+section.log .stock-decrease:nth-first-child,
+section.log .stock-decrease:nth-last-child {
   clear: both;
 }
-body section.log .stock-increase {
+/* line 177, style.scss */
+section.log .stock-increase {
   background: #a9e000;
 }
-body section.log .stock-decrease {
+/* line 180, style.scss */
+section.log .stock-decrease {
   background: #ff432e;
   color: white;
 }
-body section.controls {
+/* line 185, style.scss */
+section.controls {
   height: auto;
 }
-body section.controls ul {
+/* line 187, style.scss */
+section.controls ul {
   padding-left: 0;
 }
-body section.controls ul li {
+/* line 190, style.scss */
+section.controls ul li {
   cursor: pointer;
   font-weight: bold;
   transition: padding 0.1s ease-out;
@@ -177,28 +222,37 @@ body section.controls ul li {
   height: 1.2rem;
   margin-top: 1rem;
 }
-body section.controls ul li.buy-button {
+/* line 198, style.scss */
+section.controls ul li.buy-button {
   background-color: #53bbf4;
 }
-body section.controls ul li.sell-button {
+/* line 201, style.scss */
+section.controls ul li.sell-button {
   background-color: #53bbf4;
 }
-body section.controls ul li.travel-button {
+/* line 204, style.scss */
+section.controls ul li.travel-button {
   background-color: #ff85cb;
 }
-body section.controls ul li.data-button {
+/* line 207, style.scss */
+section.controls ul li.data-button {
   background-color: #ff85cb;
 }
-body section.controls ul li:hover {
+/* line 210, style.scss */
+section.controls ul li:hover {
   padding-left: 0.75rem;
 }
-body section.controls .buy-button::after, body section.controls .sell-button::after {
+/* line 216, style.scss */
+section.controls .buy-button::after, section.controls .sell-button::after {
   background: #23a8f1;
 }
-body section.controls .travel-button::after, body section.controls .data-button::after {
+/* line 219, style.scss */
+section.controls .travel-button::after, section.controls .data-button::after {
   background: #ff52b5;
 }
-body .stock {
+
+/* line 225, style.scss */
+.stock {
   cursor: pointer;
   transition: background 0.1s ease-out, width 0.1s ease-out;
   background: #53bbf4;
@@ -213,37 +267,46 @@ body .stock {
   width: 100%;
 }
 @media only screen and (min-width: 600px) {
-  body .stock {
+  /* line 225, style.scss */
+  .stock {
     width: calc(50% - 1rem);
   }
 }
 @media only screen and (min-width: 1000px) {
-  body .stock {
+  /* line 225, style.scss */
+  .stock {
     width: auto;
     padding: .75rem .5rem;
   }
-  body .stock:nth-child(odd) {
+  /* line 245, style.scss */
+  .stock:nth-child(odd) {
     margin-right: 1rem;
   }
-  body .stock:hover::after {
+  /* line 250, style.scss */
+  .stock:hover::after {
     padding: 0 .5rem;
     left: -0.5rem;
     height: 0.6rem;
   }
 }
-body .stock.owned {
+/* line 257, style.scss */
+.stock.owned {
   background: #ff85cb;
 }
-body .stock.owned:hover {
+/* line 259, style.scss */
+.stock.owned:hover {
   background: #ff52b5;
 }
-body .stock.owned:hover::after {
+/* line 261, style.scss */
+.stock.owned:hover::after {
   background: #ff1fa0;
 }
-body .stock:hover {
+/* line 267, style.scss */
+.stock:hover {
   background: #23a8f1;
 }
-body .stock:hover::after {
+/* line 269, style.scss */
+.stock:hover::after {
   background: #0e8dd3;
   height: 0.8rem;
   top: 0.8rem;
