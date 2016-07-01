@@ -404,12 +404,10 @@ var MICROSTOCKS = (function () {
       playerObject["stats"].location = newLocation;
     }
 
-  // Public functions that are used outside
-  // of this module
-  // --------------------------------------
+
   // Add button event listener function, takes 2 optional functions 
   // (logMessage and moreBehavior)
-  microstocksModule.addButtonEvent = function(button, logMessage, moreBehavior) {
+  var addButtonEvent = function(button, logMessage, moreBehavior) {
       var logText = "";
       if (button !== undefined && button !== null) {
         button.addEventListener("click", function() {
@@ -463,7 +461,7 @@ var MICROSTOCKS = (function () {
     // (Probably could combine sellMessage & buyMessage into
     // one super "Message" function that would take in
     // yet another function... that is getting ugly though  
-  microstocksModule.buyMessage = function(stockIndex, amount) {
+  var buyMessage = function(stockIndex, amount) {
     // Check stockIndex
     if (typeof stockIndex === "undefined" || stockIndex === null) {
       // if we are null or empty, make one up.
@@ -488,7 +486,7 @@ var MICROSTOCKS = (function () {
       return "You bought " + stockAmount + " share(s) of " + playerObject["stats"].stocks[stockIndex].name + ".";
     }
   }
-  microstocksModule.buyAction = function(amount) {
+  var buyAction = function(amount) {
     // Pull in playerObject to this method
     var player = playerObject["stats"];
     // Check amount
@@ -507,7 +505,7 @@ var MICROSTOCKS = (function () {
       updateInventory();
     }
     // Sell button functions
-  microstocksModule.sellMessage = function(stockIndex, amount) { 
+  var sellMessage = function(stockIndex, amount) { 
     // Check stockIndex
     if (typeof stockIndex === "undefined" || stockIndex === null) {
       // If the player owns NO stock, return a log message indicating
@@ -538,7 +536,7 @@ var MICROSTOCKS = (function () {
       return "You don't have " + stockAmount + " share(s) of " + playerObject["stats"].stocks[stockIndex].name + ".";
     }
   }
-  microstocksModule.sellAction = function(amount) {
+  var sellAction = function(amount) {
     // If the player owns stock, continue on with this action
     if(playerOwnsStock()) {
       // Pull in playerObject to this method
@@ -559,7 +557,7 @@ var MICROSTOCKS = (function () {
     }
   }
   // Location logging functionality
-  microstocksModule.travelMessage = function() {
+  var travelMessage = function() {
       // Pull in playerObject to this method
       var player = playerObject["stats"];
       // if the player doesn't have $10, don't let him travel.
@@ -581,7 +579,7 @@ var MICROSTOCKS = (function () {
               "Charged $" + moveFee + " to go!"];
     }
     // Subsequent function, update screen
-  microstocksModule.travelAction = function() {
+  var travelAction = function() {
       // Pull in playerObject to this method
       var player = playerObject["stats"];
       // if the player has $10 (he should, we just checked this in travelMessage).
@@ -687,9 +685,9 @@ var MICROSTOCKS = (function () {
                 // if amount is correctly retrieved by jquery-ui
                 if (slideAmount !== null && slideAmount !== undefined) {
                   // So let's buy it!
-                  var buyLogMessage = microstocksModule.buyMessage(index, slideAmount);
+                  var buyLogMessage = buyMessage(index, slideAmount);
                   addListElement(logList, buyLogMessage);
-                  microstocksModule.buyAction(slideAmount);
+                  buyAction(slideAmount);
                 } else {
                   console.error("buySellDialogue exception: Stock purchase amount undefined or null, please try again!");
                 }
@@ -715,9 +713,9 @@ var MICROSTOCKS = (function () {
                 // if the user didn't try any tricky stuff
                 if (slideAmount !== null && slideAmount !== undefined) {
                   // Let's actually sell the thing
-                  var sellLogMessage = microstocksModule.sellMessage(index, slideAmount);
+                  var sellLogMessage = sellMessage(index, slideAmount);
                   addListElement(logList, sellLogMessage);
-                  microstocksModule.sellAction(slideAmount);
+                  sellAction(slideAmount);
                 } else {
                   console.error("buySellDialogue exception: Stock sell amount undefined or null, please try again!");
                 }
@@ -740,13 +738,13 @@ var MICROSTOCKS = (function () {
   var addStockEventListeners = function() {
     var stockArray = document.getElementsByClassName("stock");
     for (var i = 0; i < stockArray.length; i++) {
-      microstocksModule.addButtonEvent(stockArray[i], [buySellDialogue, i]);
+      addButtonEvent(stockArray[i], [buySellDialogue, i]);
     }
   }
   // And now our last public method that will utilize the previous
   // private methods. 
   // This function creates the initial display of the inventory box
-  microstocksModule.createInventory = function() {
+  var createInventory = function() {
       // Bring in microstocks playerObject
       var player = playerObject["stats"];
       // Get the player's inventory list, since we are adding elements to it.
@@ -783,24 +781,29 @@ var MICROSTOCKS = (function () {
       addStockEventListeners();
     }
   
+  // Now add our public init method to call in the ready event
+  microstocksModule.init = function() {
+    // Get the Controls
+    // ----------------
+    // Now lets pull in the buttons
+    var buyButton = document.getElementsByClassName("buy-button")[0];
+    var sellButton = document.getElementsByClassName("sell-button")[0];
+    var travelButton = document.getElementsByClassName("travel-button")[0];
+    // Now let's set up the event listeners
+    addButtonEvent(buyButton, buyMessage, buyAction);
+    addButtonEvent(sellButton, sellMessage, sellAction);
+    addButtonEvent(travelButton, travelMessage, travelAction); 
+    // Now let's create the inventory panel!
+    createInventory();
+  }
+
   // give back our module!
   return microstocksModule;
 
 }()); // Execute MICROSTOCKS function enclosure immediately
 
-// Don't do any javascript until the HTML DOMContent is loaded
-// on the page, because we need to ineract with it.
-document.addEventListener("DOMContentLoaded", function() {
-  // Get the Controls
-  // ----------------
-  // Now lets pull in the buttons
-  var buyButton = document.getElementsByClassName("buy-button")[0];
-  var sellButton = document.getElementsByClassName("sell-button")[0];
-  var travelButton = document.getElementsByClassName("travel-button")[0];
-  // Now let's set up the event listeners
-  MICROSTOCKS.addButtonEvent(buyButton, MICROSTOCKS.buyMessage, MICROSTOCKS.buyAction);
-  MICROSTOCKS.addButtonEvent(sellButton, MICROSTOCKS.sellMessage, MICROSTOCKS.sellAction);
-  MICROSTOCKS.addButtonEvent(travelButton, MICROSTOCKS.travelMessage, MICROSTOCKS.travelAction); 
-  // Now let's create the inventory panel!
-  MICROSTOCKS.createInventory();
+// Don't do any javascript until jquery's ready event is called
+$(document).ready(function() {
+  // Now let's initialize Microstocks!
+  MICROSTOCKS.init();
 });
