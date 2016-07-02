@@ -16,13 +16,18 @@ $grey: #eee;
 }
 
 // rules
-body {
+// body & jquery override for modal
+body, .ui-widget {
   color: black;
-  background-color: $grey;
   font-size: 16px;
   font-weight: 300;
   font-family: sans-serif;
 }
+// set background color
+body {
+  background-color: $grey;
+}
+// set anchor behavior
 a {
   color: $pink;
   text-decoration: none;
@@ -34,6 +39,7 @@ a {
     border-bottom: .25rem solid white;
   }
 }
+// headers
 h1,
 h2 {
   text-align: center;
@@ -48,6 +54,7 @@ h1 {
 h2 {
   font-size: 1rem;
 }
+// content styles
 p {
   width: 75%;
   margin: 1rem auto;
@@ -84,141 +91,143 @@ ul {
     }
   }
 }
+// section styles
 section {
   float: left;
   width: calc(100% - 4rem);
   background-color: #fff;
   margin: 1rem;
   position:relative;
-  &.log,
-  &.controls,
-  &.inventory,
-  &.stocks {
-    padding: 1rem;
+}
+// custom rules for game screens
+.log,
+.controls,
+.inventory,
+.stocks {
+  padding: 1rem;
+}
+.inventory,
+.controls {
+  @include respond($phoneBreakpoint) {
+    width: calc(30% - 4rem);
   }
-  &.inventory,
-  &.controls {
+}
+.log,
+.controls {
+  height: 18rem;
+  font-size: 0.8rem;
+}
+.title {
+  width: calc(100% - 2rem);
+  h1 {
+    background: $blue;
+    color: white;
+    font-weight: bold;
+    padding: .5rem 0;
+  }
+}
+.inventory {
+  ul {
+    width: 100%;
+    li {
+      margin-top: .25rem;
+      padding: .75rem .5rem;
+    }
+  }
+  .money,
+  .location {
+    color: white;
+    font-weight: bold;
+  }
+  .money {
+    background: darken($green,10%);
+  }
+  .location {
+    background: $orange;
+  }
+}
+.log {
+  font-size: 14px;
+  font-family: monospace;
+  line-height: 20px;
+  h2 {
+      font-family: sans-serif;
+  }
+  @include respond($phoneBreakpoint) {
+    width: calc(70% - 4rem);
+    height: 33rem;
+  }
+  & ul {
+    overflow-y: scroll;
+    max-height: 15rem;
     @include respond($phoneBreakpoint) {
-      width: calc(30% - 4rem);
+      max-height: 30rem;
+    }
+    li {
+      padding: .5rem;
+      float: left;
+      width: calc(100% - 2rem);
     }
   }
-  &.log,
-  &.controls {
-    height: 18rem;
-    font-size: 0.8rem;
-  }
-  &.title {
-    width: calc(100% - 2rem);
-    h1 {
-      background: $blue;
-      color: white;
-      font-weight: bold;
-      padding: .5rem 0;
-    }
-  }
-  &.inventory {
-    ul {
-      width: 100%;
-      li {
-        margin-top: .25rem;
-        padding: .75rem .5rem;
-      }
-    }
-    .money,
-    .location {
-      color: white;
-      font-weight: bold;
-    }
-    .money {
-      background: darken($green,10%);
-    }
-    .location {
-      background: $orange;
-    }
-  }
-  &.log {
-    font-size: 14px;
-    font-family: monospace;
-    line-height: 20px;
-    h2 {
-        font-family: sans-serif;
-    }
+  .stock-increase,
+  .stock-decrease {
     @include respond($phoneBreakpoint) {
-      width: calc(70% - 4rem);
-      height: 33rem;
+      width: calc(50% - 2rem);
     }
-    & ul {
-      overflow-y: scroll;
-      max-height: 15rem;
-      @include respond($phoneBreakpoint) {
-        max-height: 30rem;
-      }
-      li {
-        padding: .5rem;
-        float: left;
-        width: calc(100% - 2rem);
-      }
+    @include respond($desktopBreakpoint) {
+      width: calc(33% - 2rem);
     }
-    .stock-increase,
-    .stock-decrease {
-      @include respond($phoneBreakpoint) {
-        width: calc(50% - 2rem);
-      }
-      @include respond($desktopBreakpoint) {
-        width: calc(33% - 2rem);
-      }
-      margin-right: 1rem;
-      margin-bottom: 0.5rem;
-      font-size: .8rem;
-      &:nth-first-child, &:nth-last-child {
-        clear: both;
-      }
-    }
-    .stock-increase {
-      background: $green;
-    }
-    .stock-decrease {
-      background: $red;
-      color: white;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: .8rem;
+    &:nth-first-child, &:nth-last-child {
+      clear: both;
     }
   }
-  &.controls {
-    height: auto;
-    ul {
-      // reset padding-left
-      padding-left: 0;
-      li {
-        cursor: pointer;
-        font-weight: bold;
-        transition: padding $animTime ease-out;
-        color: white;
-        padding: 1rem 1rem;
-        height: 1.2rem;
-        margin-top: 1rem;
-        &.buy-button {
-          background-color: $blue;
-        }
-        &.sell-button {
-          background-color: $blue;
-        }
-        &.travel-button {
-          background-color: $pink;
-        }
-        &.data-button {
-          background-color: $pink;
-        }
-        &:hover {
-          padding-left: 0.75rem;
-        }
+  .stock-increase {
+    background: $green;
+  }
+  .stock-decrease {
+    background: $red;
+    color: white;
+  }
+}
+.controls {
+  height: auto;
+  ul {
+    // reset padding-left
+    padding-left: 0;
+    li {
+      cursor: pointer;
+      font-weight: bold;
+      transition: padding $animTime ease-out;
+      color: white;
+      padding: 1rem 1rem;
+      height: 1.2rem;
+      margin-top: 1rem;
+      &.buy-button {
+        background-color: $blue;
+      }
+      &.sell-button {
+        background-color: $blue;
+      }
+      &.travel-button {
+        background-color: $pink;
+      }
+      &.data-button {
+        background-color: $pink;
+      }
+      &:hover {
+        padding-left: 0.75rem;
       }
     }
-    // under-hover override
-    .buy-button::after, .sell-button::after {
-      background:darken($blue,10%);
-    }
-    .travel-button::after, .data-button::after {
-      background:darken($pink,10%);
-    }
+  }
+  // under-hover override
+  .buy-button::after, .sell-button::after {
+    background:darken($blue,10%);
+  }
+  .travel-button::after, .data-button::after {
+    background:darken($pink,10%);
   }
 }
 // Stocks
@@ -228,7 +237,6 @@ section {
     width $animTime ease-out;
   background: $blue;
   color: white;
-  float: left;
   display: inline-block;
   margin-right: 1rem;
   height: 2rem;
@@ -270,6 +278,74 @@ section {
       background: darken($blue,20%);
       height: 0.8rem;
       top: 0.8rem;
+    }
+  }
+}
+// jQuery-ui override
+.ui-dialog {
+  // I don't like border-radius, flat pls
+  border-radius: 0;
+  background: white;
+  // override modal background area
+  &.ui-widget-content, .ui-widget-content {
+    border: none;
+    background: white;
+  }
+  .ui-widget-content {
+    // further override the slider, because it's
+    // using the class .ui-widget-content
+    &.ui-slider {
+      background: $grey;
+      border-radius: 0;
+    }
+    .ui-slider-handle {
+      border: none;
+      border-radius: 0;
+      background: $blue;
+      height: 1.5rem;
+      top: -.36rem;
+    }
+  }
+  // override color header
+  .ui-widget-header {
+    border: none;
+    border-radius: 0;
+    background: $blue;
+    width: 100%;
+    // have to adjust .ui-dialog-titlebar's
+    // override if you adjust this left value
+    left: -1.5rem;
+    top: -.2rem;
+  }
+  // override buttons
+  button{
+    &.ui-button {
+    font-weight: bold;
+    color: white;
+    border: none;
+      // override the close icon
+      &.ui-dialog-titlebar-close {
+        border-radius: 0;
+        border: $blue 2px solid;
+        // reposition because of the
+        // .ui-widget-header left override
+        right: .8rem;
+      }
+    }
+    // override the buy/cancel buttons
+    &.ui-button-text-only {
+      border-radius: 0;
+      font-family: sans-serif;
+      // this actually INCREASES the default
+      // padding of the jquery-ui text buttons
+      padding: .1rem;
+      // override the background color of the text buttons
+      &.ui-state-default {
+        background: $blue;
+      }
+      &.ui-state-hover {
+        background: darken($blue, 10%);
+      }
     }
   }
 }

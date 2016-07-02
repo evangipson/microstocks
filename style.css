@@ -1,19 +1,19 @@
-/* line 19, style.scss */
-body {
+body, .ui-widget {
   color: black;
-  background-color: #eeeeee;
   font-size: 16px;
   font-weight: 300;
   font-family: sans-serif;
 }
 
-/* line 26, style.scss */
+body {
+  background-color: #eeeeee;
+}
+
 a {
   color: #ff85cb;
   text-decoration: none;
   font-weight: bold;
 }
-/* line 30, style.scss */
 a:hover {
   background: #ff85cb;
   color: white;
@@ -21,7 +21,6 @@ a:hover {
   border-bottom: .25rem solid white;
 }
 
-/* line 38, style.scss */
 h1,
 h2 {
   text-align: center;
@@ -31,36 +30,30 @@ h2 {
   margin: 0;
 }
 
-/* line 45, style.scss */
 h1 {
   font-size: 1.33rem;
 }
 
-/* line 48, style.scss */
 h2 {
   font-size: 1rem;
 }
 
-/* line 51, style.scss */
 p {
   width: 75%;
   margin: 1rem auto;
   padding: 0;
 }
 
-/* line 56, style.scss */
 ul {
   list-style-type: none;
   margin-left: 0;
   padding-left: 0;
 }
-/* line 61, style.scss */
 ul li {
   margin-left: 0;
   margin-top: .5rem;
 }
 
-/* line 70, style.scss */
 .under-hover::after {
   content: "";
   background: #eeeeee;
@@ -70,14 +63,12 @@ ul li {
   position: relative;
   display: block;
 }
-/* line 80, style.scss */
 .under-hover:hover::after {
   width: 100%;
   height: 0.3rem;
   transition: width 0.1s ease-out;
 }
 
-/* line 87, style.scss */
 section {
   float: left;
   width: calc(100% - 4rem);
@@ -85,135 +76,122 @@ section {
   margin: 1rem;
   position: relative;
 }
-/* line 96, style.scss */
-section.log, section.controls, section.inventory, section.stocks {
+
+.log,
+.controls,
+.inventory,
+.stocks {
   padding: 1rem;
 }
+
 @media only screen and (min-width: 600px) {
-  /* line 100, style.scss */
-  section.inventory, section.controls {
+  .inventory,
+  .controls {
     width: calc(30% - 4rem);
   }
 }
-/* line 106, style.scss */
-section.log, section.controls {
+
+.log,
+.controls {
   height: 18rem;
   font-size: 0.8rem;
 }
-/* line 110, style.scss */
-section.title {
+
+.title {
   width: calc(100% - 2rem);
 }
-/* line 112, style.scss */
-section.title h1 {
+.title h1 {
   background: #53bbf4;
   color: white;
   font-weight: bold;
   padding: .5rem 0;
 }
-/* line 120, style.scss */
-section.inventory ul {
+
+.inventory ul {
   width: 100%;
 }
-/* line 122, style.scss */
-section.inventory ul li {
+.inventory ul li {
   margin-top: .25rem;
   padding: .75rem .5rem;
 }
-/* line 128, style.scss */
-section.inventory .money,
-section.inventory .location {
+.inventory .money,
+.inventory .location {
   color: white;
   font-weight: bold;
 }
-/* line 132, style.scss */
-section.inventory .money {
+.inventory .money {
   background: #83ad00;
 }
-/* line 135, style.scss */
-section.inventory .location {
+.inventory .location {
   background: #ffac00;
 }
-/* line 139, style.scss */
-section.log {
+
+.log {
   font-size: 14px;
   font-family: monospace;
   line-height: 20px;
 }
-/* line 143, style.scss */
-section.log h2 {
+.log h2 {
   font-family: sans-serif;
 }
 @media only screen and (min-width: 600px) {
-  /* line 139, style.scss */
-  section.log {
+  .log {
     width: calc(70% - 4rem);
     height: 33rem;
   }
 }
-/* line 150, style.scss */
-section.log ul {
+.log ul {
   overflow-y: scroll;
   max-height: 15rem;
 }
 @media only screen and (min-width: 600px) {
-  /* line 150, style.scss */
-  section.log ul {
+  .log ul {
     max-height: 30rem;
   }
 }
-/* line 156, style.scss */
-section.log ul li {
+.log ul li {
   padding: .5rem;
   float: left;
   width: calc(100% - 2rem);
 }
-/* line 163, style.scss */
-section.log .stock-increase,
-section.log .stock-decrease {
+.log .stock-increase,
+.log .stock-decrease {
   margin-right: 1rem;
   margin-bottom: 0.5rem;
   font-size: .8rem;
 }
 @media only screen and (min-width: 600px) {
-  /* line 163, style.scss */
-  section.log .stock-increase,
-  section.log .stock-decrease {
+  .log .stock-increase,
+  .log .stock-decrease {
     width: calc(50% - 2rem);
   }
 }
 @media only screen and (min-width: 1000px) {
-  /* line 163, style.scss */
-  section.log .stock-increase,
-  section.log .stock-decrease {
+  .log .stock-increase,
+  .log .stock-decrease {
     width: calc(33% - 2rem);
   }
 }
-/* line 173, style.scss */
-section.log .stock-increase:nth-first-child, section.log .stock-increase:nth-last-child,
-section.log .stock-decrease:nth-first-child,
-section.log .stock-decrease:nth-last-child {
+.log .stock-increase:nth-first-child, .log .stock-increase:nth-last-child,
+.log .stock-decrease:nth-first-child,
+.log .stock-decrease:nth-last-child {
   clear: both;
 }
-/* line 177, style.scss */
-section.log .stock-increase {
+.log .stock-increase {
   background: #a9e000;
 }
-/* line 180, style.scss */
-section.log .stock-decrease {
+.log .stock-decrease {
   background: #ff432e;
   color: white;
 }
-/* line 185, style.scss */
-section.controls {
+
+.controls {
   height: auto;
 }
-/* line 187, style.scss */
-section.controls ul {
+.controls ul {
   padding-left: 0;
 }
-/* line 190, style.scss */
-section.controls ul li {
+.controls ul li {
   cursor: pointer;
   font-weight: bold;
   transition: padding 0.1s ease-out;
@@ -222,42 +200,33 @@ section.controls ul li {
   height: 1.2rem;
   margin-top: 1rem;
 }
-/* line 198, style.scss */
-section.controls ul li.buy-button {
+.controls ul li.buy-button {
   background-color: #53bbf4;
 }
-/* line 201, style.scss */
-section.controls ul li.sell-button {
+.controls ul li.sell-button {
   background-color: #53bbf4;
 }
-/* line 204, style.scss */
-section.controls ul li.travel-button {
+.controls ul li.travel-button {
   background-color: #ff85cb;
 }
-/* line 207, style.scss */
-section.controls ul li.data-button {
+.controls ul li.data-button {
   background-color: #ff85cb;
 }
-/* line 210, style.scss */
-section.controls ul li:hover {
+.controls ul li:hover {
   padding-left: 0.75rem;
 }
-/* line 216, style.scss */
-section.controls .buy-button::after, section.controls .sell-button::after {
+.controls .buy-button::after, .controls .sell-button::after {
   background: #23a8f1;
 }
-/* line 219, style.scss */
-section.controls .travel-button::after, section.controls .data-button::after {
+.controls .travel-button::after, .controls .data-button::after {
   background: #ff52b5;
 }
 
-/* line 225, style.scss */
 .stock {
   cursor: pointer;
   transition: background 0.1s ease-out, width 0.1s ease-out;
   background: #53bbf4;
   color: white;
-  float: left;
   display: inline-block;
   margin-right: 1rem;
   height: 2rem;
@@ -267,47 +236,87 @@ section.controls .travel-button::after, section.controls .data-button::after {
   width: 100%;
 }
 @media only screen and (min-width: 600px) {
-  /* line 225, style.scss */
   .stock {
     width: calc(50% - 1rem);
   }
 }
 @media only screen and (min-width: 1000px) {
-  /* line 225, style.scss */
   .stock {
     width: auto;
     padding: .75rem .5rem;
   }
-  /* line 245, style.scss */
   .stock:nth-child(odd) {
     margin-right: 1rem;
   }
-  /* line 250, style.scss */
   .stock:hover::after {
     padding: 0 .5rem;
     left: -0.5rem;
     height: 0.6rem;
   }
 }
-/* line 257, style.scss */
 .stock.owned {
   background: #ff85cb;
 }
-/* line 259, style.scss */
 .stock.owned:hover {
   background: #ff52b5;
 }
-/* line 261, style.scss */
 .stock.owned:hover::after {
   background: #ff1fa0;
 }
-/* line 267, style.scss */
 .stock:hover {
   background: #23a8f1;
 }
-/* line 269, style.scss */
 .stock:hover::after {
   background: #0e8dd3;
   height: 0.8rem;
   top: 0.8rem;
+}
+
+.ui-dialog {
+  border-radius: 0;
+  background: white;
+}
+.ui-dialog.ui-widget-content, .ui-dialog .ui-widget-content {
+  border: none;
+  background: white;
+}
+.ui-dialog .ui-widget-content.ui-slider {
+  background: #eeeeee;
+  border-radius: 0;
+}
+.ui-dialog .ui-widget-content .ui-slider-handle {
+  border: none;
+  border-radius: 0;
+  background: #53bbf4;
+  height: 1.5rem;
+  top: -0.36rem;
+}
+.ui-dialog .ui-widget-header {
+  border: none;
+  border-radius: 0;
+  background: #53bbf4;
+  width: 100%;
+  left: -1.5rem;
+  top: -0.2rem;
+}
+.ui-dialog button.ui-button {
+  font-weight: bold;
+  color: white;
+  border: none;
+}
+.ui-dialog button.ui-button.ui-dialog-titlebar-close {
+  border-radius: 0;
+  border: #53bbf4 2px solid;
+  right: .8rem;
+}
+.ui-dialog button.ui-button-text-only {
+  border-radius: 0;
+  font-family: sans-serif;
+  padding: .1rem;
+}
+.ui-dialog button.ui-button-text-only.ui-state-default {
+  background: #53bbf4;
+}
+.ui-dialog button.ui-button-text-only.ui-state-hover {
+  background: #23a8f1;
 }
