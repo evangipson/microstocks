@@ -119,11 +119,53 @@ section {
 }
 .title {
   width: calc(100% - 2rem);
-  h1 {
+  // I only want the header section
+  // to be blue
+  header {
     background: $blue;
+  }
+  h1 {
+    // Compensating for the the .options-button
+    // element's width set below
+    width: calc(100% - 11.5rem);
     color: white;
     font-weight: bold;
-    padding: .5rem 0;
+    padding: .75rem 0;
+    // change this if you want to change
+    // the centering behavior of the h1 text.
+    // This is propportional to the .options-button
+    // element's width set below
+    padding-left: 6rem;
+    // So the gear displays to the right
+    // we need to avoid a clear with inline-block
+    display: inline-block;
+  }
+  p {
+    background: white;
+  }
+}
+// style the options button
+.options-button {
+  // other rules
+  color: white;
+  // If you change this, make sure to change
+  // the .title's h1 width's calculation and 
+  // the padding-left value accordingly!
+  width: 5rem;
+  text-align: center;
+  display: inline-block;
+  padding: .5rem 0;
+  cursor: pointer;
+  // Set our initial value so the spin animation
+  // has something as it's "base"
+  transform: rotate(0deg);
+  // Smooth transitions are all but certain
+  // ease-in-out allows the animation to "playback."
+  // Also, should take 3 times as long as the other animations.
+  transition: transform $animTime*3 ease;
+  &:hover {
+    // On hover let's rotate this puppy!
+    transform: rotate(90deg);
   }
 }
 .inventory {
