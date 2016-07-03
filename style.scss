@@ -333,6 +333,10 @@ section {
     border: none;
     background: white;
   }
+  .ui-dialog-title {
+    margin: .1rem 0 0 1.25rem;
+    color: white;
+  }
   .ui-widget-content {
     // further override the slider, because it's
     // using the class .ui-widget-content
