@@ -588,6 +588,22 @@ var MICROSTOCKS = (function () {
         updateInventory();
       }
     }
+  // Will call the options dialog pop-up, meant
+  // to be used with the options button
+  var launchOptionsDialog = function() {
+    // Initialize the options-dialog modal
+    $(".options").dialog({
+        // The magic line right here
+        // Don't open unless called to
+        //autoOpen: false,
+        modal: true,
+        buttons: {
+            "Close": function() {
+              $(this).dialog("close");
+            }
+        }
+    });
+  }
   // Function to call buy/sell alert box
   // We have to call this last because it uses 
   // buyAction, sellAction, buyMessage & sellMessage
@@ -669,13 +685,13 @@ var MICROSTOCKS = (function () {
                 $(".buy-sell-dialogue").text("You don't have any " + stockName + " to sell!");
               }
           },
-          "Cancel": function() {
+          Cancel: function() {
             $(this).dialog("close");
           }
         }
     });
     // Initialize the buy-dialog modal
-    $( ".buy-dialog" ).dialog({
+    $(".buy-dialog").dialog({
         // The magic line right here
         // Don't open unless called to
         autoOpen: false,
@@ -789,10 +805,12 @@ var MICROSTOCKS = (function () {
     var buyButton = document.getElementsByClassName("buy-button")[0];
     var sellButton = document.getElementsByClassName("sell-button")[0];
     var travelButton = document.getElementsByClassName("travel-button")[0];
+    var optionsButton = document.getElementsByClassName("options-button")[0];
     // Now let's set up the event listeners
     addButtonEvent(buyButton, buyMessage, buyAction);
     addButtonEvent(sellButton, sellMessage, sellAction);
-    addButtonEvent(travelButton, travelMessage, travelAction); 
+    addButtonEvent(travelButton, travelMessage, travelAction);
+    addButtonEvent(optionsButton, launchOptionsDialog);
     // Now let's create the inventory panel!
     createInventory();
   }
