@@ -104,26 +104,42 @@ section {
   background: #53bbf4;
 }
 .title h1 {
-  width: calc(100% - 11.5rem);
+  width: 100%;
   color: white;
   font-weight: bold;
   padding: .75rem 0;
-  padding-left: 6rem;
-  display: inline-block;
+}
+@media only screen and (min-width: 600px) {
+  .title h1 {
+    width: calc(100% - 11.5rem);
+    padding-left: 6rem;
+    display: inline-block;
+  }
 }
 .title p {
   background: white;
 }
 
 .options-button {
-  color: white;
-  width: 5rem;
+  position: relative;
+  width: auto;
+  margin: auto;
   text-align: center;
-  display: inline-block;
-  padding: .5rem 0;
+  display: block!important;
+  top: -0.5rem;
+  padding: .25rem 0;
+  color: white;
   cursor: pointer;
   transform: rotate(0deg);
   transition: transform 0.3s ease;
+}
+@media only screen and (min-width: 600px) {
+  .options-button {
+    display: inline-block;
+    width: 5rem;
+    top: .15rem;
+    padding: .5rem 0;
+  }
 }
 .options-button:hover {
   transform: rotate(90deg);

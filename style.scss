@@ -125,20 +125,26 @@ section {
     background: $blue;
   }
   h1 {
-    // Compensating for the the .options-button
-    // element's width set below
-    width: calc(100% - 11.5rem);
+    // We have to compensate for the  options button
+    // if it's on the same line as the h1, which is is
+    // when we are above phoneBreakpoint
+    @include respond($phoneBreakpoint) {
+      // Compensating for the the .options-button
+      // element's width set below
+      width: calc(100% - 11.5rem);
+      // change this if you want to change
+      // the centering behavior of the h1 text.
+      // This is propportional to the .options-button
+      // element's width set below
+      padding-left: 6rem;
+      // So the gear displays to the right
+      // we need to avoid a clear with inline-block
+      display: inline-block;
+    }
+    width: 100%;
     color: white;
     font-weight: bold;
     padding: .75rem 0;
-    // change this if you want to change
-    // the centering behavior of the h1 text.
-    // This is propportional to the .options-button
-    // element's width set below
-    padding-left: 6rem;
-    // So the gear displays to the right
-    // we need to avoid a clear with inline-block
-    display: inline-block;
   }
   p {
     background: white;
@@ -146,15 +152,28 @@ section {
 }
 // style the options button
 .options-button {
+  position: relative;
+  width: auto;
+  margin: auto;
+  text-align: center;
+  // Need the important here to override
+  // font-awesome's display-inline
+  display: block!important;
+  top: -.5rem;
+  padding: .25rem 0;
+  @include respond($phoneBreakpoint) {
+    display: inline-block;
+    // If you change this, make sure to change
+    // the .title's h1 width's calculation and 
+    // the padding-left value accordingly!
+    width: 5rem;
+    // Also push it down just a touch
+    top: .15rem;
+    // Vertically center with equal padding above and below
+    padding: .5rem 0;
+  }
   // other rules
   color: white;
-  // If you change this, make sure to change
-  // the .title's h1 width's calculation and 
-  // the padding-left value accordingly!
-  width: 5rem;
-  text-align: center;
-  display: inline-block;
-  padding: .5rem 0;
   cursor: pointer;
   // Set our initial value so the spin animation
   // has something as it's "base"
