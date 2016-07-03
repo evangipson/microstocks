@@ -120,12 +120,12 @@ section {
   background: white;
 }
 
-.options-button {
+nav.options-button {
   position: relative;
   width: auto;
   margin: auto;
   text-align: center;
-  display: block!important;
+  display: block;
   top: -0.5rem;
   padding: .25rem 0;
   color: white;
@@ -134,14 +134,14 @@ section {
   transition: transform 0.3s ease;
 }
 @media only screen and (min-width: 600px) {
-  .options-button {
+  nav.options-button {
     display: inline-block;
     width: 5rem;
     top: .15rem;
     padding: .5rem 0;
   }
 }
-.options-button:hover {
+nav.options-button:hover {
   transform: rotate(90deg);
 }
 
