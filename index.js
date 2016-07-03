@@ -39,44 +39,44 @@ var MICROSTOCKS = (function () {
       // Take the floor of random calculation
       return Math.floor(Math.random() * (highNum - lowNum) + lowNum);
     }
-    // Function used to create a new name for a stock
-  var createStockName = function() {
-      var stockName = "";
+    // Function used to create a new name for a resource
+  var createResourceName = function() {
+      var resourceName = "";
       for (var i = 0; i < 3; i++) {
         // Pulled from http://stackoverflow.com/questions/3145030/convert-integer-into-its-character-equivalent-in-javascript
-        stockName += String.fromCharCode(65 + randomNum(26));
+        resourceName += String.fromCharCode(65 + randomNum(26));
       }
-      return stockName;
+      return resourceName;
     }
-    // Initialize stocks array with this function
-  var createStocks = function(stockAmount) {
+    // Initialize resources array with this function
+  var createResources = function(resourceAmount) {
       var retArray = [];
-      for (var i = 0; i < stockAmount; i++) {
+      for (var i = 0; i < resourceAmount; i++) {
         retArray.push({
           "cost": randomNum(randomNum(2, 5), randomNum(20, randomNum(20,110))),
-          "name": createStockName()
+          "name": createResourceName()
         });
       }
       return retArray;
     }
-    // Initialize stocks array with this function
-  var givePlayerStocks = function(stocks, stockAmount) {
-    for (var i = 0; i < stockAmount; i++) {
-      // Ensure player gets at least 1 stock to play with
+    // Initialize resources array with this function
+  var givePlayerResources = function(resources, resourceAmount) {
+    for (var i = 0; i < resourceAmount; i++) {
+      // Ensure player gets at least 1 resource to play with
       var atLeastOne = false;
-      // 30% chance the player will own that stock
+      // 30% chance the player will own that resource
       if(randomNum(100)>70) {
-        stocks[i].amount = randomNum(randomNum(1, 4), randomNum(5, 20));
+        resources[i].amount = randomNum(randomNum(1, 4), randomNum(5, 20));
         atLeastOne = true;
       }
       else {
-        stocks[i].amount = 0;
+        resources[i].amount = 0;
       }
     }
-    // If the player didn't even get one stock
+    // If the player didn't even get one resource
     if(atLeastOne === false) {
-      // Give the player a random stock
-      stocks[randomNum(0,stocks.length)].amount = randomNum(randomNum(1,4), randomNum(5,20));
+      // Give the player a random resource
+      resources[randomNum(0,resources.length)].amount = randomNum(randomNum(1,4), randomNum(5,20));
     }
   }
   // Ability to get Object Key index from JSON object
@@ -107,15 +107,15 @@ var MICROSTOCKS = (function () {
   logList = document.getElementsByClassName("log-list")[0];
   // We need to set how much it is to move
   moveFee = 10;
-  // Change this variable to modify the amount of stocks generated
-  stockAmount = randomNum(12,20);
+  // Change this variable to modify the amount of resources generated
+  resourceAmount = randomNum(12,20);
   // Create some variables to fill up player JSON with
-  stocks = createStocks(stockAmount);
-  // Fill up the playerObject stock array w/ amounts for the player
-  givePlayerStocks(stocks, stockAmount);
-  // Now sort the stocks array by Amount
+  resources = createResources(resourceAmount);
+  // Fill up the playerObject resource array w/ amounts for the player
+  givePlayerResources(resources, resourceAmount);
+  // Now sort the resources array by Amount
   // Before applying to the player
-  stocks.sort(function(a, b) {
+  resources.sort(function(a, b) {
     return b.amount - a.amount;
   });
   // Array of locations around the USA
@@ -137,15 +137,15 @@ var MICROSTOCKS = (function () {
   playerString = '{"stats":{' +
     '"money":' + randomNum(500) + ',' +
     '"location":"' + randomNum(locations.length) + '",' +
-    '"stocks":[' +
-    arrayToJSON(stocks) +
+    '"resources":[' +
+    arrayToJSON(resources) +
     ']' +
     '}' +
     '}';
   // Get the object with JSON.parse
   playerObject = JSON.parse(playerString);
 
-  // Private functions needed for stocks & log
+  // Private functions needed for resources & log
   // ---------------------------------
   // Add list element to object
   var addListElement = function(obj, text, cssClass) {
@@ -210,40 +210,40 @@ var MICROSTOCKS = (function () {
         console.error("changeListElement needs to be called with a valid cssClass and incoming text. Check your syntax: changeListElement(cssClass, text);");
       }
     }
-    // Function to fluctuate stock prices
+    // Function to fluctuate resource prices
     // called everytime inventory is updated.
-  var updateStockPrices = function() {
-      // Pull playerObject's stocks in locally
-      var playerStocks = playerObject["stats"].stocks;
-      // Amount stocks should be flucuating
+  var updateResourcePrices = function() {
+      // Pull playerObject's resources in locally
+      var playerResources = playerObject["stats"].resources;
+      // Amount resources should be flucuating
       var variant = 0;
-      // Max $ amount stocks can be
-      var stockMax = 250;
+      // Max $ amount resources can be
+      var resourceMax = 250;
       // Declare a couple variables to use inside the for loop
-      var stockCost = 0;
-      var stockName = "";
-      // We'd like to evaluate every stock per update
-      for (var i = 0; i < playerStocks.length; i++) {
+      var resourceCost = 0;
+      var resourceName = "";
+      // We'd like to evaluate every resource per update
+      for (var i = 0; i < playerResources.length; i++) {
         // Reset variant
         variant = 0;
-        // Pull cost in so we only have to query playerStocks array once
-        stockCost = playerStocks[i].cost;
-        stockName = playerStocks[i].name;
+        // Pull cost in so we only have to query playerResources array once
+        resourceCost = playerResources[i].cost;
+        resourceName = playerResources[i].name;
         // ~20% chance for the company's value to potentially shift
         if (randomNum(100) < 18) {
-          // Let's pass another check (sort of random) to increase stock price
+          // Let's pass another check (sort of random) to increase resource price
           if (randomNum(100) < randomNum(30,48)) {
             variant = randomNum(5);
             // Show the increase in value on the log
-            addListElement(logList, stockName + " has risen $" + variant + " dollars.", "stock-increase");
+            addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
           }
           // Or if we pass yet another random check, let's lower the value
           // if we are above 0
-          else if ((randomNum(100) < randomNum(30,48)) && (stockCost > 0)) {
+          else if ((randomNum(100) < randomNum(30,48)) && (resourceCost > 0)) {
             // Turn variant negative
             variant = randomNum(5) * -1;
             // Show the decrease in value on the log
-            addListElement(logList, stockName + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
+            addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
           }
         } 
         // Or we don't hit the shift chance, but
@@ -252,39 +252,39 @@ var MICROSTOCKS = (function () {
           // If there was no regular shift, there is a
           // 0.5% chance for the company's value to grow by up to 1/5th.
           if(randomNum(1000) < 5) {
-            // Set variant to up to 1/5 of stockCost
-            variant = Math.floor(stockCost * (randomNum(1,20)*.01));
+            // Set variant to up to 1/5 of resourceCost
+            variant = Math.floor(resourceCost * (randomNum(1,20)*.01));
             // Show the cost hike on the log
-            addListElement(logList, stockName + " has risen $" + variant + " dollars.", "stock-increase");
+            addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
           }
           // And if that shift never happens, then the comapny is doomed at a
           // 0.5% chance for the it's value to drop by up to 1/5th
-          else if (randomNum(1000) < 5 && stockCost > 0) {
-            // Set variant to up to negative 1/5 of stockCost
-            variant = Math.floor(stockCost * (randomNum(1,20)*.01)) * -1;
+          else if (randomNum(1000) < 5 && resourceCost > 0) {
+            // Set variant to up to negative 1/5 of resourceCost
+            variant = Math.floor(resourceCost * (randomNum(1,20)*.01)) * -1;
             // Show the subtraction on the log
-            addListElement(logList, stockName + " has fallen $" + Math.abs(variant) + " dollars.", "stock-decrease");
+            addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
           }
         }
         // Now that we have the variant for sure, modify the playerObject
-        playerObject["stats"].stocks[i].cost = parseInt(stockCost) + variant;
-        // Check if the stock is really low
-        if(stockCost <= 1) {
-          // 15% to make the stock bounce back
+        playerObject["stats"].resources[i].cost = parseInt(resourceCost) + variant;
+        // Check if the resource is really low
+        if(resourceCost <= 1) {
+          // 15% to make the resource bounce back
           if(randomNum(100) < 25) {
-            playerObject["stats"].stocks[i].cost = randomNum(5,11);
+            playerObject["stats"].resources[i].cost = randomNum(5,11);
           }
         }
-        // Check if the stock is super high
-        if(parseInt(stockCost) >= stockMax) {
-          // 33% to make the stock bottom out a bit
+        // Check if the resource is super high
+        if(parseInt(resourceCost) >= resourceMax) {
+          // 33% to make the resource bottom out a bit
           if(randomNum(100) < 33) {
-            // Bottom out, retain only 55-70% of cost for this stock
-            playerObject["stats"].stocks[i].cost = stockCost * (randomNum(55,70) * 0.01);
+            // Bottom out, retain only 55-70% of cost for this resource
+            playerObject["stats"].resources[i].cost = resourceCost * (randomNum(55,70) * 0.01);
           }
-          // Otherwise let's just set it to stockMax
+          // Otherwise let's just set it to resourceMax
           else {
-            playerObject["stats"].stocks[i].cost = stockMax;
+            playerObject["stats"].resources[i].cost = resourceMax;
           }
         }
       }
@@ -294,15 +294,15 @@ var MICROSTOCKS = (function () {
   var updateInventory = function() {
     // Bring player in locally
     var player = playerObject["stats"];
-    // Get the updated stock prices
-    updateStockPrices();
+    // Get the updated resource prices
+    updateResourcePrices();
     // Draw out the new inventory
     changeListElement("cash", "Money: $" + player.money);
     // Variable to display the total amount of the portfolio
     var portfolioTotal = 0;
     // Display portfolio total
-    for (var i = 0; i < player.stocks.length; i++) {
-      portfolioTotal += player.stocks[i].amount * player.stocks[i].cost;
+    for (var i = 0; i < player.resources.length; i++) {
+      portfolioTotal += player.resources[i].amount * player.resources[i].cost;
     }
     // We need to display our portfolio
     changeListElement("portfolio", "Total Portfolio: $" + portfolioTotal);
@@ -327,76 +327,76 @@ var MICROSTOCKS = (function () {
         changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
     }
     changeListElement("location", "Location: " + locations[player.location]);
-    // Sort out the player's stock array 
-    player.stocks.sort(function(a, b) {
+    // Sort out the player's resource array 
+    player.resources.sort(function(a, b) {
       return b.amount - a.amount;
     });
-    // Update the player's stock amounts and change any owned to have said css class
-    for (var i = 0; i < player.stocks.length; i++) {
-      var theStock = document.getElementsByClassName("stocks-"+i)[0];
-      changeListElement("stocks-" + i, player.stocks[i].name + " | " + player.stocks[i].amount + " owned | $" + player.stocks[i].cost);
-      if(player.stocks[i].amount > 0 && !theStock.classList.contains("owned")) {
-        theStock.classList.add("owned");
+    // Update the player's resource amounts and change any owned to have said css class
+    for (var i = 0; i < player.resources.length; i++) {
+      var theResource = document.getElementsByClassName("resource-"+i)[0];
+      changeListElement("resource-" + i, player.resources[i].name + " | " + player.resources[i].amount + " owned | $" + player.resources[i].cost);
+      if(player.resources[i].amount > 0 && !theResource.classList.contains("owned")) {
+        theResource.classList.add("owned");
       }
-      else if(player.stocks[i].amount === 0 && theStock.classList.contains("owned")) {
-        theStock.classList.remove("owned");
+      else if(player.resources[i].amount === 0 && theResource.classList.contains("owned")) {
+        theResource.classList.remove("owned");
       }
     }
   } 
-  // Will return true if player owns any stock,
+  // Will return true if player owns any resources,
   // and false otherwise 
-  var playerOwnsStock = function() {
-      var ownedStocks = [];
-      // For every stock we have
-      for(var i = 0; i < playerObject["stats"].stocks.length; i++) {
-        // If we own that stock
-        if(playerObject["stats"].stocks[i].amount > 0) {
-          // Push the index into that ownedStocks array
-          ownedStocks.push(i);
+  var playerOwnsResource = function() {
+      var ownedResources = [];
+      // For every resource we have
+      for(var i = 0; i < playerObject["stats"].resources.length; i++) {
+        // If we own that resource
+        if(playerObject["stats"].resources[i].amount > 0) {
+          // Push the index into that ownedResources array
+          ownedResources.push(i);
         }
       }
       // Now the moment of truth
-      if(ownedStocks.length !== 0) {
+      if(ownedResources.length !== 0) {
         return true;
       }
       return false;
   }
-  // Set random stock index, based on ownership
-  var setRandomStockIndex = function() {
-      // Empty array holding stocks index's that we own
-      var ownedStocksIndex = [];
-      // If we have more than 1 stock
-      if(playerObject["stats"].stocks.length > 1) {
-        // For every stock we have
-        for(var i = 0; i < playerObject["stats"].stocks.length; i++) {
-          // If we own that stock
-          if(playerObject["stats"].stocks[i].amount > 0) {
-            // Push the index into that ownedStocksIndex array
-            ownedStocksIndex.push(i);
+  // Set random resource index, based on ownership
+  var setRandomResourceIndex = function() {
+      // Empty array holding resources index's that we own
+      var ownedResourcesIndex = [];
+      // If we have more than 1 resource
+      if(playerObject["stats"].resources.length > 1) {
+        // For every resource we have
+        for(var i = 0; i < playerObject["stats"].resources.length; i++) {
+          // If we own that resource
+          if(playerObject["stats"].resources[i].amount > 0) {
+            // Push the index into that ownedResourcesIndex array
+            ownedResourcesIndex.push(i);
           }
         }
       }
-      // Pick a random value in ownedStocksIndex and
-      // now set playerObject's stockIndex for permanence
-      // And let's default this value to 0 if there are no owned stocks
-      // so we'll just try and sell the first stock on the list.
-      playerObject["stats"].stockIndex = (ownedStocksIndex.length === 0) ? 0 : ownedStocksIndex[randomNum(0,ownedStocksIndex.length)];
+      // Pick a random value in ownedResourcesIndex and
+      // now set playerObject's resourceIndex for permanence
+      // And let's default this value to 0 if there are no owned resource
+      // so we'll just try and sell the first resource on the list.
+      playerObject["stats"].resourceIndex = (ownedResourcesIndex.length === 0) ? 0 : ownedResourcesIndex[randomNum(0,ownedResourcesIndex.length)];
   }
-  // Update stock index globally
-  var updateStockIndex = function(stockIndex) {
+  // Update resource index globally
+  var updateResourceIndex = function(resourceIndex) {
       // Pull in playerObject to this method
       var player = playerObject["stats"];
-      // If we have a stockIndex, let's set it accordingly (the click came from stock button)
-      if (typeof stockIndex !== "undefined" && typeof stockIndex !== "object") {
-        if (stockIndex < player.stocks.length) {
-          playerObject["stats"].stockIndex = stockIndex;
+      // If we have a resourceIndex, let's set it accordingly (the click came from resource button)
+      if (typeof resourceIndex !== "undefined" && typeof resourceIndex !== "object") {
+        if (resourceIndex < player.resources.length) {
+          playerObject["stats"].resourceIndex = resourceIndex;
         } else {
-          console.error("updateStockIndex exception: Incoming stockIndex outside of bounds of stocks array.");
+          console.error("updateResourceIndex exception: Incoming resourceIndex outside of bounds of resources array.");
         }
       }
-      // We don't have a suitable stock index, so let's randomly shuffle the stock index
+      // We don't have a suitable resource index, so let's randomly shuffle the resource index
       else {
-          playerObject["stats"].stockIndex = randomNum(0,player.stocks.length);
+          playerObject["stats"].resourceIndex = randomNum(0,player.resources.length);
         }
       }
     // Update location index globally
@@ -461,96 +461,96 @@ var MICROSTOCKS = (function () {
     // (Probably could combine sellMessage & buyMessage into
     // one super "Message" function that would take in
     // yet another function... that is getting ugly though  
-  var buyMessage = function(stockIndex, amount) {
-    // Check stockIndex
-    if (typeof stockIndex === "undefined" || stockIndex === null) {
+  var buyMessage = function(resourceIndex, amount) {
+    // Check resourceIndex
+    if (typeof resourceIndex === "undefined" || resourceIndex === null) {
       // if we are null or empty, make one up.
-      updateStockIndex();
-      stockIndex = playerObject["stats"].stockIndex;
+      updateResourceIndex();
+      resourceIndex = playerObject["stats"].resourceIndex;
     } else {
-      // Pull in stockIndex
-      updateStockIndex(stockIndex);
+      // Pull in resourceIndex
+      updateResourceIndex(resourceIndex);
     }
 
     // Check amount
-    var stockAmount = (amount === undefined) ? 1 : amount;
+    var resourceAmount = (amount === undefined) ? 1 : amount;
 
-    // If they can't buy the stock, fuck them.
-    if (playerObject["stats"].money < (playerObject["stats"].stocks[stockIndex].cost * stockAmount)) {
-      return ["Can't afford share(s) of " + playerObject["stats"].stocks[stockIndex].name + ".",
-        "(Attempted to purchase " + stockAmount + ".)"
+    // If they can't buy the resource, fuck them.
+    if (playerObject["stats"].money < (playerObject["stats"].resources[resourceIndex].cost * resourceAmount)) {
+      return ["Can't afford share(s) of " + playerObject["stats"].resources[resourceIndex].name + ".",
+        "(Attempted to purchase " + resourceAmount + ".)"
       ];
     }
     // If the player can afford it, let's buy it!
     else {
-      return "You bought " + stockAmount + " share(s) of " + playerObject["stats"].stocks[stockIndex].name + ".";
+      return "You bought " + resourceAmount + " share(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
     }
   }
   var buyAction = function(amount) {
     // Pull in playerObject to this method
     var player = playerObject["stats"];
     // Check amount
-    var stockAmount = (amount === undefined) ? 1 : amount;
-      // Pull in stockIndex
-      var stockIndex = player.stockIndex;
-      // If the player can afford the stock
-      if (player.money >= (player.stocks[stockIndex].cost * stockAmount)) {
+    var resourceAmount = (amount === undefined) ? 1 : amount;
+      // Pull in resourceIndex
+      var resourceIndex = player.resourceIndex;
+      // If the player can afford the resource
+      if (player.money >= (player.resources[resourceIndex].cost * resourceAmount)) {
         // Update the player's money
-        playerObject["stats"].money = player.money - (player.stocks[stockIndex].cost * stockAmount);
-        // Update the player's stock amount
-        playerObject["stats"].stocks[stockIndex].amount += parseInt(stockAmount);
+        playerObject["stats"].money = player.money - (player.resources[resourceIndex].cost * resourceAmount);
+        // Update the player's resource amount
+        playerObject["stats"].resources[resourceIndex].amount += parseInt(resourceAmount);
       } else {
         console.error("buyAction exception: Not enough money to make purchase.");
       }
       updateInventory();
     }
     // Sell button functions
-  var sellMessage = function(stockIndex, amount) { 
-    // Check stockIndex
-    if (typeof stockIndex === "undefined" || stockIndex === null) {
-      // If the player owns NO stock, return a log message indicating
-      // that before messing with stockIndex
-      if(!playerOwnsStock()) {
-        return "You don't have any stock to sell! Try buying some.";
+  var sellMessage = function(resourceIndex, amount) { 
+    // Check resourceIndex
+    if (typeof resourceIndex === "undefined" || resourceIndex === null) {
+      // If the player owns NO resource, return a log message indicating
+      // that before messing with resourceIndex
+      if(!playerOwnsResource()) {
+        return "You don't have any resource to sell! Try buying some.";
       }
-      // if I'm calling this function with no stockIndex, it's
+      // if I'm calling this function with no resourceIndex, it's
       // safe to assume it's from the sell random button, since the
-      // stocks will always call sellMessage with their index, so just
-      // set a new random stock index.
-      setRandomStockIndex();
-      // Set stockIndex for this function
-      stockIndex = playerObject["stats"].stockIndex;
+      // resources will always call sellMessage with their index, so just
+      // set a new random resource index.
+      setRandomResourceIndex();
+      // Set resourceIndex for this function
+      resourceIndex = playerObject["stats"].resourceIndex;
     } else {
-      // Pull in stockIndex
-      updateStockIndex(stockIndex);
+      // Pull in resourceIndex
+      updateResourceIndex(resourceIndex);
     }
     // Check amount
-    var stockAmount = (amount === undefined) ? 1 : amount;
+    var resourceAmount = (amount === undefined) ? 1 : amount;
 
-    // If you have the stock amount, go ahead and sell it!
-    if (playerObject["stats"].stocks[stockIndex].amount >= stockAmount) {
-      return "You sold " + stockAmount + " share(s) of " + playerObject["stats"].stocks[stockIndex].name + ".";
+    // If you have the resource amount, go ahead and sell it!
+    if (playerObject["stats"].resources[resourceIndex].amount >= resourceAmount) {
+      return "You sold " + resourceAmount + " share(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
     }
     // If the player can't afford it, fuck off!
     else {
-      return "You don't have " + stockAmount + " share(s) of " + playerObject["stats"].stocks[stockIndex].name + ".";
+      return "You don't have " + resourceAmount + " share(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
     }
   }
   var sellAction = function(amount) {
-    // If the player owns stock, continue on with this action
-    if(playerOwnsStock()) {
+    // If the player owns resources, continue on with this action
+    if(playerOwnsResource()) {
       // Pull in playerObject to this method
       var player = playerObject["stats"];
       // Check amount
-      var stockAmount = (amount === undefined) ? 1 : amount;
-      // Pull in stockIndex
-      var tmpStockIndex = player.stockIndex;
-      // If you have the stock amount, go ahead and sell it!
-      if (player.stocks[tmpStockIndex].amount >= stockAmount) {
-        // Update players stock
-        playerObject["stats"].stocks[tmpStockIndex].amount -= parseInt(stockAmount);
+      var resourceAmount = (amount === undefined) ? 1 : amount;
+      // Pull in resourceIndex
+      var tmpResourceIndex = player.resourceIndex;
+      // If you have the resource amount, go ahead and sell it!
+      if (player.resources[tmpResourceIndex].amount >= resourceAmount) {
+        // Update players resource
+        playerObject["stats"].resources[tmpResourceIndex].amount -= parseInt(resourceAmount);
         // Update player's money
-        playerObject["stats"].money = player.money + (player.stocks[tmpStockIndex].cost * stockAmount);
+        playerObject["stats"].money = player.money + (player.resources[tmpResourceIndex].cost * resourceAmount);
         // Update the inventory box
         updateInventory();
       } 
@@ -562,11 +562,11 @@ var MICROSTOCKS = (function () {
       var player = playerObject["stats"];
       // if the player doesn't have $10, don't let him travel.
       if (player.money < moveFee) {
-        return "Can't afford to move! Why don't you sell some stock?";
+        return "Can't afford to move! Why don't you sell some resources?";
       }
-      // make sure we have a valid stock index for potentially selling
+      // make sure we have a valid resource index for potentially selling
       // since this runs before sellAction.
-      updateStockIndex();
+      updateResourcendex();
       // Try and generate a new locationIndex. 
       var newNum = randomNum(locations.length);
       // Make sure we don't get the same locationIndex that we have
@@ -614,78 +614,79 @@ var MICROSTOCKS = (function () {
     // pull in playerObject to this method
     var player = playerObject["stats"];
     // instantiate variables needed for jquery-ui elements
-    var maxStocks = 0;
+    var maxResources = 0;
     var sliderStep = 0;
     var sliderValue = 0;
     var slideAmount = 1;
-    var stockName = player.stocks[index].name;
-    $(".buy-sell-dialogue").text("Would you like to buy or sell " + stockName + " stock today?");
+    var resourceName = player.resources[index].name;
+    $(".buy-sell-dialogue").text("Would you like to buy or sell " + resourceName + " today?");
     // Initialize the buy-sell dialogue modal
     $(".buy-sell").dialog({
         modal: true,
         buttons: {
           "Buy": function() {
-              // Set how many stocks we can buy
-              maxStocks = parseInt(player.money) / parseInt(player.stocks[index].cost);
+              // Set how many resources we can buy
+              maxResources = parseInt(player.money) / parseInt(player.resources[index].cost);
               // If we don't have any money, let the player know
-              if(maxStocks < 1) {
-                    $(".buy-sell-dialogue").text("Can't afford any " + stockName + " stock!");
+              if(maxResources < 1) {
+                    $(".buy-sell-dialogue").text("Can't afford any " + resourceName + "!");
               }
-              // Otherwise, we have stock to buy!
+              // Otherwise, we have resources to buy!
               else {
                 // Get out slider step amount
-                sliderStep = (maxStocks >= 50) ? 5 : 1;
-                // Initialize the buy-stock-slider
-                $(".buy-stock-slider").slider({
+                sliderStep = (maxResources >= 50) ? 5 : 1;
+                // Initialize the buy-resource-slider
+                $(".buy-resource-slider").slider({
                     value: 1,
                     min: 1,
-                    max: maxStocks,
+                    max: maxResources,
                     step: sliderStep,
                     // Taken from https://jqueryui.com/slider/#steps
                     slide: function(event,ui) {
-                      $(".buy-stock-amount").text("Buying " + ui.value + " " + stockName + " stock!");
+                      $(".buy-resource-amount").text("Buying " + ui.value + " " + resourceName + "!");
                       slideAmount = ui.value;
                     }
                 });
                 // get value from slider
-                sliderValue = $(".stock-slider").slider( "value" );
+                sliderValue = $(".resource-slider").slider( "value" );
                 // Before we open the buy dialog, set the value
                 // Shown on the slider to be what it is because it do
-                $(".buy-stock-amount").text("Buying 1 " + stockName + " stock!");
+                $(".buy-resource-amount").text("Buying 1 " + resourceName + "!");
                 // Open up the buy dialog
                 $(".buy-dialog").dialog("open");
               }
           },
           "Sell": function() {
-              // If the player actually has some of that stock...
-              if(player.stocks[index].amount > 0) {
+              // If the player actually has some of that resource...
+              if(player.resources[index].amount > 0) {
                 // Figure out how much to step the slider
-                sliderStep = (player.stocks[index].amount >= 50) ? 5 : 1;
-                // Initialize the sell-stock-sliderß
-                $(".sell-stock-slider").slider({
+                sliderStep = (player.resources[index].amount >= 50) ? 5 : 1;
+                // Initialize the sell-resource-slider
+                $(".sell-resource-slider").slider({
                     value: 1,
                     min: 1,
-                    // Our max is the amount of stock we have for that certain stock
-                    max: player.stocks[index].amount,
+                    // Our max value for the slider is the amount
+                    // of resources we have for that certain resource
+                    max: player.resources[index].amount,
                     step: sliderStep,
                     // Taken from https://jqueryui.com/slider/#steps
                     slide: function(event,ui) {
-                      $(".sell-stock-amount").text("Selling " + ui.value + " " + stockName +  " stock.");
+                      $(".sell-resource-amount").text("Selling " + ui.value + " " + resourceName +  ".");
                       slideAmount = ui.value;
                     }
                 });
                 // Get slider's value
-                sliderValue = $( ".stock-slider" ).slider( "value" );
+                sliderValue = $( ".resource-slider" ).slider( "value" );
                 // Before we open the sell dialog, set the value
                 // Shown on the slider to be what it is because it do
-                $(".sell-stock-amount").text("Selling 1 " + stockName +  " stock.");
+                $(".sell-resource-amount").text("Selling 1 " + resourceName +  ".");
                 // Open up the sell dialog
                 $(".sell-dialog").dialog("open");
               }
               // Otherwise, just tell them they can't.
               // I should probably not have the sell button if they can't use it.
               else {
-                $(".buy-sell-dialogue").text("You don't have any " + stockName + " to sell!");
+                $(".buy-sell-dialogue").text("You don't have any " + resourceName + " to sell!");
               }
           },
           Cancel: function() {
@@ -708,7 +709,7 @@ var MICROSTOCKS = (function () {
                   addListElement(logList, buyLogMessage);
                   buyAction(slideAmount);
                 } else {
-                  console.error("buySellDialogue exception: Stock purchase amount undefined or null, please try again!");
+                  console.error("buySellDialogue exception: Resource purchase amount undefined or null, please try again!");
                 }
                 // Close up the buy-sell dialog too
                 $(".buy-sell").dialog("close");
@@ -736,7 +737,7 @@ var MICROSTOCKS = (function () {
                   addListElement(logList, sellLogMessage);
                   sellAction(slideAmount);
                 } else {
-                  console.error("buySellDialogue exception: Stock sell amount undefined or null, please try again!");
+                  console.error("buySellDialogue exception: Resource sell amount undefined or null, please try again!");
                 }
                 // Close up the buy-sell dialog too
                 $(".buy-sell").dialog("close");
@@ -750,25 +751,25 @@ var MICROSTOCKS = (function () {
         }
     });
   }
-  // This adds all the stock button event listeners
-  // to buy and sell those invididual stocks
+  // This adds all the resource button event listeners
+  // to buy and sell those invididual resources
   // and it's declared down here because it needs
   // buySellDialogue
-  var addStockEventListeners = function() {
-    var stockArray = document.getElementsByClassName("stock");
-    for (var i = 0; i < stockArray.length; i++) {
-      addButtonEvent(stockArray[i], [buySellDialogue, i]);
+  var addResourceEventListeners = function() {
+    var resourceArray = document.getElementsByClassName("resource");
+    for (var i = 0; i < resourceArray.length; i++) {
+      addButtonEvent(resourceArray[i], [buySellDialogue, i]);
     }
   }
   // And now our last public method that will utilize the previous
   // private methods. 
   // This function creates the initial display of the inventory box
   var createInventory = function() {
-      // Bring in microstocks playerObject
+      // Bring in playerObject to a local variable
       var player = playerObject["stats"];
       // Get the player's inventory list, since we are adding elements to it.
       var invList = document.getElementsByClassName("inventory-list")[0];
-      var stockList = document.getElementsByClassName("stock-list")[0];
+      var resourceList = document.getElementsByClassName("resource-list")[0];
       // Need a variable for the for loop later
       var className = "";
       // We need to display our money
@@ -776,8 +777,8 @@ var MICROSTOCKS = (function () {
       // Variable to display the total amount of the portfolio
       var portfolioTotal = 0;
       // Display portfolio total
-      for (var i = 0; i < player.stocks.length; i++) {
-        portfolioTotal += player.stocks[i].amount * player.stocks[i].cost;
+      for (var i = 0; i < player.resources.length; i++) {
+        portfolioTotal += player.resources[i].amount * player.resources[i].cost;
       }
       // We need to display our portfolio
       addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio");
@@ -785,19 +786,19 @@ var MICROSTOCKS = (function () {
       addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth");
       // Our location
       addListElement(invList, "Location: " + locations[player.location], "location");
-      // And our stocks.
-      // Loop through all the current stocks
-      for (var i = 0; i < stocks.length; i++) {
-        className = "stock stocks-" + i + " under-hover";
-        if(player.stocks[i].amount > 0) {
+      // And our resources.
+      // Loop through all the current resources
+      for (var i = 0; i < resources.length; i++) {
+        className = "resource resource-" + i + " under-hover";
+        if(player.resources[i].amount > 0) {
           className += " owned";
         }
-        // Add a stock box
+        // Add a resource box
         // and if the player has any, fill that in with a special class
-        addListElement(stockList, player.stocks[i].name + " | " + player.stocks[i].amount + " owned | $" + player.stocks[i].cost, className);
+        addListElement(resourceList, player.resources[i].name + " | " + player.resources[i].amount + " owned | $" + player.resources[i].cost, className);
       }
-      // Now add the event listeners for buying & selling those stocks
-      addStockEventListeners();
+      // Now add the event listeners for buying & selling those resources
+      addResourceEventListeners();
     }
   
   // Now add our public init method to call in the ready event

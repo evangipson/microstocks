@@ -105,7 +105,7 @@ section {
 .log,
 .controls,
 .inventory,
-.stocks {
+.resources {
   padding: 1rem;
 }
 .inventory,
@@ -253,8 +253,8 @@ nav.options-button {
       width: calc(100% - 2rem);
     }
   }
-  .stock-increase,
-  .stock-decrease {
+  .resource-increase,
+  .resource-decrease {
     @include respond($phoneBreakpoint) {
       width: calc(50% - 2rem);
     }
@@ -268,10 +268,10 @@ nav.options-button {
       clear: both;
     }
   }
-  .stock-increase {
+  .resource-increase {
     background: $green;
   }
-  .stock-decrease {
+  .resource-decrease {
     background: $red;
     color: white;
   }
@@ -314,8 +314,8 @@ nav.options-button {
     background:darken($pink,10%);
   }
 }
-// Stocks
-.stock {
+// Resources
+.resource {
   cursor: pointer;
   transition: background $animTime ease-out,
     width $animTime ease-out;
