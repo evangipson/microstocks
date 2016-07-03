@@ -368,7 +368,7 @@ nav.options-button {
 // jQuery-ui dialog override
 .ui-dialog {
   // I don't like border-radius, flat pls
-  border-radius: 0;
+  border-radius: 0 !important;
   background: white;
   // override modal background area
   &.ui-widget-content, .ui-widget-content {
@@ -447,7 +447,7 @@ button{
   // override the buy/cancel buttons
   &.ui-button-text-only {
     border-radius: 0;
-    border: none;
+    border: none!important;;
     color: white!important;
     // this actually INCREASES the default
     // padding of the jquery-ui text buttons
