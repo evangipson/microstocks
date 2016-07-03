@@ -20,8 +20,8 @@ $grey: #eee;
 body, .ui-widget {
   color: black;
   font-size: 16px;
-  font-weight: 300;
-  font-family: sans-serif;
+  //font-weight: 300;
+  font-family: 'Muli', sans-serif;
 }
 // set background color
 body {
@@ -49,7 +49,9 @@ h2 {
   margin: 0;
 }
 h1 {
-  font-size: 1.33rem;
+  font-family: 'Trirong', serif;
+  font-weight: bold;
+  font-size: 1.75rem;
 }
 h2 {
   font-size: 1rem;
@@ -143,7 +145,6 @@ section {
     }
     width: 100%;
     color: white;
-    font-weight: bold;
     padding: .75rem 0;
   }
   p {
@@ -198,17 +199,18 @@ nav.options-button {
 // specific rules for each text field
 .options-text {
   font-weight: bold;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
+  font-family: 'Trirong', serif;
 }
 .options-subtext {
   font-weight: 300;
   font-size: 0.7rem;
   font-style: italic;
   position: relative;
-  top: -.8rem;
+  top: -1.6rem;
 }
 .options-author {
-  font-family: monospace;
+  font-family: 'Cutive Mono', monospace;
   font-size: 0.8rem;
 }
 .inventory {
@@ -232,17 +234,14 @@ nav.options-button {
   }
 }
 .log {
-  font-size: 14px;
-  font-family: monospace;
-  line-height: 20px;
-  h2 {
-      font-family: sans-serif;
-  }
   @include respond($phoneBreakpoint) {
     width: calc(70% - 4rem);
     height: 33rem;
   }
   & ul {
+    font-size: 14px;
+    font-family: 'Cutive Mono', monospace;
+    line-height: 20px;
     overflow-y: scroll;
     max-height: 15rem;
     @include respond($phoneBreakpoint) {
@@ -327,7 +326,7 @@ nav.options-button {
   height: 2rem;
   padding: .75rem 0;
   text-align:center;
-  font-family: monospace;
+  font-family: 'Cutive Mono', monospace;
   width: 100%;
   @include respond($phoneBreakpoint) {
     width: calc(50% - 1rem);
@@ -366,7 +365,7 @@ nav.options-button {
     }
   }
 }
-// jQuery-ui override
+// jQuery-ui dialog override
 .ui-dialog {
   // I don't like border-radius, flat pls
   border-radius: 0;
@@ -379,6 +378,7 @@ nav.options-button {
   .ui-dialog-title {
     margin: .1rem 0 0 1.25rem;
     color: white;
+    width: calc(90% - 2.2rem);
   }
   .ui-widget-content {
     // further override the slider, because it's
@@ -405,36 +405,59 @@ nav.options-button {
     // override if you adjust this left value
     left: -1.5rem;
     top: -.2rem;
+    // Override padding-bottom so the custom close
+    // button doesn't look weird with blue under it
+    padding-bottom: .25rem;
+    .ui-icon {
+      background-image: none;
+    }
   }
-  // override buttons
-  button{
-    &.ui-button {
+}
+// override jquery-ui buttons
+button{
+  &.ui-button {
     font-weight: bold;
     color: white;
     border: none;
-      // override the close icon
-      &.ui-dialog-titlebar-close {
-        border-radius: 0;
-        border: $blue 2px solid;
-        // reposition because of the
-        // .ui-widget-header left override
-        right: .8rem;
+    // override the close icon
+    &.ui-dialog-titlebar-close {
+      background-image: none;
+      background: none;
+      font-family: FontAwesome;
+      position: relative;
+      font-size: 1.6rem;
+      color: white;
+      width: 2.2rem;
+      height: 2.2rem;
+      padding-top: .3rem;
+      top: 0.2rem;
+      left: 1.4rem;
+      border-radius: 0;
+      border: none;
+      transform: rotate(0deg);
+      transition: transform $animTime*3;
+      &.ui-state-hover {
+        transform: rotate(90deg);
+      }
+      &::before {
+        content: "\f00d";
       }
     }
-    // override the buy/cancel buttons
-    &.ui-button-text-only {
-      border-radius: 0;
-      font-family: sans-serif;
-      // this actually INCREASES the default
-      // padding of the jquery-ui text buttons
-      padding: .1rem;
-      // override the background color of the text buttons
-      &.ui-state-default {
-        background: $blue;
-      }
-      &.ui-state-hover {
-        background: darken($blue, 10%);
-      }
+  }
+  // override the buy/cancel buttons
+  &.ui-button-text-only {
+    border-radius: 0;
+    border: none;
+    color: white!important;
+    // this actually INCREASES the default
+    // padding of the jquery-ui text buttons
+    padding: .1rem;
+    // override the background color of the text buttons
+    &.ui-state-default {
+      background: $blue;
+    }
+    &.ui-state-hover {
+      background: darken($blue, 10%);
     }
   }
 }
