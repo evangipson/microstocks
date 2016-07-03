@@ -591,6 +591,9 @@ var MICROSTOCKS = (function () {
   // Will call the options dialog pop-up, meant
   // to be used with the options button
   var launchOptionsDialog = function() {
+    $(".options-text").text("Microstocks");
+    $(".options-subtext").text("Version 1.0.5");
+    $(".options-author").html("Author: <a href=\"https://github.com/evangipson\">Evan Gipson</a>");
     // Initialize the options-dialog modal
     $(".options").dialog({
         // The magic line right here

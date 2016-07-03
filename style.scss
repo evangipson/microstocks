@@ -187,6 +187,30 @@ nav.options-button {
     transform: rotate(90deg);
   }
 }
+// style the options screen with
+// these general rules, plus the more
+// specific rules beneath.
+.options-text,
+.options-subtext,
+.options-author {
+  margin-left: 0;
+}
+// specific rules for each text field
+.options-text {
+  font-weight: bold;
+  font-size: 1.4rem;
+}
+.options-subtext {
+  font-weight: 300;
+  font-size: 0.7rem;
+  font-style: italic;
+  position: relative;
+  top: -.8rem;
+}
+.options-author {
+  font-family: monospace;
+  font-size: 0.8rem;
+}
 .inventory {
   ul {
     width: 100%;
