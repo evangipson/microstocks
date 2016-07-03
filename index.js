@@ -595,7 +595,7 @@ var MICROSTOCKS = (function () {
     $(".options").dialog({
         // The magic line right here
         // Don't open unless called to
-        autoOpen: false,
+        //autoOpen: false,
         modal: true,
         buttons: {
             "Close": function() {
