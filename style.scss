@@ -29,12 +29,12 @@ body {
 }
 // set anchor behavior
 a, .ui-dialog a {
-  color: $pink;
+  color: $pink !important;
   text-decoration: none;
   font-weight: bold;
   &:hover {
     background: $pink;
-    color: white;
+    color: white !important;
     text-decoration: underline;
     border-bottom: .25rem solid white;
   }
@@ -376,9 +376,9 @@ nav.options-button {
     background: white;
   }
   .ui-dialog-title {
-    margin: .1rem 0 0 1.25rem;
+    margin: .1rem 0 0 1rem!important;
     color: white;
-    width: calc(90% - 2.2rem);
+    width: calc(90% - 2.2rem)!important;
   }
   .ui-widget-content {
     // further override the slider, because it's
