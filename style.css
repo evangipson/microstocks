@@ -9,12 +9,12 @@ body {
   background-color: #eeeeee;
 }
 
-a {
+a, .ui-dialog a {
   color: #ff85cb;
   text-decoration: none;
   font-weight: bold;
 }
-a:hover {
+a:hover, .ui-dialog a:hover {
   background: #ff85cb;
   color: white;
   text-decoration: underline;

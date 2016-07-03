@@ -28,7 +28,7 @@ body {
   background-color: $grey;
 }
 // set anchor behavior
-a {
+a, .ui-dialog a {
   color: $pink;
   text-decoration: none;
   font-weight: bold;
