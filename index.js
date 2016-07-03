@@ -477,13 +477,13 @@ var MICROSTOCKS = (function () {
 
     // If they can't buy the resource, fuck them.
     if (playerObject["stats"].money < (playerObject["stats"].resources[resourceIndex].cost * resourceAmount)) {
-      return ["Can't afford share(s) of " + playerObject["stats"].resources[resourceIndex].name + ".",
+      return ["Can't afford unit(s) of " + playerObject["stats"].resources[resourceIndex].name + ".",
         "(Attempted to purchase " + resourceAmount + ".)"
       ];
     }
     // If the player can afford it, let's buy it!
     else {
-      return "You bought " + resourceAmount + " share(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
+      return "You bought " + resourceAmount + " unit(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
     }
   }
   var buyAction = function(amount) {
@@ -529,11 +529,11 @@ var MICROSTOCKS = (function () {
 
     // If you have the resource amount, go ahead and sell it!
     if (playerObject["stats"].resources[resourceIndex].amount >= resourceAmount) {
-      return "You sold " + resourceAmount + " share(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
+      return "You sold " + resourceAmount + " unit(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
     }
     // If the player can't afford it, fuck off!
     else {
-      return "You don't have " + resourceAmount + " share(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
+      return "You don't have " + resourceAmount + " unit(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
     }
   }
   var sellAction = function(amount) {
