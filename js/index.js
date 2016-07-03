@@ -566,7 +566,7 @@ var MICROSTOCKS = (function () {
       }
       // make sure we have a valid resource index for potentially selling
       // since this runs before sellAction.
-      updateResourcendex();
+      updateResourceIndex();
       // Try and generate a new locationIndex. 
       var newNum = randomNum(locations.length);
       // Make sure we don't get the same locationIndex that we have
