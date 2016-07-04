@@ -286,6 +286,7 @@ nav.options-button {
   }
   .resource-decrease {
     background: $red;
+    @include border(darken($red, 20%));
     color: white;
   }
 }
