@@ -1,5 +1,6 @@
 // variables
 $animTime: .1s;
+$borderWidth: .2rem;
 $phoneBreakpoint: 600px;
 $desktopBreakpoint: 1000px;
 $green: #a9e000;
@@ -9,10 +10,15 @@ $orange: #ffac00;
 $red: #ff432e;
 $grey: #eee;
 // mixins
+// use this for mobile queries
 @mixin respond($size) {
   @media only screen and (min-width: $size) {
     @content;
   }
+}
+// use this to set border unless setting to border: none;
+@mixin border($color) {
+  border: $color $borderWidth solid;
 }
 
 // rules for body
@@ -276,6 +282,7 @@ nav.options-button {
   }
   .resource-increase {
     background: $green;
+    @include border(darken($green, 10%));
   }
   .resource-decrease {
     background: $red;
@@ -342,13 +349,13 @@ nav.options-button {
     width: 100%;
     padding: 0;
   }
-  border: darken($blue, 10%) .3rem solid;
+  @include border(darken($blue, 10%));
   &.owned {
     background: $pink;
-    border: darken($pink, 10%) .3rem solid;
+    @include border(darken($pink, 10%));
     &:hover {
       background: darken($pink,10%);
-      border: darken($pink,20%) .3rem solid;
+      @include border(darken($pink, 20%));
       &::after {
         background: darken($pink,20%);
       }
