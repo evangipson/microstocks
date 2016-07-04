@@ -41,24 +41,80 @@ var MICROSTOCKS = (function () {
     }
     // Function used to create a new name for a resource
   var createResourceName = function() {
-      var resourceName = "";
-      for (var i = 0; i < 3; i++) {
+    var resourceName = "";
+    for (var i = 0; i < 3; i++) {
         // Pulled from http://stackoverflow.com/questions/3145030/convert-integer-into-its-character-equivalent-in-javascript
-        resourceName += String.fromCharCode(65 + randomNum(26));
-      }
-      return resourceName;
+      resourceName += String.fromCharCode(65 + randomNum(26));
     }
+    return resourceName;
+  }
+  // This will determine the resource type
+  var determineResourceType = function() {
+    // Set up the amount of resource types
+    var resourceTypes = [
+      "health",
+      "natural",
+      "tech",
+      "rare",
+      "mineral"
+    ];
+    // Give back what we should be!
+    return resourceTypes[randomNum(0,resourceTypes.length)];
+  }
+  // Function to determine a trend for the resource
+  var determineResourceTrend = function(theType) {
+    // Variable for resource's trend's string representation
+    var trend = "";
+    // Set up the trend arrays, filled with
+    // objects containing the type name as the key
+    // and the type maxFlux as the value
+    var resourceStableTrends = [
+      { "stable-up" : randomNum(0,3) },
+      { "stable" : randomNum(-1,2) },
+      { "stable-down" : randomNum(-2,0) }
+    ];
+    var resourceVolatileTrends = [
+      { "volatile-up" : randomNum(6) },
+      { "volatile" : randomNum(-3,4) },
+      { "volatile-down" : randomNum(-5,-1) }
+    ];
+    var resourceAllTrends = resourceStableTrends + resourceVolatileTrends;
+    console.log(resourceAllTrends);
+    // Determine type of resource
+    // If we have a health or natural resource
+    if (theType == "health" || theType == "natural") {
+      // It will probably be stable and continually go up
+      trend = "stable-up";
+    }
+    // Otherwise, we could have a mineral
+    else if (theType == "mineral") {
+      // Which would be stable, but could be stable=up, stable, or stable-down.
+      trend = resourceStableTrends[randomNum(0,resourceStableTrends.length)];
+    }
+    // Furthermore, we could have a tech or rare resource
+    else {
+      // Which I imagine would be volatile
+      trend = resourceVolatileTrends[randomNum(0,resourceVolatileTrends.length)];
+    }
+    // Now let's return the amount their resource cost should vary
+    // since we know the type we can access the object by key declared up above
+    return 0;
+  }
     // Initialize resources array with this function
   var createResources = function(resourceAmount) {
-      var retArray = [];
-      for (var i = 0; i < resourceAmount; i++) {
-        retArray.push({
-          "cost": randomNum(randomNum(2, 5), randomNum(20, randomNum(20,110))),
-          "name": createResourceName()
-        });
-      }
-      return retArray;
+    var retArray = [];
+    var theType = "";
+    for (var i = 0; i < resourceAmount; i++) {
+      theType = determineResourceType();
+      retArray.push({
+        "cost": randomNum(randomNum(2, 5), randomNum(20, randomNum(20,110))),
+        "name": createResourceName(),
+        "type": theType,
+        "trend": determineResourceTrend(theType)
+      });
     }
+    return retArray;
+  }
     // Initialize resources array with this function
   var givePlayerResources = function(resources, resourceAmount) {
     for (var i = 0; i < resourceAmount; i++) {
