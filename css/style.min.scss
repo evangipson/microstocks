@@ -32,6 +32,8 @@ a, .ui-dialog a {
   text-decoration: none;
   font-weight: bold;
   &:hover {
+    // I always want to show pointer on a:hover
+    cursor: pointer!important;
     background: $pink;
     color: white !important;
     text-decoration: underline;
@@ -117,6 +119,11 @@ section {
 .controls {
   height: 18rem;
   font-size: 0.8rem;
+}
+.resources {
+  ul {
+    text-align: center;
+  }
 }
 .title {
   width: calc(100% - 2rem);
@@ -315,54 +322,33 @@ nav.options-button {
 }
 // Resources
 .resource {
+  position: relative;
   cursor: pointer;
   transition: background $animTime ease-out,
-    width $animTime ease-out;
+    width $animTime ease-out,
+    top $animTime ease-out;
   background: $blue;
   color: white;
   display: inline-block;
   margin-right: 1rem;
-  height: 9rem;
-  padding: .75rem 0;
+  height: auto;
+  width: auto;
+  padding: .25rem 2rem;
   text-align:center;
   font-family: 'Cutive Mono', monospace;
-  width: 100%;
+  // Let's make it look a little above the element
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   p {
-    padding: .2rem;
+    width: 100%;
+    padding: 0;
   }
-  @include respond($phoneBreakpoint) {
-    width: calc(33% - 1rem);
-    height: 10rem;
-    // under-hover override
-    &:hover {
-      &::after {
-        padding: 0;
-        width: 100%;
-        margin-left: 0rem;
-        margin-top: 2rem;
-      }
-    }
-  }
-  @include respond($desktopBreakpoint) {
-    width: auto;
-    padding: .25rem 2rem;
-    &:nth-child(odd) {
-      margin-right: 1rem;
-    }
-    // under-hover override
-    &:hover {
-      &::after {
-        padding: 0 2rem;
-        width: 100%;
-        margin-left: -2rem;
-        margin-top: -0.9rem;
-      }
-    }
-  }
+  border: darken($blue, 10%) .3rem solid;
   &.owned {
     background: $pink;
+    border: darken($pink, 10%) .3rem solid;
     &:hover {
       background: darken($pink,10%);
+      border: darken($pink,20%) .3rem solid;
       &::after {
         background: darken($pink,20%);
       }
@@ -371,10 +357,18 @@ nav.options-button {
   // under-hover override
   &:hover {
     background: darken($blue,10%);
+    border: darken($blue,20%) .3rem solid;
+    // hover up just a bit
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    // move top just a touch
+    top: -.2rem;
     &::after {
       background: darken($blue,20%);
       height: 0.8rem;
-      top: 0.5rem;
+      padding: 0 2rem;
+      width: 100%;
+      margin-left: -2rem;
+      margin-top: -0.9rem;
     }
   }
 }

@@ -306,7 +306,10 @@ var MICROSTOCKS = (function () {
       // Get the specific resource
       theResource = document.getElementsByClassName("resource-"+i)[0];
       // Change the text of that specific thing to an updated string
-      theText = "<p><span class=\"fa fa-qrcode fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p><p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
+      theText = "<p><span class=\"fa fa-qrcode fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p>";
+      if(player.resources[i].amount > 0) {
+        theText += "<p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
+      }
       // Create a node to append to listElement
       theResource.innerHTML = theText;
       // Decide if it's owned or not
@@ -793,7 +796,10 @@ var MICROSTOCKS = (function () {
         // Create a list element for each resource
         listElement = document.createElement("LI");
         // Create the HTML string for each resource
-        theText = "<p><span class=\"fa fa-qrcode fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p><p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
+        theText = "<p><span class=\"fa fa-qrcode fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p>";
+        if(player.resources[i].amount > 0) {
+          theText += "<p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
+        }
         // Append message to <li> node
         listElement.innerHTML = theText;
         className = "resource resource-" + i + " under-hover";
