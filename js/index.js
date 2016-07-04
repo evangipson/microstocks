@@ -291,76 +291,67 @@ var MICROSTOCKS = (function () {
   var updateResourcePrices = function() {
       // Pull playerObject's resources in locally
       var playerResources = playerObject["stats"].resources;
+      // Also the resourceName for readiability
+      var resourceName = "";
       // Amount resources should be flucuating
       var variant = 0;
       // Max $ amount resources can be
       var resourceMax = 250;
-      // Declare a couple variables to use inside the for loop
-      var resourceCost = 0;
-      var resourceName = "";
       // We'd like to evaluate every resource per update
       for (var i = 0; i < playerResources.length; i++) {
-        // Reset variant
-        variant = 0;
-        // Pull cost in so we only have to query playerResources array once
-        resourceCost = playerResources[i].cost;
+        variant = randomNum(0,playerResources[i].trend.maxFlux);
         resourceName = playerResources[i].name;
-        // ~20% chance for the company's value to potentially shift
-        if (randomNum(100) < 18) {
-          // Let's pass another check (sort of random) to increase resource price
-          if (randomNum(100) < randomNum(30,48)) {
-            variant = randomNum(5);
-            // Show the increase in value on the log
-            addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
+        resourceType = playerResources[i].trend.name;
+        // Stable resources won't be modified as much
+        if(resourceType === "stable-up" || resourceType === "stable" || resourceType === "stable-down") {
+          // 30% chance to modify
+          if(randomNum(100) < 30) {
+            // Now check if the cost is too high or too low
+            if(playerResources[i].cost < resourceMax && playerResources[i].cost > 1) {
+              // Actually modify the playerObject resource cost
+              playerObject["stats"].resources[i].cost += variant;
+              if(variant > 0) {
+                // Show the increase in value on the log
+                addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
+              }
+              else if(variant > 0) {
+                // Show the decrease in value on the log
+                addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
+              }
+            }
+            else if(playerResources[i].cost < 1) {
+              // Or if it's too low.
+              // Will "bankrupt" the resource here
+              playerObject["stats"].resources[i].cost = 1;
+              // Show the increase in value on the log
+              addListElement(logList, resourceName + " bottomed out! Worth $1.", "resource-decrease");
+            }
           }
-          // Or if we pass yet another random check, let's lower the value
-          // if we are above 0
-          else if ((randomNum(100) < randomNum(30,48)) && (resourceCost > 0)) {
-            // Turn variant negative
-            variant = randomNum(5) * -1;
-            // Show the decrease in value on the log
-            addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
-          }
-        } 
-        // Or we don't hit the shift chance, but
-        // there is a tiny chance something drastic happens...
+        }
+        // It's a volatile resource, so MODIFY!
         else {
-          // If there was no regular shift, there is a
-          // 0.5% chance for the company's value to grow by up to 1/5th.
-          if(randomNum(1000) < 5) {
-            // Set variant to up to 1/5 of resourceCost
-            variant = Math.floor(resourceCost * (randomNum(1,20)*.01));
-            // Show the cost hike on the log
-            addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
-          }
-          // And if that shift never happens, then the comapny is doomed at a
-          // 0.5% chance for the it's value to drop by up to 1/5th
-          else if (randomNum(1000) < 5 && resourceCost > 0) {
-            // Set variant to up to negative 1/5 of resourceCost
-            variant = Math.floor(resourceCost * (randomNum(1,20)*.01)) * -1;
-            // Show the subtraction on the log
-            addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
-          }
-        }
-        // Now that we have the variant for sure, modify the playerObject
-        playerObject["stats"].resources[i].cost = parseInt(resourceCost) + variant;
-        // Check if the resource is really low
-        if(resourceCost <= 1) {
-          // 15% to make the resource bounce back
-          if(randomNum(100) < 25) {
-            playerObject["stats"].resources[i].cost = randomNum(5,11);
-          }
-        }
-        // Check if the resource is super high
-        if(parseInt(resourceCost) >= resourceMax) {
-          // 33% to make the resource bottom out a bit
-          if(randomNum(100) < 33) {
-            // Bottom out, retain only 55-70% of cost for this resource
-            playerObject["stats"].resources[i].cost = resourceCost * (randomNum(55,70) * 0.01);
-          }
-          // Otherwise let's just set it to resourceMax
-          else {
-            playerObject["stats"].resources[i].cost = resourceMax;
+          // 60% chance to modify
+          if(randomNum(100) < 60) {
+            // Now check if the cost is too high or too low
+            if(playerResources[i].cost < resourceMax && playerResources[i].cost > 1) {
+              // Actually modify the playerObject resource cost
+              playerObject["stats"].resources[i].cost += variant;
+              if(variant > 0) {
+                // Show the increase in value on the log
+                addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
+              }
+              else if(variant > 0) {
+                // Show the decrease in value on the log
+                addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
+              }
+            }
+            else if(playerResources[i].cost < 1) {
+              // Or if it's too low.
+              // Will "bankrupt" the resource here
+              playerObject["stats"].resources[i].cost = 1;
+              // Show the increase in value on the log
+              addListElement(logList, resourceName + " bottomed out! Worth $1.", "resource-decrease");
+            }
           }
         }
       }
@@ -397,8 +388,8 @@ var MICROSTOCKS = (function () {
       }
     }
   }
-    // Function to update the inventory box.
-    // Called when controls are interacted with.
+  // Function to update the inventory box.
+  // Called when controls are interacted with.
   var updateInventory = function() {
     // Bring player in locally
     var player = playerObject["stats"];

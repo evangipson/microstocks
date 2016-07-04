@@ -282,11 +282,11 @@ nav.options-button {
   }
   .resource-increase {
     background: $green;
-    @include border(darken($green, 10%));
+    box-shadow: inset 0 0 0 $borderWidth darken($green, 10%);
   }
   .resource-decrease {
     background: $red;
-    @include border(darken($red, 20%));
+    box-shadow: inset 0 0 0 $borderWidth darken($red, 20%);
     color: white;
   }
 }
