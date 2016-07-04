@@ -306,7 +306,7 @@ var MICROSTOCKS = (function () {
       // Get the specific resource
       theResource = document.getElementsByClassName("resource-"+i)[0];
       // Change the text of that specific thing to an updated string
-      theText = "<p><span class=\"fa fa-qrcode\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar\"" + player.resources[i].cost + "</p><p>" + player.resources[i].amount + " owned</p>"
+      theText = "<p><span class=\"fa fa-qrcode\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar\"></span>" + player.resources[i].cost + "</p><p>" + player.resources[i].amount + " owned</p>";
       // Create a node to append to listElement
       theResource.innerHTML = theText;
       // Decide if it's owned or not
@@ -793,8 +793,7 @@ var MICROSTOCKS = (function () {
         // Create a list element for each resource
         listElement = document.createElement("LI");
         // Create the HTML string for each resource
-        theText = "<p><span class=\"fa fa-qrcode\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar\"" + player.resources[i].cost + "</p><p>" + player.resources[i].amount + " owned</p>";
-        console.log("Here i am!");
+        theText = "<p><span class=\"fa fa-qrcode\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar\"></span>" + player.resources[i].cost + "</p><p>" + player.resources[i].amount + " owned</p>";
         // Append message to <li> node
         listElement.innerHTML = theText;
         className = "resource resource-" + i + " under-hover";
@@ -804,8 +803,8 @@ var MICROSTOCKS = (function () {
         // We have a class that is multiple values
         // so let's add it to the DOM
         cssClassArray = className.split(" ");
-        for (var i in cssClassArray) {
-          listElement.classList.add(cssClassArray[i]);
+        for (var j in cssClassArray) {
+          listElement.classList.add(cssClassArray[j]);
         }
         // Append <li> node to resource list <ul>
         resourceList.appendChild(listElement);
