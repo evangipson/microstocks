@@ -288,7 +288,36 @@ var MICROSTOCKS = (function () {
           }
         }
       }
+  }
+  // This function updates the resource boxes
+  var updateResourceBoxes = function() {
+    // Bring in playerObject to a local variable
+    var player = playerObject["stats"];
+    // Sort out the player's resource array 
+    player.resources.sort(function(a, b) {
+      return b.amount - a.amount;
+    });
+    // get the resource list ul element
+    var resourceList = document.getElementsByClassName("resource-list")[0];
+    var theResource = "";
+    var theText = "";
+    // Loop through all the current resources
+    for (var i = 0; i < player.resources.length; i++) {
+      // Get the specific resource
+      theResource = document.getElementsByClassName("resource-"+i)[0];
+      // Change the text of that specific thing to an updated string
+      theText = "<p><span class=\"fa fa-qrcode fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p><p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
+      // Create a node to append to listElement
+      theResource.innerHTML = theText;
+      // Decide if it's owned or not
+      if(player.resources[i].amount > 0 && !theResource.classList.contains("owned")) {
+        theResource.classList.add("owned");
+      }
+      else if(player.resources[i].amount === 0 && theResource.classList.contains("owned")) {
+        theResource.classList.remove("owned");
+      }
     }
+  }
     // Function to update the inventory box.
     // Called when controls are interacted with.
   var updateInventory = function() {
@@ -327,21 +356,8 @@ var MICROSTOCKS = (function () {
         changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
     }
     changeListElement("location", "Location: " + locations[player.location]);
-    // Sort out the player's resource array 
-    player.resources.sort(function(a, b) {
-      return b.amount - a.amount;
-    });
-    // Update the player's resource amounts and change any owned to have said css class
-    for (var i = 0; i < player.resources.length; i++) {
-      var theResource = document.getElementsByClassName("resource-"+i)[0];
-      changeListElement("resource-" + i, player.resources[i].name + " | " + player.resources[i].amount + " owned | $" + player.resources[i].cost);
-      if(player.resources[i].amount > 0 && !theResource.classList.contains("owned")) {
-        theResource.classList.add("owned");
-      }
-      else if(player.resources[i].amount === 0 && theResource.classList.contains("owned")) {
-        theResource.classList.remove("owned");
-      }
-    }
+    // Then update the resource boxes!
+    updateResourceBoxes();
   } 
   // Will return true if player owns any resources,
   // and false otherwise 
@@ -761,44 +777,63 @@ var MICROSTOCKS = (function () {
       addButtonEvent(resourceArray[i], [buySellDialogue, i]);
     }
   }
-  // And now our last public method that will utilize the previous
-  // private methods. 
+  // This function creates the display of the resources
+  var createResourceBoxes = function() {
+      // Bring in playerObject to a local variable
+      var player = playerObject["stats"];
+      // variables for display resources
+      var className = "";
+      var listELement = "";
+      var theText = "";
+      var cssClassArray = [];
+      // get the resource list ul element
+      var resourceList = document.getElementsByClassName("resource-list")[0];
+      // Loop through all the current resources
+      for (var i = 0; i < player.resources.length; i++) {
+        // Create a list element for each resource
+        listElement = document.createElement("LI");
+        // Create the HTML string for each resource
+        theText = "<p><span class=\"fa fa-qrcode fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p><p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
+        // Append message to <li> node
+        listElement.innerHTML = theText;
+        className = "resource resource-" + i + " under-hover";
+        if(player.resources[i].amount > 0) {
+          className += " owned";
+        }
+        // We have a class that is multiple values
+        // so let's add it to the DOM
+        cssClassArray = className.split(" ");
+        for (var j in cssClassArray) {
+          listElement.classList.add(cssClassArray[j]);
+        }
+        // Append <li> node to resource list <ul>
+        resourceList.appendChild(listElement);
+      }
+      // Now add the event listeners for buying & selling those resources
+      addResourceEventListeners();
+  }
   // This function creates the initial display of the inventory box
   var createInventory = function() {
       // Bring in playerObject to a local variable
       var player = playerObject["stats"];
       // Get the player's inventory list, since we are adding elements to it.
       var invList = document.getElementsByClassName("inventory-list")[0];
-      var resourceList = document.getElementsByClassName("resource-list")[0];
-      // Need a variable for the for loop later
-      var className = "";
-      // We need to display our money
-      addListElement(invList, "Cash: $" + player.money, "money cash");
       // Variable to display the total amount of the portfolio
       var portfolioTotal = 0;
       // Display portfolio total
-      for (var i = 0; i < player.resources.length; i++) {
+      for (var i = 0; i < resources.length; i++) {
         portfolioTotal += player.resources[i].amount * player.resources[i].cost;
       }
+      // We need to display our money
+      addListElement(invList, "Cash: $" + player.money, "money cash");
       // We need to display our portfolio
       addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio");
       // We need to display our total worth
       addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth");
       // Our location
       addListElement(invList, "Location: " + locations[player.location], "location");
-      // And our resources.
-      // Loop through all the current resources
-      for (var i = 0; i < resources.length; i++) {
-        className = "resource resource-" + i + " under-hover";
-        if(player.resources[i].amount > 0) {
-          className += " owned";
-        }
-        // Add a resource box
-        // and if the player has any, fill that in with a special class
-        addListElement(resourceList, player.resources[i].name + " | " + player.resources[i].amount + " owned | $" + player.resources[i].cost, className);
-      }
-      // Now add the event listeners for buying & selling those resources
-      addResourceEventListeners();
+      // Then draw the resources
+      createResourceBoxes();
     }
   
   // Now add our public init method to call in the ready event
