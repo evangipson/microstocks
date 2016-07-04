@@ -375,7 +375,7 @@ var MICROSTOCKS = (function () {
       // Change the text of that specific thing to an updated string
       theText = "<p><span class=\"fa " + player.resources[i].type.icon + " fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p>";
       if(player.resources[i].amount > 0) {
-        theText += "<p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
+        theText += "<p><span class=\"fa fa-shopping-cart fa-fw\"></span>" + player.resources[i].amount + "</p>";
       }
       // Create a node to append to listElement
       theResource.innerHTML = theText;
@@ -710,11 +710,13 @@ var MICROSTOCKS = (function () {
     var resourceIcon = player.resources[index].type.icon;
     var resourceTrendAverage = player.resources[index].trend.maxFlux;
     var resourceTrendName = player.resources[index].trend.name;
+    var resourceAmount = player.resources[index].amount;
     $(".buy-sell-dialogue").html("<h3><span class=\"fa " + resourceIcon + " fa-fw\"></span>" + resourceName + "</h3><hr />" +
       "<ul>" +
         "<li>Type: " + resourceType + "</li>" +
         "<li>Trend type: " + resourceTrendName + "</li>" +
         "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
+        "<li>You own " + resourceAmount + " unit(s) of " + resourceName + "</li>" +
       "</ul><hr />" +
       "Would you like to buy or sell " + resourceName + " today?");
     // Initialize the buy-sell dialogue modal
@@ -731,6 +733,7 @@ var MICROSTOCKS = (function () {
                     "<li>Type: " + resourceType + "</li>" +
                     "<li>Trend type: " + resourceTrendName + "</li>" +
                     "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
+                    "<li>You own " + resourceAmount + " unit(s) of " + resourceName + "</li>" +
                   "</ul><hr />" +
                   "Can't afford any " + resourceName + "! Try selling other stock!");
               }
@@ -794,6 +797,8 @@ var MICROSTOCKS = (function () {
                     "<li>Type: " + resourceType + "</li>" +
                     "<li>Trend type: " + resourceTrendName + "</li>" +
                     "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
+                    "<li>You own " + resourceAmount + "</li>" +
+                    "<li>You own " + resourceAmount + " unit(s) of " + resourceName + "</li>" +
                   "</ul><hr />" +
                   "You don't have any " + resourceName + " to sell!");
               }
@@ -889,7 +894,7 @@ var MICROSTOCKS = (function () {
         // Create the HTML string for each resource
         theText = "<p><span class=\"fa " + player.resources[i].type.icon + " fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p>";
         if(player.resources[i].amount > 0) {
-          theText += "<p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
+          theText += "<p><span class=\"fa fa-shopping-cart fa-fw\"></span>" + player.resources[i].amount + "</p>";
         }
         // Append message to <li> node
         listElement.innerHTML = theText;
