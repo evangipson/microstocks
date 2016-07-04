@@ -40,23 +40,23 @@ var MICROSTOCKS = (function () {
     // with icons associated as well
     var resourceTypes = [
       {
-        "name": "health",
+        "name": "Health",
         "icon": "fa-heartbeat"
       },
       {
-        "name": "natural",
+        "name": "Natural",
         "icon": "fa-paw"
       },
       {
-        "name": "tech",
+        "name": "Tech",
         "icon": "fa-qrcode"
       },
       {
-        "name": "rare",
+        "name": "Rare",
         "icon": "fa-diamond"
       },
       {
-        "name": "mineral",
+        "name": "Mineral",
         "icon" : "fa-gg-circle"
       }
     ];
@@ -80,7 +80,7 @@ var MICROSTOCKS = (function () {
         "maxFlux" : randomNum(-1, 2)
       },
       {
-        "name": "stable-up",
+        "name": "stable-down",
         "maxFlux" : randomNum(-2, 0)
       }
     ];
@@ -102,13 +102,13 @@ var MICROSTOCKS = (function () {
     var resourceAllTrends = resourceStableTrends.concat(resourceVolatileTrends);
     // Determine type of resource
     // If we have a health or natural resource
-    if (theType.name == "health" || theType.name == "natural") {
+    if (theType.name == "Health" || theType.name == "Natural") {
       // It will be stable-up, which is the first item
       // in the resourceStableTrends array
       trend = resourceStableTrends[0];
     }
     // Otherwise, we could have a mineral
-    else if (theType.name == "mineral") {
+    else if (theType.name == "Mineral") {
       // Which would be stable, but could be stable=up, stable, or stable-down.
       trend = resourceStableTrends[randomNum(0,resourceStableTrends.length)];
     }
@@ -705,7 +705,18 @@ var MICROSTOCKS = (function () {
     var sliderValue = 0;
     var slideAmount = 1;
     var resourceName = player.resources[index].name;
-    $(".buy-sell-dialogue").text("Would you like to buy or sell " + resourceName + " today?");
+    // Pull in some variables for stats about resource
+    var resourceType = player.resources[index].type.name;
+    var resourceIcon = player.resources[index].type.icon;
+    var resourceTrendAverage = player.resources[index].trend.maxFlux;
+    var resourceTrendName = player.resources[index].trend.name;
+    $(".buy-sell-dialogue").html("<h3><span class=\"fa " + resourceIcon + " fa-fw\"></span>" + resourceName + "</h3><hr />" +
+      "<ul>" +
+        "<li>Type: " + resourceType + "</li>" +
+        "<li>Trend type: " + resourceTrendName + "</li>" +
+        "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
+      "</ul><hr />" +
+      "Would you like to buy or sell " + resourceName + " today?");
     // Initialize the buy-sell dialogue modal
     $(".buy-sell").dialog({
         modal: true,
@@ -715,7 +726,13 @@ var MICROSTOCKS = (function () {
               maxResources = parseInt(player.money) / parseInt(player.resources[index].cost);
               // If we don't have any money, let the player know
               if(maxResources < 1) {
-                    $(".buy-sell-dialogue").text("Can't afford any " + resourceName + "!");
+                $(".buy-sell-dialogue").html("<h3><span class=\"fa " + resourceIcon + " fa-fw\"></span>" + resourceName + "</h3><hr />" +
+                  "<ul>" +
+                    "<li>Type: " + resourceType + "</li>" +
+                    "<li>Trend type: " + resourceTrendName + "</li>" +
+                    "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
+                  "</ul><hr />" +
+                  "Can't afford any " + resourceName + "! Try selling other stock!");
               }
               // Otherwise, we have resources to buy!
               else {
@@ -772,7 +789,13 @@ var MICROSTOCKS = (function () {
               // Otherwise, just tell them they can't.
               // I should probably not have the sell button if they can't use it.
               else {
-                $(".buy-sell-dialogue").text("You don't have any " + resourceName + " to sell!");
+                $(".buy-sell-dialogue").html("<h3><span class=\"fa " + resourceIcon + " fa-fw\"></span>" + resourceName + "</h3><hr />" +
+                  "<ul>" +
+                    "<li>Type: " + resourceType + "</li>" +
+                    "<li>Trend type: " + resourceTrendName + "</li>" +
+                    "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
+                  "</ul><hr />" +
+                  "You don't have any " + resourceName + " to sell!");
               }
           },
           Cancel: function() {
