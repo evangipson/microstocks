@@ -5,61 +5,140 @@
 var MICROSTOCKS = (function () {
   // Private functions necessary for initial variables
   // ------------------------------------------------
-  // JSON packager for an array
-  // TO-DO: generalize this to work with any array
-  var arrayToJSON = function(array) {
-      var response = "";
-      for (var i = 0; i < array.length; i++) {
-        response = response + '{"name":"' + array[i].name + '",' +
-          '"cost":' + array[i].cost + ',' +
-          '"amount":' + array[i].amount + '},';
-      }
-      // Remove last comma
-      response = response.slice(0, -1);
-      // Return the string
-      return response;
-    }
-    // Random number function with optional lowNum + highNum variable.
-    // If no lwo or high number is specified, the function will default
-    // to ranging from 1-100.
+  // Random number function with optional lowNum + highNum variable.
+  // If no lwo or high number is specified, the function will default
+  // to ranging from 1-100.
   var randomNum = function(lowNum, highNum) {
-      // If lowNum wasn't defined, set it to 1 to get the 1-100 range
-      if (lowNum === undefined || lowNum === NaN || lowNum === null || typeof lowNum !== "number") {
-        // If lowNum ISN'T a number, it's safe to set it to 1.
-        lowNum = 1;
-        // And also highNum to 100.
-        highNum = 100;
-      }
-      // If highNum wasn't defined, set it to the first value and lowNum to 1 to get the 1-lowNum range
-      if (highNum === undefined || highNum === NaN || highNum === null || typeof highNum !== "number") {
-        // If highNum ISN'T a number, it's safe to set it the range to 1-100.
-        highNum = lowNum;
-        lowNum = 1;
-      }
-      // Take the floor of random calculation
-      return Math.floor(Math.random() * (highNum - lowNum) + lowNum);
+    // If lowNum wasn't defined, set it to 1 to get the 1-100 range
+    if (lowNum === undefined || lowNum === NaN || lowNum === null || typeof lowNum !== "number") {
+      // If lowNum ISN'T a number, it's safe to set it to 1.
+      lowNum = 1;
+      // And also highNum to 100.
+      highNum = 100;
     }
-    // Function used to create a new name for a resource
+    // If highNum wasn't defined, set it to the first value and lowNum to 1 to get the 1-lowNum range
+    if (highNum === undefined || highNum === NaN || highNum === null || typeof highNum !== "number") {
+      // If highNum ISN'T a number, it's safe to set it the range to 1-100.
+      highNum = lowNum;
+      lowNum = 1;
+    }
+    // Take the floor of random calculation
+    return Math.floor(Math.random() * (highNum - lowNum) + lowNum);
+  }
+  // Function used to create a new name for a resource
   var createResourceName = function() {
-      var resourceName = "";
-      for (var i = 0; i < 3; i++) {
+    var resourceName = "";
+    for (var i = 0; i < 3; i++) {
         // Pulled from http://stackoverflow.com/questions/3145030/convert-integer-into-its-character-equivalent-in-javascript
-        resourceName += String.fromCharCode(65 + randomNum(26));
-      }
-      return resourceName;
+      resourceName += String.fromCharCode(65 + randomNum(26));
     }
-    // Initialize resources array with this function
+    return resourceName;
+  }
+  // This will determine the resource type
+  var determineResourceType = function() {
+    // Set up the amount of resource types
+    // with icons associated as well
+    var resourceTypes = [
+      {
+        "name": "health",
+        "icon": "fa-heartbeat"
+      },
+      {
+        "name": "natural",
+        "icon": "fa-paw"
+      },
+      {
+        "name": "tech",
+        "icon": "fa-qrcode"
+      },
+      {
+        "name": "rare",
+        "icon": "fa-diamond"
+      },
+      {
+        "name": "mineral",
+        "icon" : "fa-gg-circle"
+      }
+    ];
+    // Give back what we should be!
+    return resourceTypes[randomNum(0,resourceTypes.length)];
+  }
+  // Function to determine a trend for the resource
+  var determineResourceTrend = function(theType) {
+    // Variable for resource's trend's string representation
+    var trend = "";
+    // Set up the trend arrays, filled with
+    // objects containing the type name as the key
+    // and the type maxFlux as the value
+    var resourceStableTrends = [
+      {
+        "name": "stable-up",
+        "maxFlux" : randomNum(0, 3)
+      },
+      {
+        "name": "stable",
+        "maxFlux" : randomNum(-1, 2)
+      },
+      {
+        "name": "stable-up",
+        "maxFlux" : randomNum(-2, 0)
+      }
+    ];
+    var resourceVolatileTrends = [
+      {
+        "name": "volatile-up",
+        "maxFlux" : randomNum(0, 6)
+      },
+      {
+        "name": "volatile",
+        "maxFlux" : randomNum(-3,4)
+      },
+      {
+        "name": "volatile-down",
+        "maxFlux" : randomNum(-5,-1)
+      }
+    ];
+    // Make a big trends array combining the two
+    var resourceAllTrends = resourceStableTrends.concat(resourceVolatileTrends);
+    // Determine type of resource
+    // If we have a health or natural resource
+    if (theType.name == "health" || theType.name == "natural") {
+      // It will be stable-up, which is the first item
+      // in the resourceStableTrends array
+      trend = resourceStableTrends[0];
+    }
+    // Otherwise, we could have a mineral
+    else if (theType.name == "mineral") {
+      // Which would be stable, but could be stable=up, stable, or stable-down.
+      trend = resourceStableTrends[randomNum(0,resourceStableTrends.length)];
+    }
+    // Furthermore, we could have a tech or rare resource
+    else {
+      // Which I imagine would be volatile
+      trend = resourceVolatileTrends[randomNum(0,resourceVolatileTrends.length)];
+    }
+    // Now let's return the object containing the name and amount
+    return trend;
+  }
+  // Initialize resources array with this function
   var createResources = function(resourceAmount) {
-      var retArray = [];
-      for (var i = 0; i < resourceAmount; i++) {
-        retArray.push({
-          "cost": randomNum(randomNum(2, 5), randomNum(20, randomNum(20,110))),
-          "name": createResourceName()
-        });
-      }
-      return retArray;
+    var retArray = [];
+    var theType = "";
+    // For every resource we want
+    for (var i = 0; i < resourceAmount; i++) {
+      // Create a blank object
+      retArray[i] = {};
+      // Determine the type of resource we're going to have
+      theType = determineResourceType();
+      // And we'll fill it with stuff
+      retArray[i].cost = randomNum(randomNum(2, 5), randomNum(20, randomNum(20,110)));
+      retArray[i].name = createResourceName();
+      retArray[i].type = theType;
+      retArray[i].trend = determineResourceTrend(theType);
     }
-    // Initialize resources array with this function
+    return retArray;
+  }
+  // Initialize resources array with this function
   var givePlayerResources = function(resources, resourceAmount) {
     for (var i = 0; i < resourceAmount; i++) {
       // Ensure player gets at least 1 resource to play with
@@ -133,17 +212,14 @@ var MICROSTOCKS = (function () {
     "Cleveland",
     "Providence",
   ];
-  // Create text string to represent JSON
-  playerString = '{"stats":{' +
-    '"money":' + randomNum(500) + ',' +
-    '"location":"' + randomNum(locations.length) + '",' +
-    '"resources":[' +
-    arrayToJSON(resources) +
-    ']' +
-    '}' +
-    '}';
-  // Get the object with JSON.parse
-  playerObject = JSON.parse(playerString);
+  // Create the player object
+  playerObject = {
+    "stats": {
+      "money": randomNum(500),
+      "location": randomNum(locations.length),
+      "resources": resources
+    }
+  }
 
   // Private functions needed for resources & log
   // ---------------------------------
@@ -306,7 +382,7 @@ var MICROSTOCKS = (function () {
       // Get the specific resource
       theResource = document.getElementsByClassName("resource-"+i)[0];
       // Change the text of that specific thing to an updated string
-      theText = "<p><span class=\"fa fa-qrcode fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p>";
+      theText = "<p><span class=\"fa " + player.resources[i].type.icon + " fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p>";
       if(player.resources[i].amount > 0) {
         theText += "<p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
       }
@@ -789,6 +865,7 @@ var MICROSTOCKS = (function () {
       var listELement = "";
       var theText = "";
       var cssClassArray = [];
+      var resourceIcon = "";
       // get the resource list ul element
       var resourceList = document.getElementsByClassName("resource-list")[0];
       // Loop through all the current resources
@@ -796,7 +873,7 @@ var MICROSTOCKS = (function () {
         // Create a list element for each resource
         listElement = document.createElement("LI");
         // Create the HTML string for each resource
-        theText = "<p><span class=\"fa fa-qrcode fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p>";
+        theText = "<p><span class=\"fa " + player.resources[i].type.icon + " fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p>";
         if(player.resources[i].amount > 0) {
           theText += "<p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
         }
