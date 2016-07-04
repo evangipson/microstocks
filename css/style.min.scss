@@ -364,10 +364,10 @@ nav.options-button {
   // under-hover override
   &:hover {
     background: darken($blue,10%);
-    border: darken($blue,20%) .3rem solid;
-    // hover up just a bit
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-    // move top just a touch
+    @include border(darken($blue, 20%));
+    // increase drop shadow to give illusion of popping up
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    // move top just a touch to maintain illusion
     top: -.2rem;
     &::after {
       background: darken($blue,20%);
