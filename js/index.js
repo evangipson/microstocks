@@ -140,9 +140,9 @@ var MICROSTOCKS = (function () {
   };
   // Initialize resources array with this function
   var givePlayerResources = function(resources, resourceAmount) {
+    // Ensure player gets at least 1 resource to play with
+    var atLeastOne = false;
     for (var i = 0; i < resourceAmount; i++) {
-      // Ensure player gets at least 1 resource to play with
-      var atLeastOne = false;
       // 30% chance the player will own that resource
       if(randomNum(100)>70) {
         resources[i].amount = randomNum(randomNum(1, 4), randomNum(5, 20));
@@ -157,21 +157,6 @@ var MICROSTOCKS = (function () {
       // Give the player a random resource
       resources[randomNum(0,resources.length)].amount = randomNum(randomNum(1,4), randomNum(5,20));
     }
-  };
-  // Ability to get Object Key index from JSON object
-  // borrowed from: http://stackoverflow.com/questions/15218448/get-index-of-a-key-in-json
-  var getObjectKeyIndex = function(obj, keyToFind) {
-    var i = 0, key;
-
-    for (key in obj) {
-        if (key == keyToFind) {
-            return i;
-        }
-
-        i++;
-    }
-
-    return null;
   };
 
   // Module
@@ -270,8 +255,16 @@ var MICROSTOCKS = (function () {
     if (cssClass !== undefined && cssClass !== null) {
       // Let's add it to the new <li>
       var cssClassArray = cssClass.split(" ");
-      for (var i in cssClassArray) {
-        listElement.classList.add(cssClassArray[i]);
+      // Make sure not to use "i" here, because of
+      // the "i" declared in the for loop above!
+      // REMEMBER: javascript has functional scope!
+      for (var j in cssClassArray) {
+        // Make sure to check the object and see if
+        // it's a "true" member. thanks, crockford!
+        if (object.hasOwnProperty(variable)) {
+          // Add the CSS class to the listElement
+          listElement.classList.add(cssClassArray[j]);
+        }
       }
     }
   };
