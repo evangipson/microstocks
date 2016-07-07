@@ -797,7 +797,6 @@ var MICROSTOCKS = (function () {
                     "<li>Type: " + resourceType + "</li>" +
                     "<li>Trend type: " + resourceTrendName + "</li>" +
                     "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
-                    "<li>You own " + resourceAmount + "</li>" +
                     "<li>You own " + resourceAmount + " unit(s) of " + resourceName + "</li>" +
                   "</ul><hr />" +
                   "You don't have any " + resourceName + " to sell!");
