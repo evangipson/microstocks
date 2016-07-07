@@ -10,21 +10,21 @@ var MICROSTOCKS = (function () {
   // to ranging from 1-100.
   var randomNum = function(lowNum, highNum) {
     // If lowNum wasn't defined, set it to 1 to get the 1-100 range
-    if (lowNum === undefined || lowNum === NaN || lowNum === null || typeof lowNum !== "number") {
+    if (lowNum === undefined || isNaN(lowNum) || lowNum === null || typeof lowNum !== "number") {
       // If lowNum ISN'T a number, it's safe to set it to 1.
       lowNum = 1;
       // And also highNum to 100.
       highNum = 100;
     }
     // If highNum wasn't defined, set it to the first value and lowNum to 1 to get the 1-lowNum range
-    if (highNum === undefined || highNum === NaN || highNum === null || typeof highNum !== "number") {
+    if (highNum === undefined || isNaN(highNum) || highNum === null || typeof highNum !== "number") {
       // If highNum ISN'T a number, it's safe to set it the range to 1-100.
       highNum = lowNum;
       lowNum = 1;
     }
     // Take the floor of random calculation
     return Math.floor(Math.random() * (highNum - lowNum) + lowNum);
-  }
+  };
   // Function used to create a new name for a resource
   var createResourceName = function() {
     var resourceName = "";
@@ -33,7 +33,7 @@ var MICROSTOCKS = (function () {
       resourceName += String.fromCharCode(65 + randomNum(26));
     }
     return resourceName;
-  }
+  };
   // This will determine the resource type
   var determineResourceType = function() {
     // Set up the amount of resource types
@@ -62,7 +62,7 @@ var MICROSTOCKS = (function () {
     ];
     // Give back what we should be!
     return resourceTypes[randomNum(0,resourceTypes.length)];
-  }
+  };
   // Function to determine a trend for the resource
   var determineResourceTrend = function(theType) {
     // Variable for resource's trend's string representation
@@ -98,8 +98,6 @@ var MICROSTOCKS = (function () {
         "maxFlux" : randomNum(-5,-1)
       }
     ];
-    // Make a big trends array combining the two
-    var resourceAllTrends = resourceStableTrends.concat(resourceVolatileTrends);
     // Determine type of resource
     // If we have a health or natural resource
     if (theType.name == "Health" || theType.name == "Natural") {
@@ -119,7 +117,7 @@ var MICROSTOCKS = (function () {
     }
     // Now let's return the object containing the name and amount
     return trend;
-  }
+  };
   // Initialize resources array with this function
   var createResources = function(resourceAmount) {
     var retArray = [];
@@ -137,12 +135,12 @@ var MICROSTOCKS = (function () {
       retArray[i].trend = determineResourceTrend(theType);
     }
     return retArray;
-  }
+  };
   // Initialize resources array with this function
   var givePlayerResources = function(resources, resourceAmount) {
+    // Ensure player gets at least 1 resource to play with
+    var atLeastOne = false;
     for (var i = 0; i < resourceAmount; i++) {
-      // Ensure player gets at least 1 resource to play with
-      var atLeastOne = false;
       // 30% chance the player will own that resource
       if(randomNum(100)>70) {
         resources[i].amount = randomNum(randomNum(1, 4), randomNum(5, 20));
@@ -157,39 +155,23 @@ var MICROSTOCKS = (function () {
       // Give the player a random resource
       resources[randomNum(0,resources.length)].amount = randomNum(randomNum(1,4), randomNum(5,20));
     }
-  }
-  // Ability to get Object Key index from JSON object
-  // borrowed from: http://stackoverflow.com/questions/15218448/get-index-of-a-key-in-json
-  var getObjectKeyIndex = function(obj, keyToFind) {
-    var i = 0, key;
-
-    for (key in obj) {
-        if (key == keyToFind) {
-            return i;
-        }
-
-        i++;
-    }
-
-    return null;
-  }
+  };
 
   // Module
   // ------
   // Create the module we'll export
-  var microstocksModule = {},
+  var microstocksModule = {};
   
   // Private Variables
   // -----------------
-  // Let's pull in the log and ul.
-  log = document.getElementsByClassName("log")[0];
-  logList = document.getElementsByClassName("log-list")[0];
+  // Let's pull in the log ul.
+  var logList = document.getElementsByClassName("log-list")[0];
   // We need to set how much it is to move
-  moveFee = 10;
+  var moveFee = 10;
   // Change this variable to modify the amount of resources generated
-  resourceAmount = randomNum(12,20);
+  var resourceAmount = randomNum(12,20);
   // Create some variables to fill up player JSON with
-  resources = createResources(resourceAmount);
+  var resources = createResources(resourceAmount);
   // Fill up the playerObject resource array w/ amounts for the player
   givePlayerResources(resources, resourceAmount);
   // Now sort the resources array by Amount
@@ -198,8 +180,8 @@ var MICROSTOCKS = (function () {
     return b.amount - a.amount;
   });
   // Array of locations around the USA
-  // This is referenced by playerObjects["stats"].location
-  locations = [
+  // This is referenced by playerObjects.stats.location
+  var locations = [
     "New York",
     "Chicago",
     "Philadelphia",
@@ -213,86 +195,96 @@ var MICROSTOCKS = (function () {
     "Providence",
   ];
   // Create the player object
-  playerObject = {
+  var playerObject = {
     "stats": {
       "money": randomNum(500),
       "location": randomNum(locations.length),
       "resources": resources
     }
-  }
+  };
 
   // Private functions needed for resources & log
   // ---------------------------------
   // Add list element to object
   var addListElement = function(obj, text, cssClass) {
-      // If text isn't empty
-      if (text !== undefined && text !== null) {
-        // We can set the amount of <li>s to the length of "text"
-        var listElementsToCreate = (typeof text === "object" ? text.length : 1);
-        var theText = "";
-        // Let's iterate now over the listOfElementsToCreate
-        for (var i = 0; i < listElementsToCreate; i++) {
-          // If we get a function, let's execute it and any optional arguments
-          if(typeof text[0] === "function") {
-            theText = text[0](text[1],text[2]);
-          }
-          // Or we got an array or JSON, so let's just
-          // fill theText with the appropriate value from text
-          else if(typeof text === "object") { 
-            theText = text[i];
-          }
-          // Otherwise, we just need the string that was given to us!
-          else {
-            theText = text;
-          }
-          // Create a new <li> element
-          var listElement = document.createElement("LI");
-          // Compose the message that will show up in the log
-          var textNode = document.createTextNode(theText);
-          // Append message to <li> node
-          listElement.appendChild(textNode);
-          // Append <li> node to log's <ul> if we defined obj
-          if (obj !== undefined || obj !== null) {
-            obj.appendChild(listElement);
-            // If we have messages, we need to reset
-            // the scroll for the log so it's on the bottom.
-            obj.scrollTop = obj.scrollHeight;
-          }
-          // Otherwise let's print out the error to the console
-          else {
-            console.error("addListElement exception: obj was null. Please call addListELement with a non-null, defined object as the first argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional.");
-          }
+    // If text isn't empty
+    if (text !== undefined && text !== null) {
+      // We can set the amount of <li>s to the length of "text"
+      var listElementsToCreate = (typeof text === "object" ? text.length : 1);
+      var theText = "";
+      // Let's iterate now over the listOfElementsToCreate
+      for (var i = 0; i < listElementsToCreate; i++) {
+        // If we get a function, let's execute it and any optional arguments
+        if(typeof text[0] === "function") {
+          theText = text[0](text[1],text[2]);
         }
-      } else {
-        console.error("addListElement exception: text was null. Please call addListELement with a non-null, defined text string as the second argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional.");
+        // Or we got an array or JSON, so let's just
+        // fill theText with the appropriate value from text
+        else if(typeof text === "object") { 
+          theText = text[i];
+        }
+        // Otherwise, we just need the string that was given to us!
+        else {
+          theText = text;
+        }
+        // Create a new <li> element
+        var listElement = document.createElement("LI");
+        // Compose the message that will show up in the log
+        var textNode = document.createTextNode(theText);
+        // Append message to <li> node
+        listElement.appendChild(textNode);
+        // Append <li> node to log's <ul> if we defined obj
+        if (obj !== undefined || obj !== null) {
+          obj.appendChild(listElement);
+          // If we have messages, we need to reset
+          // the scroll for the log so it's on the bottom.
+          obj.scrollTop = obj.scrollHeight;
+        }
+        // Otherwise let's print out the error to the console
+        else {
+          console.error("addListElement exception: obj was null. Please call addListELement with a non-null, defined object as the first argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional.");
+        }
       }
-      // If we HAVE a class coming in and it's valid
-      if (cssClass !== undefined && cssClass !== null) {
-        // Let's add it to the new <li>
-        var cssClassArray = cssClass.split(" ");
-        for (var i in cssClassArray) {
-          listElement.classList.add(cssClassArray[i]);
+    } else {
+      console.error("addListElement exception: text was null. Please call addListELement with a non-null, defined text string as the second argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional.");
+    }
+    // If we HAVE a class coming in and it's valid
+    if (cssClass !== undefined && cssClass !== null) {
+      // Let's add it to the new <li>
+      var cssClassArray = cssClass.split(" ");
+      // Make sure not to use "i" here, because of
+      // the "i" declared in the for loop above!
+      // REMEMBER: javascript has functional scope!
+      for (var j in cssClassArray) {
+        // Make sure to check the object and see if
+        // it's a "true" member. thanks, crockford!
+        if (cssClassArray.hasOwnProperty(j)) {
+          // Add the CSS class to the incoming object
+          obj.classList.add(cssClassArray[j]);
         }
       }
     }
-    // Change existing list element
+  };
+  // Change existing list element
   var changeListElement = function(cssClass, text) {
-      // This element already exists, so let's find it
-      var listElement = document.getElementsByClassName(cssClass)[0];
-      if (listElement !== undefined) {
-        // Set message to incoming text
-        listElement.innerText = text;
-      } else {
-        console.error("changeListElement needs to be called with a valid cssClass and incoming text. Check your syntax: changeListElement(cssClass, text);");
-      }
+    // This element already exists, so let's find it
+    var listElement = document.getElementsByClassName(cssClass)[0];
+    if (listElement !== undefined) {
+      // Set message to incoming text
+      listElement.innerText = text;
+    } else {
+      console.error("changeListElement needs to be called with a valid cssClass and incoming text. Check your syntax: changeListElement(cssClass, text);");
     }
-    // Function to fluctuate resource prices
-    // called everytime inventory is updated.
+  };
+  // Function to fluctuate resource prices
+  // called everytime inventory is updated.
   var updateResourcePrices = function() {
       // Pull playerObject's resources in locally
-      var playerResources = playerObject["stats"].resources;
-      // Also the resourceName for readiability
+      var playerResources = playerObject.stats.resources;
+      // Also the resourceName & resourceType for readability
+      // in the for loop below
       var resourceName = "";
+      var resourceType = "";
       // Amount resources should be flucuating
       var variant = 0;
       // Max $ amount resources can be
@@ -309,7 +301,7 @@ var MICROSTOCKS = (function () {
             // Now check if the cost is too high or too low
             if(playerResources[i].cost < resourceMax && playerResources[i].cost > 1) {
               // Actually modify the playerObject resource cost
-              playerObject["stats"].resources[i].cost += variant;
+              playerObject.stats.resources[i].cost += variant;
               if(variant > 0) {
                 // Show the increase in value on the log
                 addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
@@ -322,7 +314,7 @@ var MICROSTOCKS = (function () {
             else if(playerResources[i].cost < 1) {
               // Or if it's too low.
               // Will "bankrupt" the resource here
-              playerObject["stats"].resources[i].cost = 1;
+              playerObject.stats.resources[i].cost = 1;
               // Show the increase in value on the log
               addListElement(logList, resourceName + " bottomed out! Worth $1.", "resource-decrease");
             }
@@ -335,7 +327,7 @@ var MICROSTOCKS = (function () {
             // Now check if the cost is too high or too low
             if(playerResources[i].cost < resourceMax && playerResources[i].cost > 1) {
               // Actually modify the playerObject resource cost
-              playerObject["stats"].resources[i].cost += variant;
+              playerObject.stats.resources[i].cost += variant;
               if(variant > 0) {
                 // Show the increase in value on the log
                 addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
@@ -348,24 +340,22 @@ var MICROSTOCKS = (function () {
             else if(playerResources[i].cost < 1) {
               // Or if it's too low.
               // Will "bankrupt" the resource here
-              playerObject["stats"].resources[i].cost = 1;
+              playerObject.stats.resources[i].cost = 1;
               // Show the increase in value on the log
               addListElement(logList, resourceName + " bottomed out! Worth $1.", "resource-decrease");
             }
           }
         }
       }
-  }
+  };
   // This function updates the resource boxes
   var updateResourceBoxes = function() {
     // Bring in playerObject to a local variable
-    var player = playerObject["stats"];
+    var player = playerObject.stats;
     // Sort out the player's resource array 
     player.resources.sort(function(a, b) {
       return b.amount - a.amount;
     });
-    // get the resource list ul element
-    var resourceList = document.getElementsByClassName("resource-list")[0];
     var theResource = "";
     var theText = "";
     // Loop through all the current resources
@@ -387,12 +377,12 @@ var MICROSTOCKS = (function () {
         theResource.classList.remove("owned");
       }
     }
-  }
+  };
   // Function to update the inventory box.
   // Called when controls are interacted with.
   var updateInventory = function() {
     // Bring player in locally
-    var player = playerObject["stats"];
+    var player = playerObject.stats;
     // Get the updated resource prices
     updateResourcePrices();
     // Draw out the new inventory
@@ -428,15 +418,15 @@ var MICROSTOCKS = (function () {
     changeListElement("location", "Location: " + locations[player.location]);
     // Then update the resource boxes!
     updateResourceBoxes();
-  } 
+  };
   // Will return true if player owns any resources,
   // and false otherwise 
   var playerOwnsResource = function() {
       var ownedResources = [];
       // For every resource we have
-      for(var i = 0; i < playerObject["stats"].resources.length; i++) {
+      for(var i = 0; i < playerObject.stats.resources.length; i++) {
         // If we own that resource
-        if(playerObject["stats"].resources[i].amount > 0) {
+        if(playerObject.stats.resources[i].amount > 0) {
           // Push the index into that ownedResources array
           ownedResources.push(i);
         }
@@ -446,17 +436,17 @@ var MICROSTOCKS = (function () {
         return true;
       }
       return false;
-  }
+  };
   // Set random resource index, based on ownership
   var setRandomResourceIndex = function() {
       // Empty array holding resources index's that we own
       var ownedResourcesIndex = [];
       // If we have more than 1 resource
-      if(playerObject["stats"].resources.length > 1) {
+      if(playerObject.stats.resources.length > 1) {
         // For every resource we have
-        for(var i = 0; i < playerObject["stats"].resources.length; i++) {
+        for(var i = 0; i < playerObject.stats.resources.length; i++) {
           // If we own that resource
-          if(playerObject["stats"].resources[i].amount > 0) {
+          if(playerObject.stats.resources[i].amount > 0) {
             // Push the index into that ownedResourcesIndex array
             ownedResourcesIndex.push(i);
           }
@@ -466,93 +456,91 @@ var MICROSTOCKS = (function () {
       // now set playerObject's resourceIndex for permanence
       // And let's default this value to 0 if there are no owned resource
       // so we'll just try and sell the first resource on the list.
-      playerObject["stats"].resourceIndex = (ownedResourcesIndex.length === 0) ? 0 : ownedResourcesIndex[randomNum(0,ownedResourcesIndex.length)];
-  }
+      playerObject.stats.resourceIndex = (ownedResourcesIndex.length === 0) ? 0 : ownedResourcesIndex[randomNum(0,ownedResourcesIndex.length)];
+  };
   // Update resource index globally
   var updateResourceIndex = function(resourceIndex) {
-      // Pull in playerObject to this method
-      var player = playerObject["stats"];
-      // If we have a resourceIndex, let's set it accordingly (the click came from resource button)
-      if (typeof resourceIndex !== "undefined" && typeof resourceIndex !== "object") {
-        if (resourceIndex < player.resources.length) {
-          playerObject["stats"].resourceIndex = resourceIndex;
-        } else {
-          console.error("updateResourceIndex exception: Incoming resourceIndex outside of bounds of resources array.");
-        }
+    // Pull in playerObject to this method
+    var player = playerObject.stats;
+    // If we have a resourceIndex, let's set it accordingly (the click came from resource button)
+    if (typeof resourceIndex !== "undefined" && typeof resourceIndex !== "object") {
+      if (resourceIndex < player.resources.length) {
+        playerObject.stats.resourceIndex = resourceIndex;
+      } else {
+        console.error("updateResourceIndex exception: Incoming resourceIndex outside of bounds of resources array.");
       }
-      // We don't have a suitable resource index, so let's randomly shuffle the resource index
-      else {
-          playerObject["stats"].resourceIndex = randomNum(0,player.resources.length);
-        }
-      }
-    // Update location index globally
-  var updateLocationIndex = function(newLocation) {
-      playerObject["stats"].location = newLocation;
     }
-
-
+    // We don't have a suitable resource index, so let's randomly shuffle the resource index
+    else {
+      playerObject.stats.resourceIndex = randomNum(0,player.resources.length);
+    }
+  };
+  // Update location index globally
+  var updateLocationIndex = function(newLocation) {
+    playerObject.stats.location = newLocation;
+  };
   // Add button event listener function, takes 2 optional functions 
   // (logMessage and moreBehavior)
   var addButtonEvent = function(button, logMessage, moreBehavior) {
-      var logText = "";
-      if (button !== undefined && button !== null) {
-        button.addEventListener("click", function() {
-          if ((typeof logMessage === "object") && logMessage !== undefined && logMessage !== null) {
-            // Supports three arguments in the function
-            // This is array support, need to generalize
-            if (logMessage.length > 1) {
-              if (logMessage.length === 2) {
-                logText = logMessage[0](logMessage[1]);
-              } else if (logMessage.length === 3) {
-                logText = logMessage[0](logMessage[1], logMessage[2]);
-              }
+    var logText = "";
+    if (button !== undefined && button !== null) {
+      button.addEventListener("click", function() {
+        if ((typeof logMessage === "object") && logMessage !== undefined && logMessage !== null) {
+          // Supports three arguments in the function
+          // This is array support, need to generalize
+          if (logMessage.length > 1) {
+            if (logMessage.length === 2) {
+              logText = logMessage[0](logMessage[1]);
+            } else if (logMessage.length === 3) {
+              logText = logMessage[0](logMessage[1], logMessage[2]);
             }
-            // Otherwise call function blank
-            else {
-              // Query our logMessage function
-              logText = logMessage();
-            }
-          } 
-          // Also execute if it's just a function
-          else if (typeof logMessage === "function") {
+          }
+          // Otherwise call function blank
+          else {
+            // Query our logMessage function
             logText = logMessage();
           }
-          // If it's neither, I don't want it, so print out the error in the console
-          else {
-            console.error("addButtonEvent called with undefined logMessage function. logMessage function should return a string. See syntax: addButtonEvent(button, logFunction, moreBehavior), with moreBehavior being an optional function.");
-            console.error("typeof logMessage = " + typeof logMessage);
+        } 
+        // Also execute if it's just a function
+        else if (typeof logMessage === "function") {
+          logText = logMessage();
+        }
+        // If it's neither, I don't want it, so print out the error in the console
+        else {
+          console.error("addButtonEvent called with undefined logMessage function. logMessage function should return a string. See syntax: addButtonEvent(button, logFunction, moreBehavior), with moreBehavior being an optional function.");
+          console.error("typeof logMessage = " + typeof logMessage);
+        }
+        // Add the list element (no cssClass yet)
+        if (logText !== undefined) {
+          addListElement(logList, logText);
+        }
+        // run any additional code given in arguments
+        if (moreBehavior !== undefined && moreBehavior !== null) {
+          // It's just a function, cool, we'll run it
+          if (typeof moreBehavior === "function") {
+            moreBehavior();
           }
-          // Add the list element (no cssClass yet)
-          if (logText !== undefined) {
-            addListElement(logList, logText);
+          // Array? Cool, function with arguments
+          // need to generalize just like up above
+          else if (typeof moreBehavior === 'object') {
+            moreBehavior[0](moreBehavior[1]);
           }
-          // run any additional code given in arguments
-          if (moreBehavior !== undefined && moreBehavior !== null) {
-            // It's just a function, cool, we'll run it
-            if (typeof moreBehavior === "function") {
-              moreBehavior();
-            }
-            // Array? Cool, function with arguments
-            // need to generalize just like up above
-            else if (typeof moreBehavior === 'object') {
-              moreBehavior[0](moreBehavior[1])
-            }
-          }
-        });
-      } else {
-        console.error("addButtonEvent needs a defined, non-null button as it's first argument. See syntax: addButtonEvent(button, logFunction, moreBehavior), with moreBehavior being an optional function.");
-      }
+        }
+      });
+    } else {
+      console.error("addButtonEvent needs a defined, non-null button as it's first argument. See syntax: addButtonEvent(button, logFunction, moreBehavior), with moreBehavior being an optional function.");
     }
-    // Buy button functions 
-    // (Probably could combine sellMessage & buyMessage into
-    // one super "Message" function that would take in
-    // yet another function... that is getting ugly though  
+  };
+  // Buy button functions 
+  // (Probably could combine sellMessage & buyMessage into
+  // one super "Message" function that would take in
+  // yet another function... that is getting ugly though  
   var buyMessage = function(resourceIndex, amount) {
     // Check resourceIndex
     if (typeof resourceIndex === "undefined" || resourceIndex === null) {
       // if we are null or empty, make one up.
       updateResourceIndex();
-      resourceIndex = playerObject["stats"].resourceIndex;
+      resourceIndex = playerObject.stats.resourceIndex;
     } else {
       // Pull in resourceIndex
       updateResourceIndex(resourceIndex);
@@ -562,35 +550,35 @@ var MICROSTOCKS = (function () {
     var resourceAmount = (amount === undefined) ? 1 : amount;
 
     // If they can't buy the resource, fuck them.
-    if (playerObject["stats"].money < (playerObject["stats"].resources[resourceIndex].cost * resourceAmount)) {
-      return ["Can't afford unit(s) of " + playerObject["stats"].resources[resourceIndex].name + ".",
+    if (playerObject.stats.money < (playerObject.stats.resources[resourceIndex].cost * resourceAmount)) {
+      return ["Can't afford unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".",
         "(Attempted to purchase " + resourceAmount + ".)"
       ];
     }
     // If the player can afford it, let's buy it!
     else {
-      return "You bought " + resourceAmount + " unit(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
+      return "You bought " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".";
     }
-  }
+  };
   var buyAction = function(amount) {
     // Pull in playerObject to this method
-    var player = playerObject["stats"];
+    var player = playerObject.stats;
     // Check amount
     var resourceAmount = (amount === undefined) ? 1 : amount;
-      // Pull in resourceIndex
-      var resourceIndex = player.resourceIndex;
-      // If the player can afford the resource
-      if (player.money >= (player.resources[resourceIndex].cost * resourceAmount)) {
-        // Update the player's money
-        playerObject["stats"].money = player.money - (player.resources[resourceIndex].cost * resourceAmount);
-        // Update the player's resource amount
-        playerObject["stats"].resources[resourceIndex].amount += parseInt(resourceAmount);
-      } else {
-        console.error("buyAction exception: Not enough money to make purchase.");
-      }
-      updateInventory();
+    // Pull in resourceIndex
+    var resourceIndex = player.resourceIndex;
+    // If the player can afford the resource
+    if (player.money >= (player.resources[resourceIndex].cost * resourceAmount)) {
+      // Update the player's money
+      playerObject.stats.money = player.money - (player.resources[resourceIndex].cost * resourceAmount);
+      // Update the player's resource amount
+      playerObject.stats.resources[resourceIndex].amount += parseInt(resourceAmount);
+    } else {
+      console.error("buyAction exception: Not enough money to make purchase.");
     }
-    // Sell button functions
+    updateInventory();
+  };
+  // Sell button functions
   var sellMessage = function(resourceIndex, amount) { 
     // Check resourceIndex
     if (typeof resourceIndex === "undefined" || resourceIndex === null) {
@@ -605,7 +593,7 @@ var MICROSTOCKS = (function () {
       // set a new random resource index.
       setRandomResourceIndex();
       // Set resourceIndex for this function
-      resourceIndex = playerObject["stats"].resourceIndex;
+      resourceIndex = playerObject.stats.resourceIndex;
     } else {
       // Pull in resourceIndex
       updateResourceIndex(resourceIndex);
@@ -614,19 +602,19 @@ var MICROSTOCKS = (function () {
     var resourceAmount = (amount === undefined) ? 1 : amount;
 
     // If you have the resource amount, go ahead and sell it!
-    if (playerObject["stats"].resources[resourceIndex].amount >= resourceAmount) {
-      return "You sold " + resourceAmount + " unit(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
+    if (playerObject.stats.resources[resourceIndex].amount >= resourceAmount) {
+      return "You sold " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".";
     }
     // If the player can't afford it, fuck off!
     else {
-      return "You don't have " + resourceAmount + " unit(s) of " + playerObject["stats"].resources[resourceIndex].name + ".";
+      return "You don't have " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".";
     }
-  }
+  };
   var sellAction = function(amount) {
     // If the player owns resources, continue on with this action
     if(playerOwnsResource()) {
       // Pull in playerObject to this method
-      var player = playerObject["stats"];
+      var player = playerObject.stats;
       // Check amount
       var resourceAmount = (amount === undefined) ? 1 : amount;
       // Pull in resourceIndex
@@ -634,46 +622,46 @@ var MICROSTOCKS = (function () {
       // If you have the resource amount, go ahead and sell it!
       if (player.resources[tmpResourceIndex].amount >= resourceAmount) {
         // Update players resource
-        playerObject["stats"].resources[tmpResourceIndex].amount -= parseInt(resourceAmount);
+        playerObject.stats.resources[tmpResourceIndex].amount -= parseInt(resourceAmount);
         // Update player's money
-        playerObject["stats"].money = player.money + (player.resources[tmpResourceIndex].cost * resourceAmount);
+        playerObject.stats.money = player.money + (player.resources[tmpResourceIndex].cost * resourceAmount);
         // Update the inventory box
         updateInventory();
       } 
     }
-  }
+  };
   // Location logging functionality
   var travelMessage = function() {
-      // Pull in playerObject to this method
-      var player = playerObject["stats"];
-      // if the player doesn't have $10, don't let him travel.
-      if (player.money < moveFee) {
-        return "Can't afford to move! Why don't you sell some resources?";
-      }
-      // make sure we have a valid resource index for potentially selling
-      // since this runs before sellAction.
-      updateResourceIndex();
-      // Try and generate a new locationIndex. 
-      var newNum = randomNum(locations.length);
-      // Make sure we don't get the same locationIndex that we have
-      while (newNum === player.location) {
-        // Make sure we generate a NEW location
-        newNum = randomNum(locations.length);
-      }
-      updateLocationIndex(newNum);
-      return ["Player moved to " + locations[player.location],
-              "Charged $" + moveFee + " to go!"];
+    // Pull in playerObject to this method
+    var player = playerObject.stats;
+    // if the player doesn't have $10, don't let him travel.
+    if (player.money < moveFee) {
+      return "Can't afford to move! Why don't you sell some resources?";
     }
-    // Subsequent function, update screen
+    // make sure we have a valid resource index for potentially selling
+    // since this runs before sellAction.
+    updateResourceIndex();
+    // Try and generate a new locationIndex. 
+    var newNum = randomNum(locations.length);
+    // Make sure we don't get the same locationIndex that we have
+    while (newNum === player.location) {
+      // Make sure we generate a NEW location
+      newNum = randomNum(locations.length);
+    }
+    updateLocationIndex(newNum);
+    return ["Player moved to " + locations[player.location],
+            "Charged $" + moveFee + " to go!"];
+  };
+  // Subsequent function, update screen
   var travelAction = function() {
-      // Pull in playerObject to this method
-      var player = playerObject["stats"];
-      // if the player has $10 (he should, we just checked this in travelMessage).
-      if (player.money >= moveFee) {
-        playerObject["stats"].money = parseInt(player.money) - moveFee;
-        updateInventory();
-      }
+    // Pull in playerObject to this method
+    var player = playerObject.stats;
+    // if the player has $10 (he should, we just checked this in travelMessage).
+    if (player.money >= moveFee) {
+      playerObject.stats.money = parseInt(player.money) - moveFee;
+      updateInventory();
     }
+  };
   // Will call the options dialog pop-up, meant
   // to be used with the options button
   var launchOptionsDialog = function() {
@@ -692,13 +680,13 @@ var MICROSTOCKS = (function () {
             }
         }
     });
-  }
+  };
   // Function to call buy/sell alert box
   // We have to call this last because it uses 
   // buyAction, sellAction, buyMessage & sellMessage
   var buySellDialogue = function(index) {
     // pull in playerObject to this method
-    var player = playerObject["stats"];
+    var player = playerObject.stats;
     // instantiate variables needed for jquery-ui elements
     var maxResources = 0;
     var sliderStep = 0;
@@ -863,7 +851,7 @@ var MICROSTOCKS = (function () {
             }
         }
     });
-  }
+  };
   // This adds all the resource button event listeners
   // to buy and sell those invididual resources
   // and it's declared down here because it needs
@@ -873,19 +861,19 @@ var MICROSTOCKS = (function () {
     for (var i = 0; i < resourceArray.length; i++) {
       addButtonEvent(resourceArray[i], [buySellDialogue, i]);
     }
-  }
+  };
   // This function creates the display of the resources
   var createResourceBoxes = function() {
       // Bring in playerObject to a local variable
-      var player = playerObject["stats"];
+      var player = playerObject.stats;
       // variables for display resources
       var className = "";
-      var listELement = "";
       var theText = "";
       var cssClassArray = [];
-      var resourceIcon = "";
       // get the resource list ul element
       var resourceList = document.getElementsByClassName("resource-list")[0];
+      // declare a listElement holder variable, gotta put that <li> somewhere!
+      var listElement = "";
       // Loop through all the current resources
       for (var i = 0; i < player.resources.length; i++) {
         // Create a list element for each resource
@@ -904,39 +892,42 @@ var MICROSTOCKS = (function () {
         // We have a class that is multiple values
         // so let's add it to the DOM
         cssClassArray = className.split(" ");
+        // Check the object and see if
+        // it's a "true" member
         for (var j in cssClassArray) {
-          listElement.classList.add(cssClassArray[j]);
+          if(cssClassArray.hasOwnProperty(j)) {
+            listElement.classList.add(cssClassArray[j]);
+          }
         }
         // Append <li> node to resource list <ul>
         resourceList.appendChild(listElement);
       }
       // Now add the event listeners for buying & selling those resources
       addResourceEventListeners();
-  }
+  };
   // This function creates the initial display of the inventory box
   var createInventory = function() {
-      // Bring in playerObject to a local variable
-      var player = playerObject["stats"];
-      // Get the player's inventory list, since we are adding elements to it.
-      var invList = document.getElementsByClassName("inventory-list")[0];
-      // Variable to display the total amount of the portfolio
-      var portfolioTotal = 0;
-      // Display portfolio total
-      for (var i = 0; i < resources.length; i++) {
-        portfolioTotal += player.resources[i].amount * player.resources[i].cost;
-      }
-      // We need to display our money
-      addListElement(invList, "Cash: $" + player.money, "money cash");
-      // We need to display our portfolio
-      addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio");
-      // We need to display our total worth
-      addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth");
-      // Our location
-      addListElement(invList, "Location: " + locations[player.location], "location");
-      // Then draw the resources
-      createResourceBoxes();
+    // Bring in playerObject to a local variable
+    var player = playerObject.stats;
+    // Get the player's inventory list, since we are adding elements to it.
+    var invList = document.getElementsByClassName("inventory-list")[0];
+    // Variable to display the total amount of the portfolio
+    var portfolioTotal = 0;
+    // Display portfolio total
+    for (var i = 0; i < resources.length; i++) {
+      portfolioTotal += player.resources[i].amount * player.resources[i].cost;
     }
-  
+    // We need to display our money
+    addListElement(invList, "Cash: $" + player.money, "money cash");
+    // We need to display our portfolio
+    addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio");
+    // We need to display our total worth
+    addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth");
+    // Our location
+    addListElement(invList, "Location: " + locations[player.location], "location");
+    // Then draw the resources
+    createResourceBoxes();
+  };  
   // Now add our public init method to call in the ready event
   microstocksModule.init = function() {
     // Get the Controls
@@ -953,11 +944,9 @@ var MICROSTOCKS = (function () {
     addButtonEvent(optionsButton, launchOptionsDialog);
     // Now let's create the inventory panel!
     createInventory();
-  }
-
+  };
   // give back our module!
   return microstocksModule;
-
 }()); // Execute MICROSTOCKS function enclosure immediately
 
 // Don't do any javascript until jquery's ready event is called
