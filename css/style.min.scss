@@ -385,6 +385,12 @@ nav.options-button {
   // I don't like border-radius, flat pls
   border-radius: 0 !important;
   background: white;
+  height: 100%!important;
+  width: 100%!important;
+  @include respond($phoneBreakpoint) {
+    height: inherit!important;
+    width: inherit!important;
+  }
   // override modal background area
   &.ui-widget-content, .ui-widget-content {
     border: none;
