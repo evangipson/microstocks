@@ -207,61 +207,50 @@ var MICROSTOCKS = (function () {
   // ---------------------------------
   // Add list element to object
   var addListElement = function(obj, text, cssClass) {
+    var listElement = "";
     // If text isn't empty
     if (text !== undefined && text !== null) {
-      // We can set the amount of <li>s to the length of "text"
-      var listElementsToCreate = (typeof text === "object" ? text.length : 1);
       var theText = "";
-      // Let's iterate now over the listOfElementsToCreate
-      for (var i = 0; i < listElementsToCreate; i++) {
-        // If we get a function, let's execute it and any optional arguments
-        if(typeof text[0] === "function") {
-          theText = text[0](text[1],text[2]);
-        }
-        // Or we got an array or JSON, so let's just
-        // fill theText with the appropriate value from text
-        else if(typeof text === "object") { 
-          theText = text[i];
-        }
-        // Otherwise, we just need the string that was given to us!
-        else {
-          theText = text;
-        }
-        // Create a new <li> element
-        var listElement = document.createElement("LI");
-        // Compose the message that will show up in the log
-        var textNode = document.createTextNode(theText);
-        // Append message to <li> node
-        listElement.appendChild(textNode);
-        // Append <li> node to log's <ul> if we defined obj
-        if (obj !== undefined || obj !== null) {
-          obj.appendChild(listElement);
-          // If we have messages, we need to reset
-          // the scroll for the log so it's on the bottom.
-          obj.scrollTop = obj.scrollHeight;
-        }
-        // Otherwise let's print out the error to the console
-        else {
-          console.error("addListElement exception: obj was null. Please call addListELement with a non-null, defined object as the first argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional.");
-        }
+      theText = text;
+      // Create a new <li> element
+      listElement = document.createElement("LI");
+      // Compose the message that will show up in the log
+      var textNode = document.createTextNode(theText);
+      // Append message to <li> node
+      listElement.appendChild(textNode);
+      // Append <li> node to log's <ul> if we defined obj
+      if (obj !== undefined || obj !== null) {
+        obj.appendChild(listElement);
+        // If we have messages, we need to reset
+        // the scroll for the log so it's on the bottom.
+        obj.scrollTop = obj.scrollHeight;
       }
-    } else {
-      console.error("addListElement exception: text was null. Please call addListELement with a non-null, defined text string as the second argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional.");
+      // Otherwise let's print out the error to the console
+      else {
+        console.error("addListElement exception: obj was null. Please call addListELement with a non-null, defined object as the first argument. See syntax: addListElement(obj, text, cssClass), with cssClass being optional.");
+      }
     }
     // If we HAVE a class coming in and it's valid
     if (cssClass !== undefined && cssClass !== null) {
       // Let's add it to the new <li>
-      var cssClassArray = cssClass.split(" ");
-      // Make sure not to use "i" here, because of
-      // the "i" declared in the for loop above!
-      // REMEMBER: javascript has functional scope!
-      for (var j in cssClassArray) {
-        // Make sure to check the object and see if
-        // it's a "true" member. thanks, crockford!
-        if (cssClassArray.hasOwnProperty(j)) {
-          // Add the CSS class to the incoming object
-          obj.classList.add(cssClassArray[j]);
+      // and if our cssClass is multiple classes....
+      if(cssClass.split(" ").length > 1) {
+        var cssClassArray = cssClass.split(" ");
+        // Make sure not to use "i" here, because of
+        // the "i" declared in the for loop above!
+        // REMEMBER: javascript has functional scope!
+        for (var j in cssClassArray) {
+          // Make sure to check the object and see if
+          // it's a "true" member. thanks, crockford!
+          if (cssClassArray.hasOwnProperty(j)) {
+            // Add the CSS class to the list element!
+            listElement.classList.add(cssClassArray[j]);
+          }
         }
+      }
+      // If we just have 1 cssClass come in, apply it
+      else {
+        listElement.classList.add(cssClass);
       }
     }
   };
