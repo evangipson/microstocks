@@ -670,6 +670,31 @@ var MICROSTOCKS = (function () {
         }
     });
   };
+  // Function that prints out buySell dialog
+  // welcome message with some data, takes in one
+  // string that is the last line of dialogue, indicating
+  // what the user can do, as well as an index
+  var buySellDialogueMessage = function(theIndex, finalStatement) {
+    // pull in playerObject to this method
+    var player = playerObject.stats;
+    // Bring in index from buySellDialogue
+    var index = theIndex;
+    // Pull in some variables for stats about resource
+    var resourceName = player.resources[index].name;
+    var resourceType = player.resources[index].type.name;
+    var resourceIcon = player.resources[index].type.icon;
+    var resourceTrendAverage = player.resources[index].trend.maxFlux;
+    var resourceTrendName = player.resources[index].trend.name;
+    var resourceAmount = player.resources[index].amount;
+    return "<h3><span class=\"fa " + resourceIcon + " fa-fw\"></span>" + resourceName + "</h3><hr />" +
+      "<ul>" +
+        "<li>Type: " + resourceType + "</li>" +
+        "<li>Trend type: " + resourceTrendName + "</li>" +
+        "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
+        "<li>You own " + resourceAmount + " unit(s) of " + resourceName + "</li>" +
+      "</ul><hr />" +
+      finalStatement;
+  };
   // Function to call buy/sell alert box
   // We have to call this last because it uses 
   // buyAction, sellAction, buyMessage & sellMessage
@@ -681,21 +706,9 @@ var MICROSTOCKS = (function () {
     var sliderStep = 0;
     var sliderValue = 0;
     var slideAmount = 1;
+    // Pull in resourceName
     var resourceName = player.resources[index].name;
-    // Pull in some variables for stats about resource
-    var resourceType = player.resources[index].type.name;
-    var resourceIcon = player.resources[index].type.icon;
-    var resourceTrendAverage = player.resources[index].trend.maxFlux;
-    var resourceTrendName = player.resources[index].trend.name;
-    var resourceAmount = player.resources[index].amount;
-    $(".buy-sell-dialogue").html("<h3><span class=\"fa " + resourceIcon + " fa-fw\"></span>" + resourceName + "</h3><hr />" +
-      "<ul>" +
-        "<li>Type: " + resourceType + "</li>" +
-        "<li>Trend type: " + resourceTrendName + "</li>" +
-        "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
-        "<li>You own " + resourceAmount + " unit(s) of " + resourceName + "</li>" +
-      "</ul><hr />" +
-      "Would you like to buy or sell " + resourceName + " today?");
+    $(".buy-sell-dialogue").html(buySellDialogueMessage(index,"Would you like to buy or sell " + resourceName + " today?"));
     // Initialize the buy-sell dialogue modal
     $(".buy-sell").dialog({
         modal: true,
@@ -705,14 +718,7 @@ var MICROSTOCKS = (function () {
               maxResources = parseInt(player.money) / parseInt(player.resources[index].cost);
               // If we don't have any money, let the player know
               if(maxResources < 1) {
-                $(".buy-sell-dialogue").html("<h3><span class=\"fa " + resourceIcon + " fa-fw\"></span>" + resourceName + "</h3><hr />" +
-                  "<ul>" +
-                    "<li>Type: " + resourceType + "</li>" +
-                    "<li>Trend type: " + resourceTrendName + "</li>" +
-                    "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
-                    "<li>You own " + resourceAmount + " unit(s) of " + resourceName + "</li>" +
-                  "</ul><hr />" +
-                  "Can't afford any " + resourceName + "! Try selling other stock!");
+                $(".buy-sell-dialogue").html(buySellDialogueMessage(index,"Can't afford any " + resourceName + "! Try selling other stock!"));
               }
               // Otherwise, we have resources to buy!
               else {
@@ -769,14 +775,7 @@ var MICROSTOCKS = (function () {
               // Otherwise, just tell them they can't.
               // I should probably not have the sell button if they can't use it.
               else {
-                $(".buy-sell-dialogue").html("<h3><span class=\"fa " + resourceIcon + " fa-fw\"></span>" + resourceName + "</h3><hr />" +
-                  "<ul>" +
-                    "<li>Type: " + resourceType + "</li>" +
-                    "<li>Trend type: " + resourceTrendName + "</li>" +
-                    "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
-                    "<li>You own " + resourceAmount + " unit(s) of " + resourceName + "</li>" +
-                  "</ul><hr />" +
-                  "You don't have any " + resourceName + " to sell!");
+                  $(".buy-sell-dialogue").html(buySellDialogueMessage(index,"You don't have any " + resourceName + " to sell!"));
               }
           },
           Cancel: function() {
