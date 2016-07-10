@@ -382,11 +382,15 @@ nav.options-button {
   // I don't like border-radius, flat pls
   border-radius: 0 !important;
   background: white;
+  // Let's make the modal expand to the
+  // whole screen's width & height
   height: 100%!important;
   width: 100%!important;
+  // If we aren't on the phone, we
+  // need to set height and width
   @include respond($phoneBreakpoint) {
-    height: inherit!important;
-    width: inherit!important;
+    height: auto!important;
+    width: 25rem!important;
   }
   // override modal background area
   &.ui-widget-content, .ui-widget-content {
