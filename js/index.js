@@ -681,17 +681,24 @@ var MICROSTOCKS = (function () {
     var index = theIndex;
     // Pull in some variables for stats about resource
     var resourceName = player.resources[index].name;
+    var resourceCost = player.resources[index].cost;
     var resourceType = player.resources[index].type.name;
     var resourceIcon = player.resources[index].type.icon;
     var resourceTrendAverage = player.resources[index].trend.maxFlux;
-    var resourceTrendName = player.resources[index].trend.name;
     var resourceAmount = player.resources[index].amount;
+    // Build the trendAmount string conditional 
+    // on if the trendAmount is negative or positive
+    var trendAmountString = (resourceTrendAverage >= 0) ? "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" : "<li>Avg. Trend amount: -$" + Math.abs(resourceTrendAverage) + "</li>";
+    // Build the resourceAmount string conditional
+    // on if the player has more than 0 of the resource
+    var resourceAmountString = (resourceAmount > 0) ? "<li>You own " + resourceAmount + " unit(s) of " + resourceName + "</li>" : "<li>You don't own any units of " + resourceName + "</li>";
+    // Construct return string to fill up buySellModal for resource click
     return "<h3><span class=\"fa " + resourceIcon + " fa-fw\"></span>" + resourceName + "</h3><hr />" +
       "<ul>" +
+        "<li class=\"buysell-resource-value\">Current cost: $" + resourceCost + "</li>" +
         "<li>Type: " + resourceType + "</li>" +
-        "<li>Trend type: " + resourceTrendName + "</li>" +
-        "<li>Avg. Trend amount: $" + resourceTrendAverage + "</li>" +
-        "<li>You own " + resourceAmount + " unit(s) of " + resourceName + "</li>" +
+        trendAmountString +
+        resourceAmountString +
       "</ul><hr />" +
       finalStatement;
   };
