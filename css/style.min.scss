@@ -393,7 +393,7 @@ nav.options-button {
   // need to set height and width
   @include respond($phoneBreakpoint) {
     height: auto!important;
-    width: 25rem!important;
+    width: auto!important;
   }
   // override modal background area
   &.ui-widget-content, .ui-widget-content {
@@ -491,4 +491,23 @@ button{
       background: darken($blue, 10%);
     }
   }
+}
+// modal dialog rules
+.graph-dialog, #graph-wrapper {
+  // make sure to set how big the
+  // wrapping modal can be!
+  .ui-widget-content & {
+    // using !important to override
+    // the generated inline css by jquery ui
+    @include respond($phoneBreakpoint) {
+      width: 50rem!important;
+    }
+  }
+  @include respond($phoneBreakpoint) {
+    width: 50rem;
+    height: 30rem;
+  }
+}
+.buy-dialog, .sell-dialog {
+  width: 30rem!important;
 }
