@@ -21,6 +21,8 @@ If you want a local copy of Microstocks, just fork the repository, and set this 
 * JavaScript
 * jQuery 2.2.4 
 * jQuery-UI 1.11.4
+* [Morris](http://morrisjs.github.io/morris.js/)
+* [Raphael](https://github.com/DmitryBaranovskiy/raphael)
 * SCSS
 * [Scout](https://mhs.github.io/scout-app/)
 * HTML
