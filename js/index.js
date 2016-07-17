@@ -410,9 +410,9 @@ var MICROSTOCKS = (function () {
     var player = playerObject.stats;
     // update the gameData object for
     // the graph
-    gameData.cash.push([year + "-" + month, playerObject.stats.money]);
+    gameData.cash.push([year + "-" + month, player.stats.money]);
     gameData.portfolio.push([year + "-" + month, portfolioTotal]);
-    gameData.netWorth.push([year + "-" + month, portfolioTotal + playerObject.stats.money]);
+    gameData.netWorth.push([year + "-" + month, portfolioTotal + player.stats.money]);
   };
   // This will make time pass in the game world
   var tick = function() {
@@ -929,7 +929,7 @@ var MICROSTOCKS = (function () {
         title: 'Date',
         titleTextStyle: {color: '#333'}, 
         slantedText:true,
-        slantedTextAngle:60
+        slantedTextAngle:30
       },
       vAxis: {minValue: 0},
       width: $("#graph-wrapper").outerWidth(),

@@ -499,8 +499,8 @@ button{
   height: 70%;
   @include respond($phoneBreakpoint) {
     // limit the graph's height
-    height: 30rem;
-    width: 50rem;
+    height: 24rem;
+    width: 40rem;
     // reset the margin-left
     margin-left: auto;
   }
