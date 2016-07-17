@@ -265,6 +265,58 @@ var MICROSTOCKS = (function () {
       console.error("changeListElement needs to be called with a valid cssClass and incoming text. Check your syntax: changeListElement(cssClass, text);");
     }
   };
+  // Function to modify a voatile resource
+  var modifyVolatileResource = function(playerResources, resourceMax, variant, resourceName, i) {
+      // 60% chance to modify
+      if(randomNum(100) < 60) {
+        // Now check if the cost is too high or too low
+        if(playerResources[i].cost < resourceMax && playerResources[i].cost > 1) {
+          // Actually modify the playerObject resource cost
+          playerObject.stats.resources[i].cost += variant;
+          if(variant > 0) {
+            // Show the increase in value on the log
+            addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
+          }
+          else if(variant > 0) {
+            // Show the decrease in value on the log
+            addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
+          }
+        }
+        else if(playerResources[i].cost < 1) {
+          // Or if it's too low.
+          // Will "bankrupt" the resource here
+          playerObject.stats.resources[i].cost = 1;
+          // Show the increase in value on the log
+          addListElement(logList, resourceName + " bottomed out! Worth $1.", "resource-decrease");
+        }
+      }
+  };
+  // Function to modify a stable resource
+  var modifyStableResource = function(playerResources, resourceMax, variant, resourceName, i) {
+      // 30% chance to modify
+      if(randomNum(100) < 30) {
+        // Now check if the cost is too high or too low
+        if(playerResources[i].cost < resourceMax && playerResources[i].cost > 1) {
+          // Actually modify the playerObject resource cost
+          playerObject.stats.resources[i].cost += variant;
+          if(variant > 0) {
+            // Show the increase in value on the log
+            addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
+          }
+          else if(variant > 0) {
+            // Show the decrease in value on the log
+            addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
+          }
+        }
+        else if(playerResources[i].cost < 1) {
+          // Or if it's too low.
+          // Will "bankrupt" the resource here
+          playerObject.stats.resources[i].cost = 1;
+          // Show the increase in value on the log
+          addListElement(logList, resourceName + " bottomed out! Worth $1.", "resource-decrease");
+        }
+      }
+  };
   // Function to fluctuate resource prices
   // called everytime inventory is updated.
   var updateResourcePrices = function() {
@@ -280,60 +332,17 @@ var MICROSTOCKS = (function () {
       var resourceMax = 250;
       // We'd like to evaluate every resource per update
       for (var i = 0; i < playerResources.length; i++) {
+        // Get the necessary info for each resource & variant
         variant = randomNum(0,playerResources[i].trend.maxFlux);
         resourceName = playerResources[i].name;
         resourceType = playerResources[i].trend.name;
         // Stable resources won't be modified as much
         if(resourceType === "stable-up" || resourceType === "stable" || resourceType === "stable-down") {
-          // 30% chance to modify
-          if(randomNum(100) < 30) {
-            // Now check if the cost is too high or too low
-            if(playerResources[i].cost < resourceMax && playerResources[i].cost > 1) {
-              // Actually modify the playerObject resource cost
-              playerObject.stats.resources[i].cost += variant;
-              if(variant > 0) {
-                // Show the increase in value on the log
-                addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
-              }
-              else if(variant > 0) {
-                // Show the decrease in value on the log
-                addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
-              }
-            }
-            else if(playerResources[i].cost < 1) {
-              // Or if it's too low.
-              // Will "bankrupt" the resource here
-              playerObject.stats.resources[i].cost = 1;
-              // Show the increase in value on the log
-              addListElement(logList, resourceName + " bottomed out! Worth $1.", "resource-decrease");
-            }
-          }
+          modifyStableResource(playerResources, resourceMax, variant, resourceName, i);
         }
         // It's a volatile resource, so MODIFY!
         else {
-          // 60% chance to modify
-          if(randomNum(100) < 60) {
-            // Now check if the cost is too high or too low
-            if(playerResources[i].cost < resourceMax && playerResources[i].cost > 1) {
-              // Actually modify the playerObject resource cost
-              playerObject.stats.resources[i].cost += variant;
-              if(variant > 0) {
-                // Show the increase in value on the log
-                addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
-              }
-              else if(variant > 0) {
-                // Show the decrease in value on the log
-                addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
-              }
-            }
-            else if(playerResources[i].cost < 1) {
-              // Or if it's too low.
-              // Will "bankrupt" the resource here
-              playerObject.stats.resources[i].cost = 1;
-              // Show the increase in value on the log
-              addListElement(logList, resourceName + " bottomed out! Worth $1.", "resource-decrease");
-            }
-          }
+          modifyVolatileResource(playerResources, resourceMax, variant, resourceName, i);
         }
       }
   };
