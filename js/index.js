@@ -166,6 +166,8 @@ var MICROSTOCKS = (function () {
   // -----------------
   // Let's pull in the log ul.
   var logList = document.getElementsByClassName("log-list")[0];
+  // We need a graph object to fill with stuff
+  var morrisGraph = null;
   // We need to set how much it is to move
   var moveFee = 10;
   // Change this variable to modify the amount of resources generated
@@ -860,28 +862,35 @@ var MICROSTOCKS = (function () {
   var launchGraphDialog = function(type) {
     // Set up the content of the modal
     $(".graph-type").text(type);
-    // Generate the graph
-    new Morris.Line({
-      // ID of the element in which to draw the chart.
-      element: 'graph-wrapper',
-      // Chart data records -- each entry in this array corresponds to a point on
-      // the chart.
-      data: [
-        { year: '2008', value: 20 },
-        { year: '2009', value: 10 },
-        { year: '2010', value: 5 },
-        { year: '2011', value: 5 },
-        { year: '2012', value: 20 }
-      ],
-      // The name of the data record attribute that contains x-values.
-      xkey: 'year',
-      // A list of names of data record attributes that contain y-values.
-      ykeys: ['value'],
-      // Labels for the ykeys -- will be displayed when you hover over the
-      // chart.
-      labels: ['Value']
-    });
-    // Initialize the grpah-dialog modal
+    // Generate the graph if it hasn't been
+    // instantiated. The thought here is that
+    // if there is a graph already generated,
+    // we will just display that one.
+    if(morrisGraph === null) {
+      morrisGraph = Morris.Line({
+        // ID of the element in which to draw the chart.
+        element: 'graph-wrapper',
+        // Chart data records -- each entry in this array corresponds to a point on
+        // the chart.
+        data: [
+          { year: '2008', value: 20 },
+          { year: '2009', value: 10 },
+          { year: '2010', value: 5 },
+          { year: '2011', value: 5 },
+          { year: '2012', value: 20 }
+        ],
+        // The name of the data record attribute that contains x-values.
+        xkey: 'year',
+        // A list of names of data record attributes that contain y-values.
+        ykeys: ['value'],
+        // Labels for the ykeys -- will be displayed when you hover over the
+        // chart.
+        labels: ['Value'],
+        xLabelMargin: 10,
+        yLabelMargin: 10
+      });
+    }
+    // Initialize the graph-dialog modal
     $(".graph-dialog").dialog({
         modal: true,
         buttons: {
@@ -976,7 +985,6 @@ var MICROSTOCKS = (function () {
     var sellButton = document.getElementsByClassName("sell-button")[0];
     var travelButton = document.getElementsByClassName("travel-button")[0];
     var optionsButton = document.getElementsByClassName("options-button")[0];
-    console.log(cashButton);
     // Now let's set up the event listeners
     addButtonEvent(buyButton, buyMessage, buyAction);
     addButtonEvent(sellButton, sellMessage, sellAction);
