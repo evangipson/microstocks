@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="./css/style.min.css" />
     <!-- *Ugh* I hate using libraries -->    
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/overcast/jquery-ui.min.css" media="none" onload="if(media!='all')media='all'" />
+    <!-- We also have to bring in the Morrs graph css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css" media="none" onload="if(media!='all')media='all'" />
     <!-- Also let's take in font-awesome for icons -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" media="none" onload="if(media!='all')media='all'" />
     <!-- Google fonts are always sweet, but very slow so disabled for now
@@ -83,6 +85,9 @@
     <!-- at least I'm doing it via CDN so I don't have to download it -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <!-- Also I need Raphael and Morris to draw the graphs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
     <!-- Load in my javascript -->
     <script src="./js/index.js" async defer></script>
   </body>
