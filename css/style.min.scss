@@ -235,6 +235,9 @@ nav.options-button {
     color: white;
     font-weight: bold;
   }
+  .cash-button {
+    cursor: pointer;
+  }
   .money {
     background: darken($green,10%);
   }

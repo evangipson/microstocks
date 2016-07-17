@@ -384,7 +384,7 @@ var MICROSTOCKS = (function () {
     // Get the updated resource prices
     updateResourcePrices();
     // Draw out the new inventory
-    changeListElement("cash", "Money: $" + player.money);
+    changeListElement("cash-button", "Money: $" + player.money);
     // Variable to display the total amount of the portfolio
     var portfolioTotal = 0;
     // Display portfolio total
@@ -856,6 +856,41 @@ var MICROSTOCKS = (function () {
         }
     });
   };
+  // Function to launch the pretty graph dialog
+  var launchGraphDialog = function(type) {
+    // Set up the content of the modal
+    $(".graph-type").text(type);
+    // Generate the graph
+    new Morris.Line({
+      // ID of the element in which to draw the chart.
+      element: 'graph-wrapper',
+      // Chart data records -- each entry in this array corresponds to a point on
+      // the chart.
+      data: [
+        { year: '2008', value: 20 },
+        { year: '2009', value: 10 },
+        { year: '2010', value: 5 },
+        { year: '2011', value: 5 },
+        { year: '2012', value: 20 }
+      ],
+      // The name of the data record attribute that contains x-values.
+      xkey: 'year',
+      // A list of names of data record attributes that contain y-values.
+      ykeys: ['value'],
+      // Labels for the ykeys -- will be displayed when you hover over the
+      // chart.
+      labels: ['Value']
+    });
+    // Initialize the grpah-dialog modal
+    $(".graph-dialog").dialog({
+        modal: true,
+        buttons: {
+            "Close": function() {
+              $(this).dialog("close");
+            }
+        }
+    });
+  };
   // This adds all the resource button event listeners
   // to buy and sell those invididual resources
   // and it's declared down here because it needs
@@ -922,7 +957,7 @@ var MICROSTOCKS = (function () {
       portfolioTotal += player.resources[i].amount * player.resources[i].cost;
     }
     // We need to display our money
-    addListElement(invList, "Cash: $" + player.money, "money cash");
+    addListElement(invList, "Cash: $" + player.money, "money cash-button");
     // We need to display our portfolio
     addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio");
     // We need to display our total worth
@@ -941,6 +976,7 @@ var MICROSTOCKS = (function () {
     var sellButton = document.getElementsByClassName("sell-button")[0];
     var travelButton = document.getElementsByClassName("travel-button")[0];
     var optionsButton = document.getElementsByClassName("options-button")[0];
+    console.log(cashButton);
     // Now let's set up the event listeners
     addButtonEvent(buyButton, buyMessage, buyAction);
     addButtonEvent(sellButton, sellMessage, sellAction);
@@ -948,6 +984,11 @@ var MICROSTOCKS = (function () {
     addButtonEvent(optionsButton, launchOptionsDialog);
     // Now let's create the inventory panel!
     createInventory();
+    // And let's pull the inventory buttons
+    // so we can look at the pretty graphs
+    var cashButton = document.getElementsByClassName("cash-button")[0];
+    // Don't forget it has an event listener as well!
+    addButtonEvent(cashButton, [launchGraphDialog, "cash"]);
   };
   // give back our module!
   return microstocksModule;
