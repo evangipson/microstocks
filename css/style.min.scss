@@ -493,19 +493,18 @@ button{
   }
 }
 // modal dialog rules
-.graph-dialog, #graph-wrapper {
+#graph-wrapper {
   // make sure you can see the whole
   // graph on mobile resolution!
-  overflow: scroll;
+  //overflow: scroll;
   // Give the graph the entire viewport
-  width: 97%;
+  width: 50rem;
   height: 13rem;
   @include respond($phoneBreakpoint) {
     // reset the overflow-x because we
     // don't want scrollbars at wider resolutions
     overflow: hidden;
-    // limit the graph's height and width
-    width: 50rem;
+    // limit the graph's height
     height: 30rem;
   }
   // make sure to set how big the

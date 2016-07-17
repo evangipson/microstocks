@@ -165,9 +165,7 @@ var MICROSTOCKS = (function () {
   // Private Variables
   // -----------------
   // Let's pull in the log ul.
-  var logList = document.getElementsByClassName("log-list")[0];
-  // We need a graph object to fill with stuff
-  var morrisGraph = null;
+  var logList = document.getElementsByClassName("log-list")[0];\
   // We need to set how much it is to move
   var moveFee = 10;
   // Change this variable to modify the amount of resources generated
@@ -199,11 +197,57 @@ var MICROSTOCKS = (function () {
   // Create the player object
   var playerObject = {
     "stats": {
-      "money": randomNum(500),
+      "money": randomNum(350,500),
       "location": randomNum(locations.length),
       "resources": resources
     }
   };
+  // Variable to display the total amount of the portfolio
+  var portfolioTotal = 0;
+  // Calculate portfolio total
+  for (var i = 0; i < playerObject.stats.resources.length; i++) {
+    portfolioTotal += playerObject.stats.resources[i].amount * playerObject.stats.resources[i].cost;
+  }
+  // We need a date for gameData
+  // and multiple things need to access
+  // it, so the it's best to be scoped
+  // to the whole closure.
+  var todaysDate = new Date();
+  // Create gameData module for
+  // all those awesome graphs!
+  // Retrieve the month and year from todaysDate.
+  // getMonth() returns a 0-based number.
+  var month = todaysDate.getMonth()+1;
+  var year = todaysDate.getFullYear();
+  var gameData = {
+    // Initialize the cash data array, which
+    // will be filled with {month, value} objects
+    "cash" : [{
+      date: year + '-' + month, value: playerObject.stats.money
+    }],
+    "portfolio" : [{
+      date: year + '-' + month, value: portfolioTotal
+    }],
+    "netWorth" : [{
+      date: year + '-' + month, value: portfolioTotal + playerObject.stats.money
+    }],
+    // See below
+    "resourceAmounts" : []
+  };
+  // Resources are a bit more complicated, though.
+  // This will be an object, filled with the data structures
+  // used above... so an object filled with an array of objects
+  // which represent data points.
+  // It will be accessed/returns like so:
+  // gameData.resourceAmounts.resourceName = [{date,value},{date2,value2}];
+  for(var j = 0; j < playerObject.stats.resources.length; j++) {
+    gameData.resourceAmounts.push({
+      name: playerObject.stats.resources[j].name,
+      value: [{
+        date: year + '-' + month, value: playerObject.stats.resources[j].cost
+      }]
+    });
+  }
 
   // Private functions needed for resources & log
   // ---------------------------------
@@ -378,6 +422,52 @@ var MICROSTOCKS = (function () {
       }
     }
   };
+  // Function to update the gameData object
+  // to ensure the graphs will have historical
+  // data!!! Yay!!!
+  var updateGameData = function() {
+    // Bring player in locally
+    var player = playerObject.stats;
+    // update the gameData object for
+    // the graph
+    gameData.cash.push({
+        date: year + '-' + month, value: player.money
+    });
+    gameData.netWorth.push({
+        date: year + '-' + month, value: portfolioTotal + player.money
+    });
+    gameData.portfolio.push({
+        date: year + '-' + month, value: portfolioTotal
+    });
+    // Update the resourceAmount object
+    for (var i = 0; i < player.resources.length; i++) {
+      // Add some new game data for that resource
+      // since time has passed
+      gameData.resourceAmounts.push({
+          name: player.resources[i].name,
+          date: year + '-' + month, value: player.resources[i].cost
+      });
+    }
+  };
+  // This will make time pass in the game world
+  var tick = function() {
+    // Make a month pass, but
+    // if we are in December
+    if(month >= 12) {
+      // The year should be January
+      month = 1;
+      // Also a year has passed!
+      year += 1;
+    }
+    // Otherwise we can just
+    // increment the month like normal
+    else {
+      month += 1;
+    }
+    // Update the gameData object for graphs
+    // since time has passed
+    updateGameData();
+  };
   // Function to update the inventory box.
   // Called when controls are interacted with.
   var updateInventory = function() {
@@ -387,9 +477,9 @@ var MICROSTOCKS = (function () {
     updateResourcePrices();
     // Draw out the new inventory
     changeListElement("cash-button", "Money: $" + player.money);
-    // Variable to display the total amount of the portfolio
-    var portfolioTotal = 0;
-    // Display portfolio total
+    // Reset portfolioTotal
+    portfolioTotal = 0;
+    // Recalculate portfolio total
     for (var i = 0; i < player.resources.length; i++) {
       portfolioTotal += player.resources[i].amount * player.resources[i].cost;
     }
@@ -415,9 +505,12 @@ var MICROSTOCKS = (function () {
         // We lost money!
         changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
     }
+    // Tell the player where they are
     changeListElement("location", "Location: " + locations[player.location]);
     // Then update the resource boxes!
     updateResourceBoxes();
+    // Make time pass
+    tick();
   };
   // Will return true if player owns any resources,
   // and false otherwise 
@@ -658,6 +751,7 @@ var MICROSTOCKS = (function () {
     var player = playerObject.stats;
     // if the player has $10 (he should, we just checked this in travelMessage).
     if (player.money >= moveFee) {
+      // Remove the money from the player's inventory
       playerObject.stats.money = parseInt(player.money) - moveFee;
       updateInventory();
     }
@@ -862,34 +956,9 @@ var MICROSTOCKS = (function () {
   var launchGraphDialog = function(type) {
     // Set up the content of the modal
     $(".graph-type").text(type);
-    // Generate the graph if it hasn't been
-    // instantiated. The thought here is that
-    // if there is a graph already generated,
-    // we will just display that one.
-    if(morrisGraph === null) {
-      morrisGraph = Morris.Line({
-        // ID of the element in which to draw the chart.
-        element: 'graph-wrapper',
-        // Chart data records -- each entry in this array corresponds to a point on
-        // the chart.
-        data: [
-          { year: '2008', value: 20 },
-          { year: '2009', value: 10 },
-          { year: '2010', value: 5 },
-          { year: '2011', value: 5 },
-          { year: '2012', value: 20 }
-        ],
-        // The name of the data record attribute that contains x-values.
-        xkey: 'year',
-        // A list of names of data record attributes that contain y-values.
-        ykeys: ['value'],
-        // Labels for the ykeys -- will be displayed when you hover over the
-        // chart.
-        labels: ['Value'],
-        xLabelMargin: 10,
-        yLabelMargin: 10
-      });
-    }
+    // Update our graph!
+    // If we are querying about a resource...
+
     // Initialize the graph-dialog modal
     $(".graph-dialog").dialog({
         modal: true,
@@ -975,9 +1044,30 @@ var MICROSTOCKS = (function () {
     addListElement(invList, "Location: " + locations[player.location], "location");
     // Then draw the resources
     createResourceBoxes();
-  };  
+  };
   // Now add our public init method to call in the ready event
   microstocksModule.init = function() {
+    // initialize the graph we're going to use, let's
+    // set it up with empty values first.
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(function() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Sales', 'Expenses'],
+          ['2013',  1000,      400],
+          ['2014',  1170,      460],
+          ['2015',  660,       1120],
+          ['2016',  1030,      540]
+        ]);
+
+        var options = {
+          title: 'Company Performance',
+          hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+          vAxis: {minValue: 0}
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('graph-wrapper'));
+        chart.draw(data, options);
+    });
     // Get the Controls
     // ----------------
     // Now lets pull in the buttons
