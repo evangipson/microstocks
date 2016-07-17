@@ -494,12 +494,15 @@ button{
 }
 // modal dialog rules
 #graph-wrapper {
-  width: 100vw;
-  height: 60vh;
+  width: 110vw;
+  margin-left: -10%;
+  height: 70%;
   @include respond($phoneBreakpoint) {
     // limit the graph's height
     height: 30rem;
     width: 50rem;
+    // reset the margin-left
+    margin-left: auto;
   }
   // make sure to set how big the
   // wrapping modal can be!
