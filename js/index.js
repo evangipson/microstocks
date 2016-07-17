@@ -165,7 +165,7 @@ var MICROSTOCKS = (function () {
   // Private Variables
   // -----------------
   // Let's pull in the log ul.
-  var logList = document.getElementsByClassName("log-list")[0];\
+  var logList = document.getElementsByClassName("log-list")[0];
   // We need to set how much it is to move
   var moveFee = 10;
   // Change this variable to modify the amount of resources generated
@@ -208,6 +208,8 @@ var MICROSTOCKS = (function () {
   for (var i = 0; i < playerObject.stats.resources.length; i++) {
     portfolioTotal += playerObject.stats.resources[i].amount * playerObject.stats.resources[i].cost;
   }
+  // Load up google charts so everyone can access it
+  google.charts.load('current', {'packages':['corechart']});
   // We need a date for gameData
   // and multiple things need to access
   // it, so the it's best to be scoped
@@ -219,35 +221,13 @@ var MICROSTOCKS = (function () {
   // getMonth() returns a 0-based number.
   var month = todaysDate.getMonth()+1;
   var year = todaysDate.getFullYear();
-  var gameData = {
-    // Initialize the cash data array, which
-    // will be filled with {month, value} objects
-    "cash" : [{
-      date: year + '-' + month, value: playerObject.stats.money
-    }],
-    "portfolio" : [{
-      date: year + '-' + month, value: portfolioTotal
-    }],
-    "netWorth" : [{
-      date: year + '-' + month, value: portfolioTotal + playerObject.stats.money
-    }],
-    // See below
-    "resourceAmounts" : []
-  };
-  // Resources are a bit more complicated, though.
-  // This will be an object, filled with the data structures
-  // used above... so an object filled with an array of objects
-  // which represent data points.
-  // It will be accessed/returns like so:
-  // gameData.resourceAmounts.resourceName = [{date,value},{date2,value2}];
-  for(var j = 0; j < playerObject.stats.resources.length; j++) {
-    gameData.resourceAmounts.push({
-      name: playerObject.stats.resources[j].name,
-      value: [{
-        date: year + '-' + month, value: playerObject.stats.resources[j].cost
-      }]
-    });
-  }
+  var gameData = {"cash":[],"netWorth":[],"portfolio":[],"resourceAmounts":[]};
+  gameData.cash.push(["Date", "Cash"]);
+  gameData.cash.push([year + "-" + month, playerObject.stats.money]);
+  gameData.portfolio.push(["Date", "Cash"]);
+  gameData.portfolio.push([year + "-" + month, portfolioTotal]);
+  gameData.netWorth.push(["Date", "Cash"]);
+  gameData.netWorth.push([year + "-" + month, portfolioTotal + playerObject.stats.money]);
 
   // Private functions needed for resources & log
   // ---------------------------------
@@ -430,24 +410,9 @@ var MICROSTOCKS = (function () {
     var player = playerObject.stats;
     // update the gameData object for
     // the graph
-    gameData.cash.push({
-        date: year + '-' + month, value: player.money
-    });
-    gameData.netWorth.push({
-        date: year + '-' + month, value: portfolioTotal + player.money
-    });
-    gameData.portfolio.push({
-        date: year + '-' + month, value: portfolioTotal
-    });
-    // Update the resourceAmount object
-    for (var i = 0; i < player.resources.length; i++) {
-      // Add some new game data for that resource
-      // since time has passed
-      gameData.resourceAmounts.push({
-          name: player.resources[i].name,
-          date: year + '-' + month, value: player.resources[i].cost
-      });
-    }
+    gameData.cash.push([year + "-" + month, playerObject.stats.money]);
+    gameData.portfolio.push([year + "-" + month, portfolioTotal]);
+    gameData.netWorth.push([year + "-" + month, portfolioTotal + playerObject.stats.money]);
   };
   // This will make time pass in the game world
   var tick = function() {
@@ -956,9 +921,23 @@ var MICROSTOCKS = (function () {
   var launchGraphDialog = function(type) {
     // Set up the content of the modal
     $(".graph-type").text(type);
-    // Update our graph!
-    // If we are querying about a resource...
-
+    console.log($(".graph-dialog"));
+    // Set up the Google Chart with the new data
+    var options = {
+      title: type,
+      hAxis: {
+        title: 'Date',
+        titleTextStyle: {color: '#333'}, 
+        slantedText:true,
+        slantedTextAngle:60
+      },
+      vAxis: {minValue: 0},
+      width: $("#graph-wrapper").outerWidth(),
+      height: $("#graph-wrapper").outerHeight() - 100,
+      pointSize: 10,
+    };
+    var chart = new google.visualization.AreaChart(document.getElementById('graph-wrapper'));
+    chart.draw(google.visualization.arrayToDataTable(gameData[type]), options);
     // Initialize the graph-dialog modal
     $(".graph-dialog").dialog({
         modal: true,
@@ -1047,27 +1026,6 @@ var MICROSTOCKS = (function () {
   };
   // Now add our public init method to call in the ready event
   microstocksModule.init = function() {
-    // initialize the graph we're going to use, let's
-    // set it up with empty values first.
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(function() {
-        var data = google.visualization.arrayToDataTable([
-          ['Year', 'Sales', 'Expenses'],
-          ['2013',  1000,      400],
-          ['2014',  1170,      460],
-          ['2015',  660,       1120],
-          ['2016',  1030,      540]
-        ]);
-
-        var options = {
-          title: 'Company Performance',
-          hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
-          vAxis: {minValue: 0}
-        };
-
-        var chart = new google.visualization.AreaChart(document.getElementById('graph-wrapper'));
-        chart.draw(data, options);
-    });
     // Get the Controls
     // ----------------
     // Now lets pull in the buttons
