@@ -935,7 +935,7 @@ var MICROSTOCKS = (function () {
                 // Create the log message
                 var sellAllLogMessage = sellMessage(index, amountToSell);
                 addListElement(logList, sellAllLogMessage);
-                buyAction(amountToSell);
+                sellAction(amountToSell);
                 // Close up the buy-sell dialog too
                 $(".buy-sell").dialog("close");
                 $(this).dialog('close');
