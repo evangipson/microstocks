@@ -890,6 +890,17 @@ var MICROSTOCKS = (function () {
                 $(".buy-sell").dialog("close");
                 $(this).dialog('close');
             },
+            "Buy All": function() {
+                // How much to buy before the player's money is gone?
+                var amountToBuyMax = Math.floor(player.money/player.resources[index].cost);
+                // Create the log message
+                var buyAllLogMessage = buyMessage(index, amountToBuyMax);
+                addListElement(logList, buyAllLogMessage);
+                buyAction(amountToBuyMax);
+                // Close up the buy-sell dialog too
+                $(".buy-sell").dialog("close");
+                $(this).dialog('close');
+            },
             Cancel: function() {
                 // Close up the buy-sell dialog too
                 $(".buy-sell").dialog("close");
@@ -917,6 +928,17 @@ var MICROSTOCKS = (function () {
                 // Close up the buy-sell dialog too
                 $(".buy-sell").dialog("close");
                 $(this).dialog("close");
+            },
+            "Sell All": function() {
+                // How much to buy before the player's money is gone?
+                var amountToSell = player.resources[index].amount;
+                // Create the log message
+                var sellAllLogMessage = sellMessage(index, amountToSell);
+                addListElement(logList, sellAllLogMessage);
+                buyAction(amountToSell);
+                // Close up the buy-sell dialog too
+                $(".buy-sell").dialog("close");
+                $(this).dialog('close');
             },
             Cancel: function() {
                 // Close up the buy-sell dialog too
