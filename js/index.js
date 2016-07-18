@@ -221,13 +221,15 @@ var MICROSTOCKS = (function () {
   // getMonth() returns a 0-based number.
   var month = todaysDate.getMonth()+1;
   var year = todaysDate.getFullYear();
-  var gameData = {"cash":[],"netWorth":[],"portfolio":[],"resourceAmounts":[]};
+  var gameData = {"cash":[],"netWorth":[],"portfolio":[],"resourceAmounts":[],"totalMoney":[]};
   gameData.cash.push(["Date", "Cash"]);
   gameData.cash.push([year + "-" + month, playerObject.stats.money]);
   gameData.portfolio.push(["Date", "Cash"]);
   gameData.portfolio.push([year + "-" + month, portfolioTotal]);
   gameData.netWorth.push(["Date", "Cash"]);
   gameData.netWorth.push([year + "-" + month, portfolioTotal + playerObject.stats.money]);
+  gameData.totalMoney.push(["Date", "Cash", "Portfolio", "Net Worth"]);
+  gameData.totalMoney.push([year + "-" + month, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
 
   // Private functions needed for resources & log
   // ---------------------------------
@@ -410,9 +412,10 @@ var MICROSTOCKS = (function () {
     var player = playerObject.stats;
     // update the gameData object for
     // the graph
-    gameData.cash.push([year + "-" + month, player.stats.money]);
+    gameData.cash.push([year + "-" + month, player.money]);
     gameData.portfolio.push([year + "-" + month, portfolioTotal]);
-    gameData.netWorth.push([year + "-" + month, portfolioTotal + player.stats.money]);
+    gameData.netWorth.push([year + "-" + month, portfolioTotal + player.money]);
+    gameData.totalMoney.push([year + "-" + month, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
   };
   // This will make time pass in the game world
   var tick = function() {
@@ -449,10 +452,10 @@ var MICROSTOCKS = (function () {
       portfolioTotal += player.resources[i].amount * player.resources[i].cost;
     }
     // We need to display our portfolio
-    changeListElement("portfolio", "Total Portfolio: $" + portfolioTotal);
+    changeListElement("portfolio-button", "Total Portfolio: $" + portfolioTotal);
     // Pull in old net worth value and see if we've gone up
     // (Usually from travelling)
-    var netBlock = document.getElementsByClassName("net-worth")[0];
+    var netBlock = document.getElementsByClassName("net-worth-button")[0];
     // Get the content of the netBlock
     var oldNetWorth = netBlock.textContent;
     // Grab the net worth amount off of the textContent
@@ -460,15 +463,15 @@ var MICROSTOCKS = (function () {
     // We need to display our total worth
     if(parseInt(oldNetWorth[1]) < portfolioTotal + parseInt(player.money)) {
         // If our total value has increased, show it!
-        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Up!");
+        changeListElement("net-worth-button", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Up!");
     }
     else if (parseInt(oldNetWorth[1]) === portfolioTotal + parseInt(player.money)) {
         // No increase!
-        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)));
+        changeListElement("net-worth-button", "Net Worth: $" + (portfolioTotal + parseInt(player.money)));
     }
     else {
         // We lost money!
-        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
+        changeListElement("net-worth-button", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
     }
     // Tell the player where they are
     changeListElement("location", "Location: " + locations[player.location]);
@@ -921,7 +924,6 @@ var MICROSTOCKS = (function () {
   var launchGraphDialog = function(type) {
     // Set up the content of the modal
     $(".graph-type").text(type);
-    console.log($(".graph-dialog"));
     // Set up the Google Chart with the new data
     var options = {
       title: type,
@@ -933,8 +935,8 @@ var MICROSTOCKS = (function () {
       },
       vAxis: {minValue: 0},
       width: $("#graph-wrapper").outerWidth(),
-      height: $("#graph-wrapper").outerHeight() - 100,
-      pointSize: 10,
+      height: $("#graph-wrapper").outerHeight() - 50,
+      pointSize: 5,
     };
     var chart = new google.visualization.AreaChart(document.getElementById('graph-wrapper'));
     chart.draw(google.visualization.arrayToDataTable(gameData[type]), options);
@@ -1016,9 +1018,9 @@ var MICROSTOCKS = (function () {
     // We need to display our money
     addListElement(invList, "Cash: $" + player.money, "money cash-button");
     // We need to display our portfolio
-    addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio");
+    addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio-button");
     // We need to display our total worth
-    addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth");
+    addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth-button");
     // Our location
     addListElement(invList, "Location: " + locations[player.location], "location");
     // Then draw the resources
@@ -1043,8 +1045,12 @@ var MICROSTOCKS = (function () {
     // And let's pull the inventory buttons
     // so we can look at the pretty graphs
     var cashButton = document.getElementsByClassName("cash-button")[0];
+    var portfolioButton = document.getElementsByClassName("portfolio-button")[0];
+    var netWorthButton = document.getElementsByClassName("net-worth-button")[0];
     // Don't forget it has an event listener as well!
     addButtonEvent(cashButton, [launchGraphDialog, "cash"]);
+    addButtonEvent(portfolioButton, [launchGraphDialog, "portfolio"]);
+    addButtonEvent(netWorthButton, [launchGraphDialog, "totalMoney"]);
   };
   // give back our module!
   return microstocksModule;
