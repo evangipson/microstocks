@@ -443,6 +443,16 @@ nav.options-button {
       background-image: none;
     }
   }
+  div.ui-dialog-buttonpane {
+    text-align: center;
+    float: none;
+    @include respond($phoneBreakpoint) {
+      float: right;
+    }
+    div.ui-dialog-buttonset {
+      float: none;
+    } 
+  }
 }
 // override jquery-ui buttons
 button{
@@ -477,6 +487,12 @@ button{
   }
   // override the buy/cancel buttons
   &.ui-button-text-only {
+    width: 100%;
+    padding: 1rem;
+    @include respond($phoneBreakpoint) {
+      width: auto;
+      float: left;
+    }
     border-radius: 0;
     border: none!important;;
     color: white!important;
@@ -496,24 +512,21 @@ button{
 #graph-wrapper {
   width: 110vw;
   margin-left: -10%;
-  height: 70%;
+  height: 70vh!important;
   @include respond($phoneBreakpoint) {
     // limit the graph's height
-    height: 24rem;
+    height: 20rem!important;
     width: 40rem;
     // reset the margin-left
-    margin-left: auto;
+    margin-left: -2.5rem;
   }
-  // make sure to set how big the
-  // wrapping modal can be!
-  .ui-widget-content & {
-    // using !important to override
-    // the generated inline css by jquery ui
-    @include respond($phoneBreakpoint) {
-      //width: 50rem!important;
-    }
+  @include respond($desktopBreakpoint) {
+    width: 60rem;
   }
 }
 .buy-dialog, .sell-dialog {
-  width: 30rem!important;
+  width: 70vw;
+  @include respond($phoneBreakpoint) {
+    width: 30rem!important;
+  }
 }
