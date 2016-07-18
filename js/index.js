@@ -937,7 +937,7 @@ var MICROSTOCKS = (function () {
       width: $("#graph-wrapper").outerWidth(),
       height: $("#graph-wrapper").outerHeight() - 50,
       pointSize: 5,
-      isStacked: false
+      isStacked: true
     };
     var chart = new google.visualization.AreaChart(document.getElementById('graph-wrapper'));
     chart.draw(google.visualization.arrayToDataTable(gameData[type]), options);
