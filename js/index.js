@@ -415,7 +415,7 @@ var MICROSTOCKS = (function () {
     gameData.cash.push([year + "-" + month, player.money]);
     gameData.portfolio.push([year + "-" + month, portfolioTotal]);
     gameData.netWorth.push([year + "-" + month, portfolioTotal + player.money]);
-    gameData.totalMoney.push([year + "-" + month, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
+    gameData.totalMoney.push([year + "-" + month, player.money, portfolioTotal, portfolioTotal + player.money]);
   };
   // This will make time pass in the game world
   var tick = function() {
@@ -935,8 +935,8 @@ var MICROSTOCKS = (function () {
       vAxis: {minValue: 0},
       width: $("#graph-wrapper").outerWidth(),
       height: $("#graph-wrapper").outerHeight() - 50,
-      pointSize: 5,
-      isStacked: true
+      pointSize: 3,
+      isStacked: false
     };
     var chart = new google.visualization.AreaChart(document.getElementById('graph-wrapper'));
     chart.draw(google.visualization.arrayToDataTable(gameData[type]), options);
