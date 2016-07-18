@@ -79,11 +79,18 @@
       <p class="sell-money-left"></p>
       <div class="sell-resource-slider"></div>
     </div>
+    <!-- Define modal for graph -->
+    <div class="graph-dialog" title="Data">
+      <p class="graph-type"></p>
+      <div id="graph-wrapper"></div>
+    </div>
     <!-- *Sigh* Let's call in jquery and jquery-ui -->
     <!-- at least I'm doing it via CDN so I don't have to download it -->
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <!-- Also I need Google Charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!-- Load in my javascript -->
-    <script src="./js/index.js" async defer></script>
+    <script src="./js/index.min.js" async defer></script>
   </body>
 </html>

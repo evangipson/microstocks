@@ -197,11 +197,39 @@ var MICROSTOCKS = (function () {
   // Create the player object
   var playerObject = {
     "stats": {
-      "money": randomNum(500),
+      "money": randomNum(350,500),
       "location": randomNum(locations.length),
       "resources": resources
     }
   };
+  // Variable to display the total amount of the portfolio
+  var portfolioTotal = 0;
+  // Calculate portfolio total
+  for (var i = 0; i < playerObject.stats.resources.length; i++) {
+    portfolioTotal += playerObject.stats.resources[i].amount * playerObject.stats.resources[i].cost;
+  }
+  // Load up google charts so everyone can access it
+  google.charts.load('current', {'packages':['corechart']});
+  // We need a date for gameData
+  // and multiple things need to access
+  // it, so the it's best to be scoped
+  // to the whole closure.
+  var todaysDate = new Date();
+  // Create gameData module for
+  // all those awesome graphs!
+  // Retrieve the month and year from todaysDate.
+  // getMonth() returns a 0-based number.
+  var month = todaysDate.getMonth()+1;
+  var year = todaysDate.getFullYear();
+  var gameData = {"cash":[],"netWorth":[],"portfolio":[],"resourceAmounts":[],"totalMoney":[]};
+  gameData.cash.push(["Date", "Cash"]);
+  gameData.cash.push([year + "-" + month, playerObject.stats.money]);
+  gameData.portfolio.push(["Date", "Cash"]);
+  gameData.portfolio.push([year + "-" + month, portfolioTotal]);
+  gameData.netWorth.push(["Date", "Cash"]);
+  gameData.netWorth.push([year + "-" + month, portfolioTotal + playerObject.stats.money]);
+  gameData.totalMoney.push(["Date", "Cash", "Portfolio", "Net Worth"]);
+  gameData.totalMoney.push([year + "-" + month, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
 
   // Private functions needed for resources & log
   // ---------------------------------
@@ -376,6 +404,38 @@ var MICROSTOCKS = (function () {
       }
     }
   };
+  // Function to update the gameData object
+  // to ensure the graphs will have historical
+  // data!!! Yay!!!
+  var updateGameData = function() {
+    // Bring player in locally
+    var player = playerObject.stats;
+    // update the gameData object for
+    // the graph
+    gameData.cash.push([year + "-" + month, player.money]);
+    gameData.portfolio.push([year + "-" + month, portfolioTotal]);
+    gameData.netWorth.push([year + "-" + month, portfolioTotal + player.money]);
+    gameData.totalMoney.push([year + "-" + month, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
+  };
+  // This will make time pass in the game world
+  var tick = function() {
+    // Make a month pass, but
+    // if we are in December
+    if(month >= 12) {
+      // The year should be January
+      month = 1;
+      // Also a year has passed!
+      year += 1;
+    }
+    // Otherwise we can just
+    // increment the month like normal
+    else {
+      month += 1;
+    }
+    // Update the gameData object for graphs
+    // since time has passed
+    updateGameData();
+  };
   // Function to update the inventory box.
   // Called when controls are interacted with.
   var updateInventory = function() {
@@ -384,18 +444,18 @@ var MICROSTOCKS = (function () {
     // Get the updated resource prices
     updateResourcePrices();
     // Draw out the new inventory
-    changeListElement("cash", "Money: $" + player.money);
-    // Variable to display the total amount of the portfolio
-    var portfolioTotal = 0;
-    // Display portfolio total
+    changeListElement("cash-button", "Money: $" + player.money);
+    // Reset portfolioTotal
+    portfolioTotal = 0;
+    // Recalculate portfolio total
     for (var i = 0; i < player.resources.length; i++) {
       portfolioTotal += player.resources[i].amount * player.resources[i].cost;
     }
     // We need to display our portfolio
-    changeListElement("portfolio", "Total Portfolio: $" + portfolioTotal);
+    changeListElement("portfolio-button", "Total Portfolio: $" + portfolioTotal);
     // Pull in old net worth value and see if we've gone up
     // (Usually from travelling)
-    var netBlock = document.getElementsByClassName("net-worth")[0];
+    var netBlock = document.getElementsByClassName("net-worth-button")[0];
     // Get the content of the netBlock
     var oldNetWorth = netBlock.textContent;
     // Grab the net worth amount off of the textContent
@@ -403,19 +463,22 @@ var MICROSTOCKS = (function () {
     // We need to display our total worth
     if(parseInt(oldNetWorth[1]) < portfolioTotal + parseInt(player.money)) {
         // If our total value has increased, show it!
-        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Up!");
+        changeListElement("net-worth-button", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Up!");
     }
     else if (parseInt(oldNetWorth[1]) === portfolioTotal + parseInt(player.money)) {
         // No increase!
-        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)));
+        changeListElement("net-worth-button", "Net Worth: $" + (portfolioTotal + parseInt(player.money)));
     }
     else {
         // We lost money!
-        changeListElement("net-worth", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
+        changeListElement("net-worth-button", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
     }
+    // Tell the player where they are
     changeListElement("location", "Location: " + locations[player.location]);
     // Then update the resource boxes!
     updateResourceBoxes();
+    // Make time pass
+    tick();
   };
   // Will return true if player owns any resources,
   // and false otherwise 
@@ -656,6 +719,7 @@ var MICROSTOCKS = (function () {
     var player = playerObject.stats;
     // if the player has $10 (he should, we just checked this in travelMessage).
     if (player.money >= moveFee) {
+      // Remove the money from the player's inventory
       playerObject.stats.money = parseInt(player.money) - moveFee;
       updateInventory();
     }
@@ -856,6 +920,37 @@ var MICROSTOCKS = (function () {
         }
     });
   };
+  // Function to launch the pretty graph dialog
+  var launchGraphDialog = function(type) {
+    // Set up the content of the modal
+    $(".graph-type").text(type);
+    // Set up the Google Chart with the new data
+    var options = {
+      title: type,
+      hAxis: {
+        title: 'Date',
+        titleTextStyle: {color: '#333'}, 
+        slantedText:true,
+        slantedTextAngle:30
+      },
+      vAxis: {minValue: 0},
+      width: $("#graph-wrapper").outerWidth(),
+      height: $("#graph-wrapper").outerHeight() - 50,
+      pointSize: 5,
+      isStacked: true
+    };
+    var chart = new google.visualization.AreaChart(document.getElementById('graph-wrapper'));
+    chart.draw(google.visualization.arrayToDataTable(gameData[type]), options);
+    // Initialize the graph-dialog modal
+    $(".graph-dialog").dialog({
+        modal: true,
+        buttons: {
+            "Close": function() {
+              $(this).dialog("close");
+            }
+        }
+    });
+  };
   // This adds all the resource button event listeners
   // to buy and sell those invididual resources
   // and it's declared down here because it needs
@@ -922,16 +1017,16 @@ var MICROSTOCKS = (function () {
       portfolioTotal += player.resources[i].amount * player.resources[i].cost;
     }
     // We need to display our money
-    addListElement(invList, "Cash: $" + player.money, "money cash");
+    addListElement(invList, "Cash: $" + player.money, "money cash-button");
     // We need to display our portfolio
-    addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio");
+    addListElement(invList, "Total Portfolio: $" + portfolioTotal, "money portfolio-button");
     // We need to display our total worth
-    addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth");
+    addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth-button");
     // Our location
     addListElement(invList, "Location: " + locations[player.location], "location");
     // Then draw the resources
     createResourceBoxes();
-  };  
+  };
   // Now add our public init method to call in the ready event
   microstocksModule.init = function() {
     // Get the Controls
@@ -948,6 +1043,15 @@ var MICROSTOCKS = (function () {
     addButtonEvent(optionsButton, launchOptionsDialog);
     // Now let's create the inventory panel!
     createInventory();
+    // And let's pull the inventory buttons
+    // so we can look at the pretty graphs
+    var cashButton = document.getElementsByClassName("cash-button")[0];
+    var portfolioButton = document.getElementsByClassName("portfolio-button")[0];
+    var netWorthButton = document.getElementsByClassName("net-worth-button")[0];
+    // Don't forget it has an event listener as well!
+    addButtonEvent(cashButton, [launchGraphDialog, "cash"]);
+    addButtonEvent(portfolioButton, [launchGraphDialog, "portfolio"]);
+    addButtonEvent(netWorthButton, [launchGraphDialog, "totalMoney"]);
   };
   // give back our module!
   return microstocksModule;
