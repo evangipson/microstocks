@@ -483,6 +483,9 @@ button{
       &::before {
         content: "\f00d";
       }
+      @include respond($phoneBreakpoint) {
+        left: 4.5rem;
+      }
     }
   }
   // override the buy/cancel buttons
