@@ -156,6 +156,22 @@ var MICROSTOCKS = (function () {
       resources[randomNum(0,resources.length)].amount = randomNum(randomNum(1,4), randomNum(5,20));
     }
   };
+  // This function initializes the google graph that is
+  // used to display the gameData
+  var initializeGraph = function() {
+    // Load up google charts so everyone can access it
+    google.charts.load('current', {'packages':['corechart']});
+    // Fill up our global gameData variable
+    gameData = {"cash":[],"netWorth":[],"portfolio":[],"resourceAmounts":[],"totalMoney":[]};
+    gameData.cash.push(["Date", "Cash"]);
+    gameData.cash.push([year + "-" + month, playerObject.stats.money]);
+    gameData.portfolio.push(["Date", "Cash"]);
+    gameData.portfolio.push([year + "-" + month, portfolioTotal]);
+    gameData.netWorth.push(["Date", "Cash"]);
+    gameData.netWorth.push([year + "-" + month, portfolioTotal + playerObject.stats.money]);
+    gameData.totalMoney.push(["Date", "Cash", "Portfolio", "Net Worth"]);
+    gameData.totalMoney.push([year + "-" + month, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
+  };
 
   // Module
   // ------
@@ -208,8 +224,6 @@ var MICROSTOCKS = (function () {
   for (var i = 0; i < playerObject.stats.resources.length; i++) {
     portfolioTotal += playerObject.stats.resources[i].amount * playerObject.stats.resources[i].cost;
   }
-  // Load up google charts so everyone can access it
-  google.charts.load('current', {'packages':['corechart']});
   // We need a date for gameData
   // and multiple things need to access
   // it, so the it's best to be scoped
@@ -221,15 +235,8 @@ var MICROSTOCKS = (function () {
   // getMonth() returns a 0-based number.
   var month = todaysDate.getMonth()+1;
   var year = todaysDate.getFullYear();
-  var gameData = {"cash":[],"netWorth":[],"portfolio":[],"resourceAmounts":[],"totalMoney":[]};
-  gameData.cash.push(["Date", "Cash"]);
-  gameData.cash.push([year + "-" + month, playerObject.stats.money]);
-  gameData.portfolio.push(["Date", "Cash"]);
-  gameData.portfolio.push([year + "-" + month, portfolioTotal]);
-  gameData.netWorth.push(["Date", "Cash"]);
-  gameData.netWorth.push([year + "-" + month, portfolioTotal + playerObject.stats.money]);
-  gameData.totalMoney.push(["Date", "Cash", "Portfolio", "Net Worth"]);
-  gameData.totalMoney.push([year + "-" + month, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
+  // Also we need our gameData visible everywhere
+  var gameData = [];
 
   // Private functions needed for resources & log
   // ---------------------------------
@@ -1042,6 +1049,8 @@ var MICROSTOCKS = (function () {
     addButtonEvent(optionsButton, launchOptionsDialog);
     // Now let's create the inventory panel!
     createInventory();
+    // Initialize our google graph
+    initializeGraph();
     // And let's pull the inventory buttons
     // so we can look at the pretty graphs
     var cashButton = document.getElementsByClassName("cash-button")[0];
