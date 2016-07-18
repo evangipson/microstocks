@@ -710,8 +710,7 @@ var MICROSTOCKS = (function () {
       newNum = randomNum(locations.length);
     }
     updateLocationIndex(newNum);
-    return ["Player moved to " + locations[player.location],
-            "Charged $" + moveFee + " to go!"];
+    return ["Player moved to " + locations[player.location] + ", charged $" + moveFee + " to go!"];
   };
   // Subsequent function, update screen
   var travelAction = function() {
