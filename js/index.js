@@ -835,6 +835,8 @@ var MICROSTOCKS = (function () {
   };
   // Location logging functionality
   var travelMessage = function(newIndex) {
+    // Pull in newIndex or set it to blank
+    var pulledIndex = newIndex || -1;
     // Pull in playerObject to this method
     var player = playerObject.stats;
     // if the player doesn't have $10, don't let him travel.
@@ -846,7 +848,7 @@ var MICROSTOCKS = (function () {
     updateResourceIndex();
     // If the player specified a planet to move to
     // by using the dialog...
-    if(newIndex !== null) {
+    if(pulledIndex !== -1) {
       updateLocationIndex(newIndex);
     }
     // Otherwise let's generate a new location
@@ -856,7 +858,7 @@ var MICROSTOCKS = (function () {
       // Try and generate a new locationIndex. 
       var newNum = randomNum(0,locations.length-1);
       // Make sure we don't get the same locationIndex that we have
-      while (newNum === player.location) {
+      while (newNum === parseInt(player.location)) {
         // Make sure we generate a NEW location
         newNum = randomNum(0,locations.length-1);
       }
@@ -924,6 +926,15 @@ var MICROSTOCKS = (function () {
               // We should log a message that we traveled!
               travelMessage(locationIndex);
               // As well as update the screen
+              travelAction();
+              // Then close this dialog
+              $(this).dialog("close");
+            },
+            "Random Planet": function() {
+              // If travelAction is called with no variable,
+              // it will "intelligently" decide where to go
+              travelMessage();
+              // Then we should update the screen
               travelAction();
               // Then close this dialog
               $(this).dialog("close");
