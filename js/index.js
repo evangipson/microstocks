@@ -890,12 +890,12 @@ var MICROSTOCKS = (function () {
                 $(".buy-sell").dialog("close");
                 $(this).dialog('close');
             },
-            "Buy All": function() {
+            "Buy Max": function() {
                 // How much to buy before the player's money is gone?
                 var amountToBuyMax = Math.floor(player.money/player.resources[index].cost);
                 // Create the log message
-                var buyAllLogMessage = buyMessage(index, amountToBuyMax);
-                addListElement(logList, buyAllLogMessage);
+                var buyMaxLogMessage = buyMessage(index, amountToBuyMax);
+                addListElement(logList, buyMaxLogMessage);
                 buyAction(amountToBuyMax);
                 // Close up the buy-sell dialog too
                 $(".buy-sell").dialog("close");
