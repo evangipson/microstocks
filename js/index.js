@@ -25,6 +25,145 @@ var MICROSTOCKS = (function () {
     // Take the floor of random calculation
     return Math.floor(Math.random() * (highNum - lowNum) + lowNum);
   };
+  // Function used to generate a 1, 2, or 3 syllable word
+  var generateWord = function(word) {
+    var firstSyllable, secondSyllable, thirdSyllable;
+    var theWord;
+    // List all the first syllables
+    firstSyllable = [
+      "qhi",
+      "mo",
+      "bli",
+      "bla",
+      "blu",
+      "amm",
+      "an",
+      "ra",
+      "ran",
+      "ram",
+      "rom",
+      "ro",
+      "qo",
+      "phi",
+      "pha",
+      "phe",
+      "neh",
+      "ni",
+      "mu",
+      "min",
+      "nuv",
+      "go",
+      "gro",
+      "gran",
+      "gra",
+      "ip",
+      "iq",
+      "ikk",
+      "s'sa",
+      "tik",
+      "theo",
+      "thra",
+      "yi",
+      "ya",
+      "yo",
+      "yon",
+      "yan",
+      "yom",
+      "clo",
+      "clat",
+      "nar"
+    ];
+    // List all the syllables that could be
+    // used after the first syllable
+    secondSyllable = [
+      "lem",
+      "laam",
+      "lam",
+      "and",
+      "ni",
+      "pin",
+      "ii",
+      "nis",
+      "dar",
+      "jar",
+      "mar",
+      "ler",
+      "lar",
+      "llar",
+      "end",
+      "in",
+      "inn",
+      "oui",
+      "wi",
+      "when",
+      "je",
+      "jee",
+      "jaa",
+      "gis",
+      "ggin",
+      "ggar",
+      "ghen",
+      "lip",
+      "fraw",
+      "frae",
+      "rae",
+      "rin",
+      "rra",
+      "to",
+      "tin",
+      "tar"
+    ];
+    // Set thirdSyllable to firstSyllable array
+    thirdSyllable = firstSyllable;
+
+    // Assemble the word
+    // 33% the word will have 3 syllables
+    if(randomNum(1,100) < 33) {
+      theWord = firstSyllable[randomNum(0,firstSyllable.length)] + secondSyllable[randomNum(0,secondSyllable.length)] + thirdSyllable[randomNum(0,thirdSyllable.length)];
+    }
+    // Otherwise 90% chance it'll have two syllables
+    else if(randomNum(1,100) < 90) {
+      theWord = firstSyllable[randomNum(0,firstSyllable.length)] + secondSyllable[randomNum(0,secondSyllable.length)];
+    }
+    // Or it will have only 1 syllable
+    else {
+      theWord = firstSyllable[randomNum(0,firstSyllable.length)];
+    }
+    // Capitalize the first letter of the word
+    theWord = theWord.charAt(0).toUpperCase() + theWord.substr(1);
+    // Give back the word you've created
+    return theWord;
+  };
+  // Function used to create a name for the planet
+  var createPlanetName = function(planetName) {
+    // Set our localPlanetName to be either a generated word
+    // or pull in planetName if we have it
+    var localPlanetName = planetName || generateWord();
+    // If we have less than 2-3 words
+    if(localPlanetName.split(" ").length < randomNum(3)) {
+      // Append a word to the planetName
+      localPlanetName += " " + generateWord();
+      // If we don't have a long enough planet name,
+      // let's call this function recursively to
+      // fill it out, while stopping when there are
+      // more than 2-3 words
+      createPlanetName(localPlanetName);
+    }
+    // Give back the planet name
+    return localPlanetName;
+  };
+  // This function will return an object containing
+  // both an x and y value, that will look like so:
+  // { x: xVal, y: yVal }
+  // It can be accessed this way:
+  // var returnVector = placePlanet();
+  // returnVector.x === xVal;
+  var placePlanet = function() {
+    return {
+      x: randomNum(-10000,10000),
+      y: randomNum(-10000,10000)
+    };
+  };
   // Function used to create a new name for a resource
   var createResourceName = function() {
     var resourceName = "";
@@ -197,24 +336,20 @@ var MICROSTOCKS = (function () {
   });
   // Array of locations around the USA
   // This is referenced by playerObjects.stats.location
-  var locations = [
-    "New York",
-    "Chicago",
-    "Philadelphia",
-    "Austin",
-    "Los Angeles",
-    "San Fransisco",
-    "Seattle",
-    "Portland",
-    "Minneapolis",
-    "Cleveland",
-    "Providence",
-  ];
+  var locations = [];
+  // We'll have 15-20 planets to start
+  for (var l = 0; l < randomNum(15,20); l++) {
+    locations.push({
+      "name": createPlanetName(),
+      "location": placePlanet()
+    });
+    console.log(locations[l].name);
+  }
   // Create the player object
   var playerObject = {
     "stats": {
       "money": randomNum(350,500),
-      "location": randomNum(locations.length),
+      "location": randomNum(0,locations.length-1),
       "resources": resources
     }
   };
@@ -481,7 +616,7 @@ var MICROSTOCKS = (function () {
         changeListElement("net-worth-button", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
     }
     // Tell the player where they are
-    changeListElement("location", "Location: " + locations[player.location]);
+    changeListElement("location", "Location: " + locations[parseInt(player.location)].name);
     // Then update the resource boxes!
     updateResourceBoxes();
     // Make time pass
@@ -710,14 +845,17 @@ var MICROSTOCKS = (function () {
     // since this runs before sellAction.
     updateResourceIndex();
     // Try and generate a new locationIndex. 
-    var newNum = randomNum(locations.length);
+    var newNum = randomNum(0,locations.length-1);
     // Make sure we don't get the same locationIndex that we have
     while (newNum === player.location) {
       // Make sure we generate a NEW location
-      newNum = randomNum(locations.length);
+      newNum = randomNum(0,locations.length-1);
     }
+    // Update our player's location after we know
+    // our new location
     updateLocationIndex(newNum);
-    return ["Player moved to " + locations[player.location] + ", charged $" + moveFee + " to go!"];
+    // Return the console log message
+    return ["Player moved to " + locations[parseInt(player.location)].name + ", charged $" + moveFee + " to go!"];
   };
   // Subsequent function, update screen
   var travelAction = function() {
@@ -1051,7 +1189,7 @@ var MICROSTOCKS = (function () {
     // We need to display our total worth
     addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth-button");
     // Our location
-    addListElement(invList, "Location: " + locations[player.location], "location");
+    addListElement(invList, "Location: " + locations[parseInt(player.location)].name, "location");
     // Then draw the resources
     createResourceBoxes();
   };
