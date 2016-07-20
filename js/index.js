@@ -1286,6 +1286,8 @@ var MICROSTOCKS = (function () {
     addButtonEvent(optionsButton, launchOptionsDialog);
     // Now let's create the inventory panel!
     createInventory();
+    // Display a welcome message for the player
+    addListElement(logList, "You arrive on " + locations[parseInt(playerObject.stats.location)].name + " with a few stocks and $" + playerObject.stats.money + " to your name.");
     // Initialize our google graph
     initializeGraph();
     // And let's pull the inventory buttons
