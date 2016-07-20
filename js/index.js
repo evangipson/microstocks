@@ -834,7 +834,7 @@ var MICROSTOCKS = (function () {
     }
   };
   // Location logging functionality
-  var travelMessage = function() {
+  var travelMessage = function(newIndex) {
     // Pull in playerObject to this method
     var player = playerObject.stats;
     // if the player doesn't have $10, don't let him travel.
@@ -844,18 +844,29 @@ var MICROSTOCKS = (function () {
     // make sure we have a valid resource index for potentially selling
     // since this runs before sellAction.
     updateResourceIndex();
-    // Try and generate a new locationIndex. 
-    var newNum = randomNum(0,locations.length-1);
-    // Make sure we don't get the same locationIndex that we have
-    while (newNum === player.location) {
-      // Make sure we generate a NEW location
-      newNum = randomNum(0,locations.length-1);
+    // If the player specified a planet to move to
+    // by using the dialog...
+    if(newIndex !== null) {
+      updateLocationIndex(newIndex);
     }
-    // Update our player's location after we know
-    // our new location
-    updateLocationIndex(newNum);
-    // Return the console log message
-    return ["Player moved to " + locations[parseInt(player.location)].name + ", charged $" + moveFee + " to go!"];
+    // Otherwise let's generate a new location
+    // (this could be a "random" button function,
+    // just call travelMessage() without an argument)
+    else {
+      // Try and generate a new locationIndex. 
+      var newNum = randomNum(0,locations.length-1);
+      // Make sure we don't get the same locationIndex that we have
+      while (newNum === player.location) {
+        // Make sure we generate a NEW location
+        newNum = randomNum(0,locations.length-1);
+      }
+      // Update our player's location after we know
+      // our new location
+      updateLocationIndex(newNum); 
+    }
+    // Display the console log messages
+    addListElement(logList,"Player moved to " + locations[parseInt(player.location)].name);
+    addListElement(logList,"You were charged  $" + moveFee + " to go!");
   };
   // Subsequent function, update screen
   var travelAction = function() {
@@ -867,6 +878,61 @@ var MICROSTOCKS = (function () {
       playerObject.stats.money = parseInt(player.money) - moveFee;
       updateInventory();
     }
+  };
+  // This function will call up the modal
+  // that is for travelling
+  var launchTravelDialog = function() {
+    // Greet the player with a message,
+    // reminding them where they are
+    $(".travel-text").text("Where would you like to go? Currently on " + locations[parseInt(playerObject.stats.location)].name + ".");
+    // Initialize the travel dropdown
+    var travelSelect = $(".travel-select")[0];
+    // Get rid of all the contents
+    for(var j = travelSelect.options.length - 1; j >= 0; j--) {
+        travelSelect.remove(j);
+    }
+    // So we can fill it back up with all the planets
+    // except the one the player is on
+    for (var i = 0; i < locations.length; i++) {
+        // Create an option for every planet
+        // except the one we are on
+        if(parseInt(playerObject.stats.location) !== i) {
+          var opt = document.createElement('option');
+          opt.value = opt.innerHTML = locations[i].name;
+          travelSelect.appendChild(opt);
+        }
+    }
+    // Initialize the options-dialog modal
+    $(".travel").dialog({
+        modal: true,
+        buttons: {
+            "Go": function() {
+              var locationIndex = 0;
+              // Find which thing I selected by
+              // comparing name with locations array,
+              // and update the log with that information
+              for(var location in locations) {
+                if(locations.hasOwnProperty(location)) {
+                  // Check if the name of the location is the
+                  // same as the selected name in the travel-select box
+                  if(locations[location].name === $(".travel-select")[0].value) {
+                    // If it is, we have our location index!
+                    locationIndex = location;
+                  }
+                }
+              }
+              // We should log a message that we traveled!
+              travelMessage(locationIndex);
+              // As well as update the screen
+              travelAction();
+              // Then close this dialog
+              $(this).dialog("close");
+            },
+            "Close": function() {
+              $(this).dialog("close");
+            }
+        }
+    });
   };
   // Will call the options dialog pop-up, meant
   // to be used with the options button
@@ -1205,7 +1271,7 @@ var MICROSTOCKS = (function () {
     // Now let's set up the event listeners
     addButtonEvent(buyButton, buyMessage, buyAction);
     addButtonEvent(sellButton, sellMessage, sellAction);
-    addButtonEvent(travelButton, travelMessage, travelAction);
+    addButtonEvent(travelButton, launchTravelDialog);
     addButtonEvent(optionsButton, launchOptionsDialog);
     // Now let's create the inventory panel!
     createInventory();
