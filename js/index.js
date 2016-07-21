@@ -877,7 +877,7 @@ var MICROSTOCKS = (function () {
     // if the player doesn't have 10% of the distance, don't let him travel
     if (player.money < moveFee) {
       // Update the log and let the poor person know!
-      addListElement(logList, "Can't afford the " + moveFee +  " light-year move from " + locations[player.location] + " to " + locations[pulledIndex] + ".");
+      addListElement(logList, "Can't afford the " + lyBetweenPlanets +  " light-year move from " + locations[player.location] + " to " + locations[pulledIndex] + ".");
       addListElement(logList, "Why don't you sell some resources?");
       // Get out of this function
       return null;
