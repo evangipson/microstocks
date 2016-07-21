@@ -171,7 +171,7 @@ var MICROSTOCKS = (function () {
     // Return the resulting distance between the two
     // planet's x and y values with the distance formula:
     // sqrt((x2-x1)^2 + (y2-y1)^2)
-    return Math.sqrt(Math.abs(((planetA.location.x - planetB.location.x)^2) + ((planetA.location.y - planetB.location.y)^2)));
+    return Math.sqrt(Math.abs(Math.pow(planetA.location.x - planetB.location.x,2) + Math.pow(planetA.location.y - planetB.location.y,2)));
   };
   // Function used to create a new name for a resource
   var createResourceName = function() {
@@ -871,14 +871,14 @@ var MICROSTOCKS = (function () {
     // Set move fee based on distance between old
     // and new planets - take the ceiling of the distance
     var lyBetweenPlanets = Math.ceil(distanceBetween(locations[pulledIndex], locations[player.location]));
-    // Make the move fee anywhere from 10-30%
-    // of the "lightyears" between planets
-    moveFee = Math.floor(lyBetweenPlanets * (randomNum(1,3) * 0.1));
+    // Make the move fee anywhere from .1-.3%
+    // of the "light-years" between planets
+    moveFee = Math.floor(lyBetweenPlanets * (randomNum(1,3) * 0.001));
     // if the player doesn't have 10% of the distance, don't let him travel
     if (player.money < moveFee) {
       // Update the log and let the poor person know!
-      addListElement("Can't afford the " + moveFee +  " mile move from " + locations[player.location] + " to " + locations[pulledIndex] + ".");
-      addListElement("Why don't you sell some resources?");
+      addListElement(logList, "Can't afford the " + moveFee +  " light-year move from " + locations[player.location] + " to " + locations[pulledIndex] + ".");
+      addListElement(logList, "Why don't you sell some resources?");
       // Get out of this function
       return null;
     }
@@ -893,7 +893,7 @@ var MICROSTOCKS = (function () {
     // Then update the player's location index
     updateLocationIndex(pulledIndex);
     // Display the final log message about how much it was
-    addListElement(logList,"You were charged  $" + moveFee + " to go " + lyBetweenPlanets + " light years.");
+    addListElement(logList,"You were charged  $" + moveFee + " to go " + lyBetweenPlanets + " light-years.");
   };
   // Subsequent function, update screen
   var travelAction = function() {
