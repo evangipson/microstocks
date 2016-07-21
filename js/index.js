@@ -925,7 +925,7 @@ var MICROSTOCKS = (function () {
         // except the one we are on
         if(parseInt(playerObject.stats.location) !== i) {
           var opt = document.createElement('option');
-          opt.value = opt.innerHTML = locations[i].name;
+          opt.value = opt.innerHTML = locations[i].name + ", " + Math.ceil(distanceBetween(locations[i], locations[playerObject.stats.location])) + " LY";
           travelSelect.appendChild(opt);
         }
     }
