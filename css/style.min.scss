@@ -535,4 +535,10 @@ button{
 }
 .travel {
   display: none;
+  select {
+    background: white;
+    @include border($grey);
+    // Override that default blue highlight
+    outline: none;
+  }
 }
