@@ -113,7 +113,8 @@ var MICROSTOCKS = (function () {
       "tin",
       "tar"
     ];
-    // Set thirdSyllable to firstSyllable array
+    // TODO: Make thirdSyllable more diverse instead
+    // of setting it as a copy of firstSyllable
     thirdSyllable = firstSyllable;
 
     // Assemble the word
@@ -163,6 +164,14 @@ var MICROSTOCKS = (function () {
       x: randomNum(-10000,10000),
       y: randomNum(-10000,10000)
     };
+  };
+  // This function returns the distance between
+  // two planet objects
+  var distanceBetween = function(planetA, planetB) {
+    // Return the resulting distance between the two
+    // planet's x and y values with the distance formula:
+    // sqrt((x2-x1)^2 + (y2-y1)^2)
+    return Math.sqrt(Math.abs(((planetA.location.x - planetB.location.x)^2) + ((planetA.location.y - planetB.location.y)^2)));
   };
   // Function used to create a new name for a resource
   var createResourceName = function() {
@@ -343,7 +352,6 @@ var MICROSTOCKS = (function () {
       "name": createPlanetName(),
       "location": placePlanet()
     });
-    console.log(locations[l].name);
   }
   // Create the player object
   var playerObject = {
@@ -833,42 +841,59 @@ var MICROSTOCKS = (function () {
       } 
     }
   };
-  // Location logging functionality
+  // Location logging functionality - called from
+  // travelDialog function.
+  // If called without an argument, it will generate
+  // a new location to travel to, and if passed an index,
+  // will move the player. If the player can't be moved,
+  // this function will return null.
   var travelMessage = function(newIndex) {
-    // Pull in newIndex or set it to blank
-    var pulledIndex = newIndex || -1;
     // Pull in playerObject to this method
     var player = playerObject.stats;
-    // if the player doesn't have $10, don't let him travel.
+    // Pull in newIndex or set it to a random
+    // element of the planetsArray we
+    // aren't currently on
+    // -------------------
+    // Try and generate a new locationIndex. 
+    var newNum = randomNum(0,locations.length-1);
+    // Make sure we don't get the same locationIndex that we have
+    while (newNum === parseInt(player.location)) {
+      // Make sure we generate a NEW location
+      newNum = randomNum(0,locations.length-1);
+    }
+    // Now set pulledIndex to be our newNum if it
+    // didn't come in the arguments of the function
+    var pulledIndex = newIndex || newNum;
+    // First let's test if the player can afford the move,
+    // because if they can't there's no point in doing
+    // anymore math or updating
+    // -------------------------
+    // Set move fee based on distance between old
+    // and new planets - take the ceiling of the distance
+    var lyBetweenPlanets = Math.ceil(distanceBetween(locations[pulledIndex], locations[player.location]));
+    // Make the move fee anywhere from 10-30%
+    // of the "lightyears" between planets
+    moveFee = Math.floor(lyBetweenPlanets * (randomNum(1,3) * 0.1));
+    // if the player doesn't have 10% of the distance, don't let him travel
     if (player.money < moveFee) {
-      return "Can't afford to move! Why don't you sell some resources?";
+      // Update the log and let the poor person know!
+      addListElement("Can't afford the " + moveFee +  " mile move from " + locations[player.location] + " to " + locations[pulledIndex] + ".");
+      addListElement("Why don't you sell some resources?");
+      // Get out of this function
+      return null;
     }
-    // make sure we have a valid resource index for potentially selling
-    // since this runs before sellAction.
+    // Now if the player CAN afford it
+    // -------------------------------
+    // Make sure we have a valid resource index for potentially selling
+    // since this runs before sellAction
     updateResourceIndex();
-    // If the player specified a planet to move to
-    // by using the dialog...
-    if(pulledIndex !== -1) {
-      updateLocationIndex(newIndex);
-    }
-    // Otherwise let's generate a new location
-    // (this could be a "random" button function,
-    // just call travelMessage() without an argument)
-    else {
-      // Try and generate a new locationIndex. 
-      var newNum = randomNum(0,locations.length-1);
-      // Make sure we don't get the same locationIndex that we have
-      while (newNum === parseInt(player.location)) {
-        // Make sure we generate a NEW location
-        newNum = randomNum(0,locations.length-1);
-      }
-      // Update our player's location after we know
-      // our new location
-      updateLocationIndex(newNum); 
-    }
-    // Display the console log messages
-    addListElement(logList,"Player moved to " + locations[parseInt(player.location)].name);
-    addListElement(logList,"You were charged  $" + moveFee + " to go!");
+    // Fire the first message before we set the player's
+    // location index and forget it
+    addListElement(logList,"Player moved from " + locations[parseInt(player.location)].name + " to " + locations[pulledIndex].name);
+    // Then update the player's location index
+    updateLocationIndex(pulledIndex);
+    // Display the final log message about how much it was
+    addListElement(logList,"You were charged  $" + moveFee + " to go " + lyBetweenPlanets + " light years.");
   };
   // Subsequent function, update screen
   var travelAction = function() {
