@@ -762,13 +762,12 @@ var MICROSTOCKS = (function () {
 
     // If they can't buy the resource, fuck them.
     if (playerObject.stats.money < (playerObject.stats.resources[resourceIndex].cost * resourceAmount)) {
-      return ["Can't afford unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".",
-        "(Attempted to purchase " + resourceAmount + ".)"
-      ];
+      addListElement(logList,"Can't afford unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".");
+      addListElement(logList, "(Attempted to purchase " + resourceAmount + ".)");
     }
     // If the player can afford it, let's buy it!
     else {
-      return "You bought " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".";
+      addListElement(logList, "You bought " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".");
     }
   };
   var buyAction = function(amount) {
@@ -789,14 +788,18 @@ var MICROSTOCKS = (function () {
     }
     updateInventory();
   };
-  // Sell button functions
+  // Sell button needs to populate the log,
+  // and this function does that. Returns null
+  // if player doesn't own the resource.
   var sellMessage = function(resourceIndex, amount) { 
     // Check resourceIndex
     if (typeof resourceIndex === "undefined" || resourceIndex === null) {
       // If the player owns NO resource, return a log message indicating
       // that before messing with resourceIndex
       if(!playerOwnsResource()) {
-        return "You don't have any resource to sell! Try buying some.";
+        addListElement("You don't have any resource to sell! Try buying some.");
+        // Make sure to leave the function
+        return null;
       }
       // if I'm calling this function with no resourceIndex, it's
       // safe to assume it's from the sell random button, since the
@@ -814,11 +817,11 @@ var MICROSTOCKS = (function () {
 
     // If you have the resource amount, go ahead and sell it!
     if (playerObject.stats.resources[resourceIndex].amount >= resourceAmount) {
-      return "You sold " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".";
+      addListElement(logList, "You sold " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".");
     }
     // If the player can't afford it, fuck off!
     else {
-      return "You don't have " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".";
+      addListElement(logList, "You don't have " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".");
     }
   };
   var sellAction = function(amount) {
