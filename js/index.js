@@ -179,12 +179,12 @@ var MICROSTOCKS = (function () {
   var setPlanetTemp = function() {
     // Determine the minimum temperature first
     // by selecting a random number
-    var minTemp = randomNum(-120,2000);
+    var minTemp = randomNum(-120,1200);
     // Set maximum temperature based off of minimum
-    // temperature up to 180% of the minimum temperature
+    // temperature up to 150-250% of the minimum temperature
     // unless minTemp is negative, in which case just
     // use a range of up to 300 degrees away from that min temp
-    var maxTemp = minTemp > 0 ? randomNum(minTemp, (minTemp * 1.8)) : randomNum(minTemp, minTemp + randomNum(300));
+    var maxTemp = minTemp > 0 ? randomNum(minTemp, (minTemp + (minTemp * (randomNum(15,25) * .1)))) : randomNum(minTemp, minTemp + randomNum(50,300));
     return {
       "min": minTemp,
       "max": maxTemp
