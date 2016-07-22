@@ -173,6 +173,23 @@ var MICROSTOCKS = (function () {
     // sqrt((x2-x1)^2 + (y2-y1)^2)
     return Math.sqrt(Math.abs(Math.pow(planetA.location.x - planetB.location.x,2) + Math.pow(planetA.location.y - planetB.location.y,2)));
   };
+  // This function will return a {min,max} vector
+  // representing a planet's minimum and maximum
+  // temperature
+  var setPlanetTemp = function() {
+    // Determine the minimum temperature first
+    // by selecting a random number
+    var minTemp = randomNum(-120,2000);
+    // Set maximum temperature based off of minimum
+    // temperature up to 180% of the minimum temperature
+    // unless minTemp is negative, in which case just
+    // use a range of up to 300 degrees away from that min temp
+    var maxTemp = minTemp > 0 ? randomNum(minTemp, (minTemp * 1.8)) : randomNum(minTemp, minTemp + randomNum(300));
+    return {
+      "min": minTemp,
+      "max": maxTemp
+    };
+  };
   // Function used to create a new name for a resource
   var createResourceName = function() {
     var resourceName = "";
@@ -343,14 +360,14 @@ var MICROSTOCKS = (function () {
   resources.sort(function(a, b) {
     return b.amount - a.amount;
   });
-  // Array of locations around the USA
   // This is referenced by playerObjects.stats.location
   var locations = [];
   // We'll have 15-20 planets to start
   for (var l = 0; l < randomNum(15,20); l++) {
     locations.push({
       "name": createPlanetName(),
-      "location": placePlanet()
+      "location": placePlanet(),
+      "temp": setPlanetTemp()
     });
   }
   // Create the player object
