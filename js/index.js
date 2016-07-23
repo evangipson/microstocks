@@ -184,7 +184,7 @@ var MICROSTOCKS = (function () {
     // temperature up to 150-250% of the minimum temperature
     // unless minTemp is negative, in which case just
     // use a range of up to 300 degrees away from that min temp
-    var maxTemp = minTemp > 0 ? randomNum(minTemp, (minTemp + (minTemp * (randomNum(15,25) * .1)))) : randomNum(minTemp, minTemp + randomNum(50,300));
+    var maxTemp = minTemp > 0 ? randomNum(minTemp, (minTemp + (minTemp * (randomNum(15,25) * 0.1)))) : randomNum(minTemp, minTemp + randomNum(50,300));
     return {
       "min": minTemp,
       "max": maxTemp
@@ -322,12 +322,14 @@ var MICROSTOCKS = (function () {
     }
   };
   // This function initializes the google graph that is
-  // used to display the gameData
+  // used to display the gameData as well as the gameData itself
   var initializeGraph = function() {
+    // Bring in player's resources to the function
+    var playerResources = playerObject.stats.resources;
     // Load up google charts so everyone can access it
     google.charts.load('current', {'packages':['corechart']});
     // Fill up our global gameData variable
-    gameData = {"cash":[],"netWorth":[],"portfolio":[],"resourceAmounts":[],"totalMoney":[]};
+    gameData = {"cash":[],"netWorth":[],"portfolio":[],"resourceAmounts":[],"totalMoney":[],"resourceList":[]};
     gameData.cash.push(["Date", "Cash"]);
     gameData.cash.push([year + "-" + month, playerObject.stats.money]);
     gameData.portfolio.push(["Date", "Cash"]);
@@ -336,6 +338,10 @@ var MICROSTOCKS = (function () {
     gameData.netWorth.push([year + "-" + month, portfolioTotal + playerObject.stats.money]);
     gameData.totalMoney.push(["Date", "Cash", "Portfolio", "Net Worth"]);
     gameData.totalMoney.push([year + "-" + month, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
+    // For each resource, I need to create a gameData entry
+    for(var i = 0; i < playerResources.length; i++) {
+      gameData.resourceList[playerResources[i].name] = [["Date", "Cash"],[year + "-" + month, playerResources[i].cost]];
+    }
   };
 
   // Module
@@ -575,14 +581,21 @@ var MICROSTOCKS = (function () {
   // to ensure the graphs will have historical
   // data!!! Yay!!!
   var updateGameData = function() {
-    // Bring player in locally
+    // Bring player and the resources in locally
     var player = playerObject.stats;
+    var playerResources = playerObject.stats.resources;
     // update the gameData object for
     // the graph
     gameData.cash.push([year + "-" + month, player.money]);
     gameData.portfolio.push([year + "-" + month, portfolioTotal]);
     gameData.netWorth.push([year + "-" + month, portfolioTotal + player.money]);
     gameData.totalMoney.push([year + "-" + month, player.money, portfolioTotal, portfolioTotal + player.money]);
+    // For each resource, I need to create a gameData entry
+    for(var resource in playerResources) {
+      if(playerResources.hasOwnProperty(resource)) {
+        gameData.resourceList[playerResources[resource].name].push([year + "-" + month, playerResources[resource].cost]);
+      }
+    }
   };
   // This will make time pass in the game world
   var tick = function() {
