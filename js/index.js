@@ -1124,7 +1124,7 @@ var MICROSTOCKS = (function () {
               maxResources = parseInt(player.money) / parseInt(player.resources[index].cost);
               // If we don't have any money, let the player know
               if(maxResources < 1) {
-                $(".buy-sell-dialogue").html(buySellDialogueMessage(index,"Can't afford any " + resourceName + "! Try selling other stock!"));
+                $(".buy-sell-dialogue").html(buySellDialogueMessage(index,"Can't afford any " + resourceName + "! Try selling other resources!"));
               }
               // Otherwise, we have resources to buy!
               else {
@@ -1367,7 +1367,7 @@ var MICROSTOCKS = (function () {
     // Now let's create the inventory panel!
     createInventory();
     // Display a welcome message for the player
-    addListElement(logList, "You arrive on " + locations[parseInt(playerObject.stats.location)].name + " with a few stocks and $" + playerObject.stats.money + " to your name.");
+    addListElement(logList, "You arrive on " + locations[parseInt(playerObject.stats.location)].name + " with a few resources and $" + playerObject.stats.money + " to your name.");
     // Initialize our google graph
     initializeGraph();
     // And let's pull the inventory buttons
