@@ -470,55 +470,79 @@ var MICROSTOCKS = (function () {
       console.error("changeListElement needs to be called with a valid cssClass and incoming text. Check your syntax: changeListElement(cssClass, text);");
     }
   };
-  // Function to modify a voatile resource
-  var modifyVolatileResource = function(playerResources, resourceMax, variant, resourceName, i) {
-      // 60% chance to modify
-      if(randomNum(100) < 60) {
-        // Now check if the cost is too high or too low
-        if(playerResources[i].cost < resourceMax && playerResources[i].cost > 1) {
-          // Actually modify the playerObject resource cost
-          playerObject.stats.resources[i].cost += variant;
-          if(variant > 0) {
-            // Show the increase in value on the log
-            addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
-          }
-          else if(variant > 0) {
-            // Show the decrease in value on the log
-            addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
-          }
-        }
-        else if(playerResources[i].cost < 1) {
-          // Or if it's too low.
-          // Will "bankrupt" the resource here
-          playerObject.stats.resources[i].cost = 1;
-          // Show the increase in value on the log
-          addListElement(logList, resourceName + " bottomed out! Worth $1.", "resource-decrease");
-        }
-      }
+  // Function to handle bankrupty
+  var bankruptResource = function(theResourceIndex) {
+    // Variabl-ize the resource we're going to operate on
+    var playerBankruptResource = playerObject.stats.resources[theResourceIndex];
+    // Pull in the variant before resetting the resource and
+    // take 20% as the payout value for the company failing
+    var initialPayout = Math.floor(Math.abs(playerBankruptResource.variant) * 0.2);
+    // If initial payout is more than a dollar, just pay it out,
+    // otherwise give the player between 5 and 10 dollars.
+    var payoutValue = initialPayout > 1 ? initialPayout : randomNum(5,15);
+    // Cancel the resource by removing it from
+    // the playerObject resources array.
+    // NOTE: This will remove all of those resources
+    // from the player's inventory as well, since the
+    // amount of resources is tied to the resources object.
+    var theType = determineResourceType();
+    // Note i'm using the playerObject array here
+    // and not the variable representation (playerBankruptResource)
+    // because of the shallow copying of javascript
+    playerObject.stats.resources[theResourceIndex] = {
+      // Create another resource in it's place
+      "cost": randomNum(randomNum(2, 5), randomNum(20, randomNum(20,110))),
+      "name": createResourceName(),
+      "type": theType,
+      "trend": determineResourceTrend(theType),
+      "amount": 0
+    };
+    // Give the player a "payout" of the resource
+    playerObject.stats.money += payoutValue;
+    // Let the player about the payout know via the log
+    addListElement(logList, "Player paid out $" + payoutValue + " during the liquidation!");
+    // Make sure displayMonth is two digits by converting it to
+    // a string and adding a 0 if it needs it! This is for
+    // displaying the month correctly on the graph's x-axis
+    var displayMonth = month > 9 ? "" + month : "0" + month;
+    // Need to also reset the history for the graph
+    // so re-init the gameData.resourceList at the current index
+    gameData.resourceList[playerBankruptResource.name] = [
+      ["Date", "Cost"],
+      [year + "-" + displayMonth, playerBankruptResource.cost]
+    ];
   };
-  // Function to modify a stable resource
-  var modifyStableResource = function(playerResources, resourceMax, variant, resourceName, i) {
-      // 30% chance to modify
-      if(randomNum(100) < 30) {
+  // Function to modify a voatile resource
+  var modifyResourceCost = function(playerResources, resourceMax, variant, resourceName, i, modifyChance) {
+      // Check against chance to modify
+      if(randomNum(100) <= modifyChance) {
         // Now check if the cost is too high or too low
-        if(playerResources[i].cost < resourceMax && playerResources[i].cost > 1) {
+        // If the cost is less than the max resource value
+        // AND the cost is more than the absolute value of variant
+        // in case we are removing cost.
+        if(playerResources[i].cost < resourceMax && playerResources[i].cost > Math.abs(variant)) {
           // Actually modify the playerObject resource cost
           playerObject.stats.resources[i].cost += variant;
           if(variant > 0) {
             // Show the increase in value on the log
             addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
           }
-          else if(variant > 0) {
+          // Using an else if here so nothing
+          // shows if variant === 0, because
+          // that's not very interesting.
+          else if (variant > 0) {
             // Show the decrease in value on the log
             addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
           }
         }
-        else if(playerResources[i].cost < 1) {
-          // Or if it's too low.
-          // Will "bankrupt" the resource here
-          playerObject.stats.resources[i].cost = 1;
-          // Show the increase in value on the log
-          addListElement(logList, resourceName + " bottomed out! Worth $1.", "resource-decrease");
+        // Check if the resource is too low
+        if(playerResources[i].cost <= 1) {
+          // Show the bankruptcy in the log
+          addListElement(logList, resourceName + " is bankrupt! Resource pulled from market.");
+          // Bankrupt the actual resource
+          bankruptResource(i);
+          // Let the player know about the new resource
+          addListElement(logList, "New resource (" + playerResources[i].name + ", worth $" + playerResources[i].cost + ") created!");
         }
       }
   };
@@ -542,12 +566,18 @@ var MICROSTOCKS = (function () {
         resourceName = playerResources[i].name;
         resourceType = playerResources[i].trend.name;
         // Stable resources won't be modified as much
+        // so use 10% as the modify cost amount
         if(resourceType === "stable-up" || resourceType === "stable" || resourceType === "stable-down") {
-          modifyStableResource(playerResources, resourceMax, variant, resourceName, i);
+          // The last value passed in this function is the chance
+          // the resource's cost will modify out of 100
+          modifyResourceCost(playerResources, resourceMax, variant, resourceName, i, 10);
         }
-        // It's a volatile resource, so MODIFY!
+        // It's a volatile resource, so 30% chance
+        // to modify the cost
         else {
-          modifyVolatileResource(playerResources, resourceMax, variant, resourceName, i);
+          // The last value passed in this function is the chance
+          // the resource's cost will modify out of 100
+          modifyResourceCost(playerResources, resourceMax, variant, resourceName, i, 30);
         }
       }
   };
@@ -1187,7 +1217,7 @@ var MICROSTOCKS = (function () {
           // If the player wants to see the history of the
           // resource's value, this is where they do it!
           "History": function() {
-            launchGraphDialog("resourceList",resourceName)
+            launchGraphDialog("resourceList",resourceName);
           },
           // Or they can just exit the dialog with cancel
           Cancel: function() {
