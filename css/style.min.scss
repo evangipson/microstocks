@@ -533,6 +533,11 @@ button{
     width: 30rem!important;
   }
 }
+.buy-sell {
+  @include respond($phoneBreakpoint) {
+    width: 25rem!important;
+  }
+}
 .travel {
   display: none;
   select {

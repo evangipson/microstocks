@@ -324,6 +324,10 @@ var MICROSTOCKS = (function () {
   // This function initializes the google graph that is
   // used to display the gameData as well as the gameData itself
   var initializeGraph = function() {
+    // Make sure displayMonth is two digits by converting it to
+    // a string and adding a 0 if it needs it! This is for
+    // displaying the month correctly on the graph's x-axis
+    var displayMonth = month > 9 ? "" + month : "0" + month;
     // Bring in player's resources to the function
     var playerResources = playerObject.stats.resources;
     // Load up google charts so everyone can access it
@@ -331,16 +335,16 @@ var MICROSTOCKS = (function () {
     // Fill up our global gameData variable
     gameData = {"cash":[],"netWorth":[],"portfolio":[],"resourceAmounts":[],"totalMoney":[],"resourceList":[]};
     gameData.cash.push(["Date", "Cash"]);
-    gameData.cash.push([year + "-" + month, playerObject.stats.money]);
-    gameData.portfolio.push(["Date", "Cash"]);
-    gameData.portfolio.push([year + "-" + month, portfolioTotal]);
-    gameData.netWorth.push(["Date", "Cash"]);
-    gameData.netWorth.push([year + "-" + month, portfolioTotal + playerObject.stats.money]);
+    gameData.cash.push([year + "-" + displayMonth, playerObject.stats.money]);
+    gameData.portfolio.push(["Date", "Portfolio"]);
+    gameData.portfolio.push([year + "-" + displayMonth, portfolioTotal]);
+    gameData.netWorth.push(["Date", "Net Worth"]);
+    gameData.netWorth.push([year + "-" + displayMonth, portfolioTotal + playerObject.stats.money]);
     gameData.totalMoney.push(["Date", "Cash", "Portfolio", "Net Worth"]);
-    gameData.totalMoney.push([year + "-" + month, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
+    gameData.totalMoney.push([year + "-" + displayMonth, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
     // For each resource, I need to create a gameData entry
     for(var i = 0; i < playerResources.length; i++) {
-      gameData.resourceList[playerResources[i].name] = [["Date", "Cash"],[year + "-" + month, playerResources[i].cost]];
+      gameData.resourceList[playerResources[i].name] = [["Date", "Cost"],[year + "-" + displayMonth, playerResources[i].cost]];
     }
   };
 
@@ -398,8 +402,8 @@ var MICROSTOCKS = (function () {
   // Create gameData module for
   // all those awesome graphs!
   // Retrieve the month and year from todaysDate.
-  // getMonth() returns a 0-based number.
-  var month = todaysDate.getMonth()+1;
+  // getMonth() returns a 0-based number
+  var month = todaysDate.getMonth() + 1;
   var year = todaysDate.getFullYear();
   // Also we need our gameData visible everywhere
   var gameData = [];
@@ -584,16 +588,20 @@ var MICROSTOCKS = (function () {
     // Bring player and the resources in locally
     var player = playerObject.stats;
     var playerResources = playerObject.stats.resources;
+    // Make sure displayMonth is two digits by converting it to
+    // a string and adding a 0 if it needs it! This is for
+    // displaying the month correctly on the graph's x-axis
+    var displayMonth = month > 9 ? "" + month : "0" + month;
     // update the gameData object for
     // the graph
-    gameData.cash.push([year + "-" + month, player.money]);
-    gameData.portfolio.push([year + "-" + month, portfolioTotal]);
-    gameData.netWorth.push([year + "-" + month, portfolioTotal + player.money]);
-    gameData.totalMoney.push([year + "-" + month, player.money, portfolioTotal, portfolioTotal + player.money]);
+    gameData.cash.push([year + "-" + displayMonth, player.money]);
+    gameData.portfolio.push([year + "-" + displayMonth, portfolioTotal]);
+    gameData.netWorth.push([year + "-" + displayMonth, portfolioTotal + player.money]);
+    gameData.totalMoney.push([year + "-" + displayMonth, player.money, portfolioTotal, portfolioTotal + player.money]);
     // For each resource, I need to create a gameData entry
     for(var resource in playerResources) {
       if(playerResources.hasOwnProperty(resource)) {
-        gameData.resourceList[playerResources[resource].name].push([year + "-" + month, playerResources[resource].cost]);
+        gameData.resourceList[playerResources[resource].name].push([year + "-" + displayMonth, playerResources[resource].cost]);
       }
     }
   };
@@ -1022,6 +1030,45 @@ var MICROSTOCKS = (function () {
         }
     });
   };
+  // Function to launch the pretty graph dialog which will
+  // take a "type" of graph (reads off of the gameData object)
+  // as well as an optional resourceName if you pass the
+  // type "resourceList"
+  var launchGraphDialog = function(type, resourceName) {
+    // Set up the content of the modal
+    $(".graph-type").text(type);
+    // Set up the Google Chart with the new data
+    var options = {
+      title: type === "resourceList" ? resourceName : type,
+      hAxis: {
+        title: 'Date',
+        titleTextStyle: {color: '#333'}, 
+        slantedText:true,
+        slantedTextAngle:50
+      },
+      vAxis: {minValue: 0},
+      width: $("#graph-wrapper").outerWidth(),
+      height: $("#graph-wrapper").outerHeight(),
+      pointSize: 3,
+      isStacked: false
+    };
+    var chart = new google.visualization.AreaChart(document.getElementById('graph-wrapper'));
+    if(type === "resourceList") {
+      chart.draw(google.visualization.arrayToDataTable(gameData[type][resourceName]), options);
+    }
+    else {
+      chart.draw(google.visualization.arrayToDataTable(gameData[type]), options);
+    }
+    // Initialize the graph-dialog modal
+    $(".graph-dialog").dialog({
+        modal: true,
+        buttons: {
+            "Close": function() {
+              $(this).dialog("close");
+            }
+        }
+    });
+  };
   // Function that prints out buySell dialog
   // welcome message with some data, takes in one
   // string that is the last line of dialogue, indicating
@@ -1137,6 +1184,12 @@ var MICROSTOCKS = (function () {
                   $(".buy-sell-dialogue").html(buySellDialogueMessage(index,"You don't have any " + resourceName + " to sell!"));
               }
           },
+          // If the player wants to see the history of the
+          // resource's value, this is where they do it!
+          "History": function() {
+            launchGraphDialog("resourceList",resourceName)
+          },
+          // Or they can just exit the dialog with cancel
           Cancel: function() {
             $(this).dialog("close");
           }
@@ -1217,37 +1270,6 @@ var MICROSTOCKS = (function () {
                 // Close up the buy-sell dialog too
                 $(".buy-sell").dialog("close");
                 $(this).dialog("close");
-            }
-        }
-    });
-  };
-  // Function to launch the pretty graph dialog
-  var launchGraphDialog = function(type) {
-    // Set up the content of the modal
-    $(".graph-type").text(type);
-    // Set up the Google Chart with the new data
-    var options = {
-      title: type,
-      hAxis: {
-        title: 'Date',
-        titleTextStyle: {color: '#333'}, 
-        slantedText:true,
-        slantedTextAngle:30
-      },
-      vAxis: {minValue: 0},
-      width: $("#graph-wrapper").outerWidth(),
-      height: $("#graph-wrapper").outerHeight() - 50,
-      pointSize: 3,
-      isStacked: false
-    };
-    var chart = new google.visualization.AreaChart(document.getElementById('graph-wrapper'));
-    chart.draw(google.visualization.arrayToDataTable(gameData[type]), options);
-    // Initialize the graph-dialog modal
-    $(".graph-dialog").dialog({
-        modal: true,
-        buttons: {
-            "Close": function() {
-              $(this).dialog("close");
             }
         }
     });
