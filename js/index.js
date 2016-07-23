@@ -357,20 +357,11 @@ var MICROSTOCKS = (function () {
   // -----------------
   // Let's pull in the log ul.
   var logList = document.getElementsByClassName("log-list")[0];
-  // We need to set how much it is to move
+  // We need to set how much it is to move.
+  // This is used in both travelMessage and travelAction,
+  // so it can be scoped to the whole MICROSTOCKS module.
   var moveFee = 10;
-  // Change this variable to modify the amount of resources generated
-  var resourceAmount = randomNum(12,20);
-  // Create some variables to fill up player JSON with
-  var resources = createResources(resourceAmount);
-  // Fill up the playerObject resource array w/ amounts for the player
-  givePlayerResources(resources, resourceAmount);
-  // Now sort the resources array by Amount
-  // Before applying to the player
-  resources.sort(function(a, b) {
-    return b.amount - a.amount;
-  });
-  // This is referenced by playerObjects.stats.location
+  // This will be referenced by playerObjects.stats.location
   var locations = [];
   // We'll have 15-20 planets to start
   for (var l = 0; l < randomNum(15,20); l++) {
@@ -385,7 +376,22 @@ var MICROSTOCKS = (function () {
     "stats": {
       "money": randomNum(350,500),
       "location": randomNum(0,locations.length-1),
-      "resources": resources
+      // Resources is taken care of by
+      // an anonymous function that only does
+      // a couple things before returning a
+      // resources array. The reason for doing this
+      // is I don't need resourceAmount or resources
+      // to be scoped to this whole MICROSTOCKS function.
+      "resources": (function() {
+        // Change this variable to modify the amount of resources generated
+        var resourceAmount = randomNum(12,20);
+        // Create some variables to fill up player JSON with
+        var resources = createResources(resourceAmount);
+        // Fill up the playerObject resource array w/ amounts for the player
+        givePlayerResources(resources, resourceAmount);
+        // Sort out the array before we return it.
+        return resources.sort(function(a, b) { return b.amount - a.amount; });
+      })() // Execute this anonymous function immediately
     }
   };
   // Variable to display the total amount of the portfolio
@@ -530,7 +536,7 @@ var MICROSTOCKS = (function () {
           // Using an else if here so nothing
           // shows if variant === 0, because
           // that's not very interesting.
-          else if (variant > 0) {
+          else if (variant < 0) {
             // Show the decrease in value on the log
             addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
           }
@@ -966,7 +972,6 @@ var MICROSTOCKS = (function () {
     // Display the final log message about how much it was
     addListElement(logList,"You were charged  $" + moveFee + " to go " + lyBetweenPlanets + " light-years.");
   };
-  // Subsequent function, update screen
   var travelAction = function() {
     // Pull in playerObject to this method
     var player = playerObject.stats;
@@ -1361,6 +1366,7 @@ var MICROSTOCKS = (function () {
   var createInventory = function() {
     // Bring in playerObject to a local variable
     var player = playerObject.stats;
+    var resources = playerObject.stats.resources;
     // Get the player's inventory list, since we are adding elements to it.
     var invList = document.getElementsByClassName("inventory-list")[0];
     // Variable to display the total amount of the portfolio
