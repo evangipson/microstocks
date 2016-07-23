@@ -31,6 +31,8 @@ If you want a local copy of Microstocks, just fork the repository, and set this 
 ## Contributing
 Have a look at the [issues with Microstocks](https://github.com/evangipson/microstocks/issues), and create a pull request containing your code so it can be reviewed be merged into the source!
 
+I will run all new javascript through [JSHint](http://jshint.com/) before merging into master.
+
 ## Versioning
 Microstocks is maintained using a 3-digit versioning system, represented by:
 ```
