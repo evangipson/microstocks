@@ -975,7 +975,7 @@ var MICROSTOCKS = (function () {
                 if(locations.hasOwnProperty(location)) {
                   // Check if the name of the location is the
                   // same as the selected name in the travel-select box
-                  if(locations[location].name === $(".travel-select")[0].value) {
+                  if($(".travel-select")[0].value.indexOf(locations[location].name) > -1) {
                     // If it is, we have our location index!
                     locationIndex = location;
                   }
