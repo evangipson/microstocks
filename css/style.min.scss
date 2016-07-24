@@ -24,7 +24,10 @@ $grey: #ededed;
 // rules for body
 body {
   color: black;
-  font-size: 20px;
+  font-size: 16px;
+  @include respond($phoneBreakpoint) {
+    font-size: 20px;
+  }
   font-weight: 300;
   font-family: 'Muli', sans-serif;
   background-color: $grey;
@@ -246,9 +249,9 @@ section {
   font-size: 1rem;
   overflow-y: scroll;
   text-align: center;
-  max-height: 15rem;
+  max-height: 23rem;
   @include respond($phoneBreakpoint) {
-    max-height: 30rem;
+    max-height: 32rem;
   }
 }
 .resource {

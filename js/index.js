@@ -415,6 +415,10 @@ var MICROSTOCKS = (function () {
   var microstocksModule = {};
   
   // Private Variables
+  // NOTE: If you change any of these, you need to
+  // understand the full scope of your change by
+  // ctrl+f and finding all instances and updating
+  // those as well if necessary
   // -----------------
   // The version that microstocks is currently at
   var microstocksVersion = "1.0.7";
