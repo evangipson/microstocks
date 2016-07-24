@@ -24,7 +24,7 @@ $grey: #ededed;
 // rules for body
 body {
   color: black;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 300;
   font-family: 'Muli', sans-serif;
   background-color: $grey;
@@ -57,7 +57,7 @@ h1 {
   font-size: 1.5rem;
 }
 h2 {
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 // content styles
 p {
@@ -83,7 +83,7 @@ ul {
     background: $grey;
     height: 0;
     width: 0;
-    top: 0.3rem;
+    bottom: 0rem;
     position:relative;
     display: block;
   }
@@ -206,10 +206,8 @@ section {
 // Style the log
 .log {
   min-height: 18rem;
-  font-size: 0.8rem;
   & ul {
   	font-family: 'Cutive Mono', monospace;
-    font-size: 14px;
     line-height: 20px;
     li {
       text-align: left;
@@ -228,7 +226,6 @@ section {
     }
     margin-right: 1rem;
     margin-bottom: 0.5rem;
-    font-size: .8rem;
     &:nth-first-child, &:nth-last-child {
       clear: both;
     }
@@ -263,12 +260,12 @@ section {
   color: white;
   display: inline-block;
   margin-right: 1rem;
-  height: auto;
+  height: 6rem;
   width: auto;
   // Make sure to fix the :hover:after
   // animation padding and margin-left
   // in sync with this!
-  padding: .25rem 1rem;
+  padding: 0rem 1rem;
   text-align:center;
   font-size: 1.3rem;
   font-family: 'Cutive Mono', monospace;
@@ -279,6 +276,7 @@ section {
   }
   @include border(darken($blue, 10%));
   &.owned {
+    height: 8.5rem;
     background: $pink;
     @include border(darken($pink, 10%));
     &:hover {
@@ -301,7 +299,7 @@ section {
       width: 100%;
       background: darken($blue,20%);
       height: 0.8rem;
-      margin-top: -0.9rem;
+      margin-top: -0.7rem;
       // Make sure to fix the element's
       // padding in sync with this
       padding: 0 1rem;
@@ -360,7 +358,7 @@ nav.options-button {
 .options-text {
   font-weight: bold;
   font-size: 1.6rem;
-  font-family: 'Trirong', serif;
+  //font-family: 'Trirong', serif;
 }
 .options-subtext {
   font-weight: 300;
@@ -371,7 +369,7 @@ nav.options-button {
 }
 .options-author {
   font-family: 'Cutive Mono', monospace;
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 // jQuery-ui dialog override
 .ui-dialog {
