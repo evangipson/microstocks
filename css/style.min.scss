@@ -221,6 +221,7 @@ section {
   }
   .resource-increase,
   .resource-decrease {
+    color: white;
     @include respond($phoneBreakpoint) {
       width: calc(50% - 2rem);
     }
@@ -240,7 +241,6 @@ section {
   .resource-decrease {
     background: $red;
     box-shadow: inset 0 0 0 $borderWidth darken($red, 20%);
-    color: white;
   }
 }
 // Style the resources ul and
