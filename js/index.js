@@ -1381,36 +1381,46 @@ var MICROSTOCKS = (function () {
   };
   // Now add our public init method to call in the ready event
   microstocksModule.init = function() {
-    // Get the Controls
-    // ----------------
-    // Now lets pull in the buttons
-    var buyButton = document.getElementsByClassName("buy-button")[0];
-    var sellButton = document.getElementsByClassName("sell-button")[0];
-    var travelButton = document.getElementsByClassName("travel-button")[0];
-    var optionsButton = document.getElementsByClassName("options-button")[0];
-    // Now let's set up the event listeners
-    addButtonEvent(buyButton, buyMessage, buyAction);
-    addButtonEvent(sellButton, sellMessage, sellAction);
-    addButtonEvent(travelButton, launchTravelDialog);
-    addButtonEvent(optionsButton, launchOptionsDialog);
-    // Now let's create the inventory panel!
-    createInventory();
-    // Display a welcome message for the player
-    addListElement(logList, "You arrive on " + locations[parseInt(playerObject.stats.location)].name + " with a few resources and $" + playerObject.stats.money + " to your name.");
-    // Initialize our google graph
-    initializeGraph();
-    // And let's pull the inventory buttons
-    // so we can look at the pretty graphs
-    var netWorthButton = document.getElementsByClassName("net-worth-button")[0];
-    // Don't forget it has an event listener as well!
-    addButtonEvent(netWorthButton, [launchGraphDialog, "totalMoney"]);
+    // Initialize modals by loading jquery-ui javascript,
+    // and when the script load is successful, initialize
+    // MICROSTOCKS!
+    $.getScript("https://code.jquery.com/ui/1.11.4/jquery-ui.min.js", function() {
+      // Get the Controls
+      // ----------------
+      // Now lets pull in the buttons
+      var buyButton = document.getElementsByClassName("buy-button")[0];
+      var sellButton = document.getElementsByClassName("sell-button")[0];
+      var travelButton = document.getElementsByClassName("travel-button")[0];
+      var optionsButton = document.getElementsByClassName("options-button")[0];
+      // Now let's set up the event listeners
+      addButtonEvent(buyButton, buyMessage, buyAction);
+      addButtonEvent(sellButton, sellMessage, sellAction);
+      addButtonEvent(travelButton, launchTravelDialog);
+      addButtonEvent(optionsButton, launchOptionsDialog);
+      // Now let's create the inventory panel!
+      createInventory();
+      // Display a welcome message for the player
+      addListElement(logList, "You arrive on " + locations[parseInt(playerObject.stats.location)].name + " with a few resources and $" + playerObject.stats.money + " to your name.");
+      // Initialize our google graph
+      initializeGraph();
+      // And let's pull the inventory buttons
+      // so we can look at the pretty graphs
+      var netWorthButton = document.getElementsByClassName("net-worth-button")[0];
+      // Don't forget it has an event listener as well!
+      addButtonEvent(netWorthButton, [launchGraphDialog, "totalMoney"]);
+    });
   };
   // give back our module!
   return microstocksModule;
 }()); // Execute MICROSTOCKS function enclosure immediately
 
-// Don't do any javascript until jquery's ready event is called
-$(document).ready(function() {
-  // Now let's initialize Microstocks!
-  MICROSTOCKS.init();
-});
+// After this script gets called via async, load jQuery,
+// and subsequently jQuery-ui then MICROSTOCKS
+// and google charts somewhere in there.
+// -------------------------------------
+var scriptTag = document.createElement('script');
+scriptTag.src = "http://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js";
+// When the script loads, let's call MICROSTOCKS.init!
+scriptTag.onload = scriptTag.onreadystatechange = MICROSTOCKS.init; 
+// Append our jQuery script to the <body>
+document.body.appendChild(scriptTag);
