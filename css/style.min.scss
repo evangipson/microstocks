@@ -172,7 +172,6 @@ section {
 // Style the title
 .title {
   width: calc(100% - 2rem);
-  height: 27vh;
   // I only want the header section
   // to be blue
   header {
@@ -246,9 +245,9 @@ section {
 .resources ul, .log ul {
   overflow-y: scroll;
   text-align: center;
-  max-height: 20rem;
+  max-height: 15rem;
   @include respond($phoneBreakpoint) {
-    max-height: 64vh;
+    max-height: 30rem;
   }
 }
 .resource {
