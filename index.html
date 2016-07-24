@@ -17,7 +17,7 @@
     <!-- Set the chart favicon -->
     <link rel="shortcut icon" href="http://evangipson.com/microstocks/img/favicon-line-chart.ico" />
     <!-- Yay let's link in my style -->
-    <link rel="stylesheet" href="./css/style.min.css" />
+    <link rel="stylesheet" href="./css/style.min.css" media="none" onload="if(media!='all')media='all'" />
     <!-- *Ugh* I hate using libraries -->    
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/overcast/jquery-ui.min.css" media="none" onload="if(media!='all')media='all'" />
     <!-- Also let's take in font-awesome for icons -->
@@ -86,9 +86,7 @@
     <!-- *Sigh* Let's call in jquery and jquery-ui -->
     <!-- at least I'm doing it via CDN so I don't have to download it -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-    <!-- Also I need Google Charts -->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js" async defer></script>
     <!-- Load in my javascript -->
     <script src="./js/index.min.js" async defer></script>
   </body>

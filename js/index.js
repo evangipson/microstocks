@@ -324,24 +324,29 @@ var MICROSTOCKS = (function () {
   // This function initializes the google graph that is
   // used to display the gameData as well as the gameData itself
   var initializeGraph = function() {
-    // Make sure displayMonth is two digits by converting it to
-    // a string and adding a 0 if it needs it! This is for
-    // displaying the month correctly on the graph's x-axis
-    var displayMonth = month > 9 ? "" + month : "0" + month;
-    // Bring in player's resources to the function
-    var playerResources = playerObject.stats.resources;
-    // Load up google charts so everyone can access it
-    google.charts.load('current', {'packages':['corechart']});
-    // Fill up our global gameData variable
-    gameData = {"netWorth":[],"resourceAmounts":[],"totalMoney":[],"resourceList":[]};
-    gameData.netWorth.push(["Date", "Net Worth"]);
-    gameData.netWorth.push([year + "-" + displayMonth, portfolioTotal + playerObject.stats.money]);
-    gameData.totalMoney.push(["Date", "Cash", "Portfolio", "Net Worth"]);
-    gameData.totalMoney.push([year + "-" + displayMonth, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
-    // For each resource, I need to create a gameData entry
-    for(var i = 0; i < playerResources.length; i++) {
-      gameData.resourceList[playerResources[i].name] = [["Date", "Cost"],[year + "-" + displayMonth, playerResources[i].cost]];
-    }
+    // Load the google script needed for graphs
+    // using jQuery, upon successful script download
+    // do all the cool google stuff
+    $.getScript("https://www.gstatic.com/charts/loader.js", function() {
+      // Make sure displayMonth is two digits by converting it to
+      // a string and adding a 0 if it needs it! This is for
+      // displaying the month correctly on the graph's x-axis
+      var displayMonth = month > 9 ? "" + month : "0" + month;
+      // Bring in player's resources to the function
+      var playerResources = playerObject.stats.resources;
+      // Load up google charts so everyone can access it
+      google.charts.load('current', {'packages':['corechart']});
+      // Fill up our global gameData variable
+      gameData = {"netWorth":[],"resourceAmounts":[],"totalMoney":[],"resourceList":[]};
+      gameData.netWorth.push(["Date", "Net Worth"]);
+      gameData.netWorth.push([year + "-" + displayMonth, portfolioTotal + playerObject.stats.money]);
+      gameData.totalMoney.push(["Date", "Cash", "Portfolio", "Net Worth"]);
+      gameData.totalMoney.push([year + "-" + displayMonth, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
+      // For each resource, I need to create a gameData entry
+      for(var i = 0; i < playerResources.length; i++) {
+        gameData.resourceList[playerResources[i].name] = [["Date", "Cost"],[year + "-" + displayMonth, playerResources[i].cost]];
+      }
+    });
   };
 
   // Module
