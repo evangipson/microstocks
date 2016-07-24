@@ -331,10 +331,6 @@ var MICROSTOCKS = (function () {
     scriptTag.src = "https://www.gstatic.com/charts/loader.js";
     // When the script loads, let's call initialize the graphs!
     scriptTag.onload = scriptTag.onreadystatechange = function() {
-      // Make sure displayMonth is two digits by converting it to
-      // a string and adding a 0 if it needs it! This is for
-      // displaying the month correctly on the graph's x-axis
-      var displayMonth = month > 9 ? "" + month : "0" + month;
       // Bring in player's resources to the function
       var playerResources = playerObject.stats.resources;
       // Load up google charts so everyone can access it
@@ -411,7 +407,7 @@ var MICROSTOCKS = (function () {
   // We need a date for gameData
   // and multiple things need to access
   // it, so the it's best to be scoped
-  // to the whole closure.
+  // to the whole closure
   var todaysDate = new Date();
   // Create gameData module for
   // all those awesome graphs!
@@ -419,6 +415,10 @@ var MICROSTOCKS = (function () {
   // getMonth() returns a 0-based number
   var month = todaysDate.getMonth() + 1;
   var year = todaysDate.getFullYear();
+  // Make sure displayMonth is two digits by converting it to
+  // a string and adding a 0 if it needs it! This is for
+  // displaying the month correctly on the graph's x-axis
+  var displayMonth = month > 9 ? "" + month : "0" + month;
   // Also we need our gameData visible everywhere
   var gameData = [];
 
@@ -515,10 +515,6 @@ var MICROSTOCKS = (function () {
     playerObject.stats.money += payoutValue;
     // Let the player about the payout know via the log
     addListElement(logList, "Player paid out $" + payoutValue + " during the liquidation!");
-    // Make sure displayMonth is two digits by converting it to
-    // a string and adding a 0 if it needs it! This is for
-    // displaying the month correctly on the graph's x-axis
-    var displayMonth = month > 9 ? "" + month : "0" + month;
     // Need to also reset the history for the graph
     // so re-init the gameData.resourceList at the current index
     // using the PLAYEROBJECT, not the playerBankruptResource
@@ -633,10 +629,6 @@ var MICROSTOCKS = (function () {
     // Bring player and the resources in locally
     var player = playerObject.stats;
     var playerResources = playerObject.stats.resources;
-    // Make sure displayMonth is two digits by converting it to
-    // a string and adding a 0 if it needs it! This is for
-    // displaying the month correctly on the graph's x-axis
-    var displayMonth = month > 9 ? "" + month : "0" + month;
     // update the gameData object for
     // the graph
     gameData.netWorth.push([year + "-" + displayMonth, portfolioTotal + player.money]);
@@ -663,6 +655,8 @@ var MICROSTOCKS = (function () {
     else {
       month += 1;
     }
+    // displayMonth also needs to advance
+    displayMonth = month > 9 ? "" + month : "0" + month;
     // Update the gameData object for graphs
     // since time has passed
     updateGameData();
@@ -690,7 +684,7 @@ var MICROSTOCKS = (function () {
     // We need to display our total worth
     if(parseInt(oldNetWorth[1]) < portfolioTotal + parseInt(player.money)) {
         // If our total value has increased, show it!
-        changeListElement("net-worth-button", "$" + player.money + "/Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Up!");
+        changeListElement("net-worth-button", "$" + player.money + "/Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " - Up!");
     }
     else if (parseInt(oldNetWorth[1]) === portfolioTotal + parseInt(player.money)) {
         // No increase!
@@ -698,14 +692,14 @@ var MICROSTOCKS = (function () {
     }
     else {
         // We lost money!
-        changeListElement("net-worth-button", "$" + player.money + "/Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
+        changeListElement("net-worth-button", "$" + player.money + "/Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " - Down!");
     }
-    // Tell the player where they are
-    changeListElement("location", "Location: " + locations[parseInt(player.location)].name);
-    // Then update the resource boxes!
-    updateResourceBoxes();
     // Make time pass
     tick();
+    // Tell the player where they are
+    changeListElement("location", "Location: " + locations[parseInt(player.location)].name + " (" + displayMonth + "/" + year + ")");
+    // Then update the resource boxes!
+    updateResourceBoxes();
   };
   // Will return true if player owns any resources,
   // and false otherwise 
@@ -1381,7 +1375,7 @@ var MICROSTOCKS = (function () {
     // We need to display our total worth
     addListElement(invList, "$" + player.money + "/Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth-button under-hover");
     // Our location
-    addListElement(invList, "Location: " + locations[parseInt(player.location)].name, "location under-hover");
+    addListElement(invList, "Location: " + locations[parseInt(player.location)].name + " (" + displayMonth + "/" + year + ")", "location under-hover");
     // Then draw the resources
     createResourceBoxes();
   };
