@@ -52,7 +52,8 @@ var MICROSTOCKS = (function () {
       "pfe",
       "pa",
       "neh",
-      "ni",
+      "le",
+      "li",
       "mu",
       "min",
       "nuv",
@@ -62,7 +63,7 @@ var MICROSTOCKS = (function () {
       "gra",
       "ip",
       "iq",
-      "ikk",
+      "ik",
       "sa",
       "tik",
       "theo",
@@ -112,7 +113,7 @@ var MICROSTOCKS = (function () {
       "wi",
       "when",
       "je",
-      "jee",
+      "ut",
       "jaa",
       "gis",
       "ggin",
@@ -238,7 +239,7 @@ var MICROSTOCKS = (function () {
   var setPlanetTemp = function() {
     // Determine the minimum temperature first
     // by selecting a random number
-    var minTemp = randomNum(-120,1200);
+    var minTemp = randomNum(-120,700);
     // Set maximum temperature based off of minimum
     // temperature up to 150-250% of the minimum temperature
     // unless minTemp is negative, in which case just
@@ -253,31 +254,35 @@ var MICROSTOCKS = (function () {
   // string and takes in no parameters
   var determinePlanetType = function() {
     var planetTypes = [
-      "Volcanic",
-      "Ice",
-      "Ocean",
-      "Gas Giant",
-      "Swamp",
-      "Desert"
+      "volcanic",
+      "lava",
+      "temperate",
+      "ice",
+      "ocean",
+      "gas giant",
+      "swamp",
+      "desert"
     ];
     var planetAdjectives = [
-      "Silica",
-      "Carbon",
-      "Hydrogen",
-      "Terraformed",
-      "Uninhabited",
-      "Tempest",
-      "Quiet",
-      "Helium",
-      "Magnesium",
-      "Aluminum"
+      "silica-based",
+      "carbon-based",
+      "hydrogen-based",
+      "terraformed",
+      "uninhabited",
+      "gusty",
+      "quiet",
+      "tempest",
+      "perpetually dark",
+      "helium-based",
+      "magnesium-based",
+      "aluminum-based"
     ];
     return {
       "base": planetTypes[randomNum(0,planetTypes.length - 1)],
-      "extra" : (function() {
+      "adjective" : (function() {
         var extraArray = [];
-        // 25% chance we'll have two adjective
-        if(randomNum(100) < 25) {
+        // 45% chance we'll have two adjective
+        if(randomNum(100) < 45) {
           // Generate the first adjective and store
           // it in a variable because we need it later
           var tempObj = planetAdjectives[randomNum(0, planetAdjectives.length - 1)];
@@ -295,9 +300,28 @@ var MICROSTOCKS = (function () {
           // Then after the tempObject isn't what we want to
           // select, push that as well!
           extraArray.push(planetAdjectives[newRandomIndex]);
+          // Very small chance to have another adjective.
+          // 45% X 30% = 13.5% to have 3 adjectives
+          if(randomNum(100) < 30) {
+            // Capture the first and second adjective and store
+            // it in a variable
+            tempObj = extraArray;
+            // Okay, let's get the third adjective,
+            // but we want to make sure it's unique
+            newRandomIndex = randomNum(0, planetAdjectives.length - 1);
+            // So if we are matching either of the old
+            // adjectives, we need to generate a new index
+            while(tempObj[0] === planetAdjectives[newRandomIndex] || tempObj[1] === planetAdjectives[newRandomIndex]) {
+              newRandomIndex = randomNum(0, planetAdjectives.length - 1);
+            }
+            // Then after the tempObject is comprised of
+            // unique adjectives, push our final adjective
+            // to the extraArray.
+            extraArray.push(planetAdjectives[newRandomIndex]);
+          }
         }
-        // 90% chance we'll have one
-        else if(randomNum(100) < 90) {
+        // 95% chance we'll have one
+        else if(randomNum(100) < 95) {
           extraArray.push(planetAdjectives[randomNum(0, planetAdjectives.length - 1)]);
         }
         // Then make sure to return the array
@@ -817,7 +841,7 @@ var MICROSTOCKS = (function () {
     // Make time pass
     tick();
     // Tell the player where they are
-    changeListElement("location", "Location: " + locations[parseInt(player.location)].name + " (" + displayMonth + "/" + year + ")");
+    changeListElement("planet-info-button", "Location: " + locations[parseInt(player.location)].name + " (" + displayMonth + "/" + year + ")");
     // Then update the resource boxes!
     updateResourceBoxes();
   };
@@ -1182,6 +1206,69 @@ var MICROSTOCKS = (function () {
         }
     });
   };
+  // This function will launch the planet informoation
+  // dialog, presenting various statistics about
+  // the planet
+  var launchPlanetInfoDialog = function() {
+    // Pull in the player's location index
+    var locationIndex = playerObject.stats.location;
+    var planetName = locations[locationIndex].name;
+    var planetType = locations[locationIndex].type.base;
+    var planetTemp = locations[locationIndex].temp;
+    // Conditionally fill up planet adjective depending
+    // on how long that array is (could be 0-2 adjectives)
+    var planetAdjective = (function() {
+      // Assume we have no adjective since
+      // that is the most common case, so just
+      // fill with a blank string
+      var retAdjective = "";
+      // Pull in the current adjective array
+      var adjectives = locations[locationIndex].type.adjective;
+      // If we have at least one adjective
+      if(adjectives.length > 1) {
+        // Then for every adjective we have,
+        // let's build the return adjective
+        for(var adjIndex = 0; adjIndex < adjectives.length; adjIndex++) {
+          if(adjIndex === adjectives.length) {
+            // No trailing space if it's the
+            // last adjective
+            retAdjective += " " + adjectives[adjIndex];
+          }
+          else {
+            // Otherwise add the adjecitve and
+            // a trailing space for the next adjective
+            retAdjective += " " + adjectives[adjIndex] + ", ";
+          }
+        }
+      }
+      // If we only have 1 adjective
+      else if(adjectives.length === 1) {
+        // We know there's only 1, so return
+        // the first element of the array
+        retAdjective = " " + adjectives[0];
+      }
+      // We're done - return the adjective
+      // we built!
+      return retAdjective;
+    })(); // Execute anonymous function to fill planetAdjective
+    // Put the planet information into a string for readability
+    var planetInfoMessage = "<p>You are on <b>" + planetName + "</b>.</p>" +
+                            "<p><b>" + planetName + "</b> is a" + planetAdjective + " " + planetType + " type planet.</p>" + 
+                            "<p>The temperature ranges from " + planetTemp.min + "C to " + planetTemp.max + "C.</p>";
+    $(".planet-info-message").html(planetInfoMessage);
+    // Initialize the options-dialog modal
+    $(".planet-info-dialog").dialog({
+        // The magic line right here
+        // Don't open unless called to
+        //autoOpen: false,
+        modal: true,
+        buttons: {
+            "Close": function() {
+              $(this).dialog("close");
+            }
+        }
+    });
+  };
   // Function to launch the pretty graph dialog which will
   // take a "type" of graph (reads off of the gameData object)
   // as well as an optional resourceName if you pass the
@@ -1490,7 +1577,7 @@ var MICROSTOCKS = (function () {
     // We need to display our total worth
     addListElement(invList, "$" + player.money + "/Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth-button under-hover");
     // Our location
-    addListElement(invList, "Location: " + locations[parseInt(player.location)].name + " (" + displayMonth + "/" + year + ")", "location under-hover");
+    addListElement(invList, "Location: " + locations[parseInt(player.location)].name + " (" + displayMonth + "/" + year + ")", "planet-info-button under-hover");
     // Then draw the resources
     createResourceBoxes();
   };
@@ -1521,8 +1608,12 @@ var MICROSTOCKS = (function () {
       // And let's pull the inventory buttons
       // so we can look at the pretty graphs
       var netWorthButton = document.getElementsByClassName("net-worth-button")[0];
-      // Don't forget it has an event listener as well!
+      // Don't forget it has an event listener
       addButtonEvent(netWorthButton, [launchGraphDialog, "totalMoney"]);
+      // Also hook up the planet info button!
+      var planetInfoButton = document.getElementsByClassName("planet-info-button")[0];
+      // Don't forget it has an event listener
+      addButtonEvent(planetInfoButton, launchPlanetInfoDialog);
     });
   };
   // give back our module!
