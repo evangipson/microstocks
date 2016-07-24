@@ -243,6 +243,7 @@ section {
 // Style the resources ul and
 // the log ul so the height is tidy!
 .resources ul, .log ul {
+  font-size: 1rem;
   overflow-y: scroll;
   text-align: center;
   max-height: 15rem;
