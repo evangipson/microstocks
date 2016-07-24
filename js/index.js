@@ -430,7 +430,7 @@ var MICROSTOCKS = (function () {
   var moveFee = 10;
   // This will be referenced by playerObjects.stats.location
   var locations = [];
-  // We'll have 15-20 planets to start
+  // We'll have 30-40 planets to start
   for (var l = 0; l < randomNum(30,40); l++) {
     locations.push({
       "name": createPlanetName(),
@@ -451,7 +451,7 @@ var MICROSTOCKS = (function () {
       // to be scoped to this whole MICROSTOCKS function.
       "resources": (function() {
         // Change this variable to modify the amount of resources generated
-        var resourceAmount = randomNum(12,20);
+        var resourceAmount = randomNum(20,30);
         // Create some variables to fill up player JSON with
         var resources = createResources(resourceAmount);
         // Fill up the playerObject resource array w/ amounts for the player
