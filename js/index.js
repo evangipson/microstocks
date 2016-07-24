@@ -325,9 +325,12 @@ var MICROSTOCKS = (function () {
   // used to display the gameData as well as the gameData itself
   var initializeGraph = function() {
     // Load the google script needed for graphs
-    // using jQuery, upon successful script download
+    // using javascript, upon successful script download
     // do all the cool google stuff
-    $.getScript("https://www.gstatic.com/charts/loader.js", function() {
+    var scriptTag = document.createElement('script');
+    scriptTag.src = "https://www.gstatic.com/charts/loader.js";
+    // When the script loads, let's call initialize the graphs!
+    scriptTag.onload = scriptTag.onreadystatechange = function() {
       // Make sure displayMonth is two digits by converting it to
       // a string and adding a 0 if it needs it! This is for
       // displaying the month correctly on the graph's x-axis
@@ -346,7 +349,9 @@ var MICROSTOCKS = (function () {
       for(var i = 0; i < playerResources.length; i++) {
         gameData.resourceList[playerResources[i].name] = [["Date", "Cost"],[year + "-" + displayMonth, playerResources[i].cost]];
       }
-    });
+    };
+    // Append our google chart script to the <body>
+    document.body.appendChild(scriptTag);
   };
 
   // Module
