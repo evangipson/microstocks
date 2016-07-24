@@ -249,6 +249,62 @@ var MICROSTOCKS = (function () {
       "max": maxTemp
     };
   };
+  // This function will return a planet type as a 
+  // string and takes in no parameters
+  var determinePlanetType = function() {
+    var planetTypes = [
+      "Volcanic",
+      "Ice",
+      "Ocean",
+      "Gas Giant",
+      "Swamp",
+      "Desert"
+    ];
+    var planetAdjectives = [
+      "Silica",
+      "Carbon",
+      "Hydrogen",
+      "Terraformed",
+      "Uninhabited",
+      "Tempest",
+      "Quiet",
+      "Helium",
+      "Magnesium",
+      "Aluminum"
+    ];
+    return {
+      "base": planetTypes[randomNum(0,planetTypes.length - 1)],
+      "extra" : (function() {
+        var extraArray = [];
+        // 25% chance we'll have two adjective
+        if(randomNum(100) < 25) {
+          // Generate the first adjective and store
+          // it in a variable because we need it later
+          var tempObj = planetAdjectives[randomNum(0, planetAdjectives.length - 1)];
+          // Push it to our return array
+          extraArray.push(tempObj);
+          // Okay, let's get the second adjective,
+          // but we want to make sure it's unique
+          var newRandomIndex = randomNum(0, planetAdjectives.length - 1);
+          // So if we are matching the old index with
+          // the new index
+          while(tempObj === planetAdjectives[newRandomIndex]) {
+            // Keep generating a new index
+            newRandomIndex = randomNum(0, planetAdjectives.length - 1);
+          }
+          // Then after the tempObject isn't what we want to
+          // select, push that as well!
+          extraArray.push(planetAdjectives[newRandomIndex]);
+        }
+        // 90% chance we'll have one
+        else if(randomNum(100) < 90) {
+          extraArray.push(planetAdjectives[randomNum(0, planetAdjectives.length - 1)]);
+        }
+        // Then make sure to return the array
+        return extraArray;
+      })() // Execute this function right away to return the array
+    };
+  };
   // Function used to create a new name for a resource
   var createResourceName = function() {
     var resourceName = "";
@@ -435,7 +491,8 @@ var MICROSTOCKS = (function () {
     locations.push({
       "name": createPlanetName(),
       "location": placePlanet(),
-      "temp": setPlanetTemp()
+      "temp": setPlanetTemp(),
+      "type": determinePlanetType()
     });
   }
   // Create the player object
