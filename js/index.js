@@ -351,6 +351,8 @@ var MICROSTOCKS = (function () {
   
   // Private Variables
   // -----------------
+  // The version that microstocks is currently at
+  var microstocksVersion = "1.0.7";
   // Let's pull in the log ul.
   var logList = document.getElementsByClassName("log-list")[0];
   // We need to set how much it is to move.
@@ -1040,7 +1042,7 @@ var MICROSTOCKS = (function () {
   // to be used with the options button
   var launchOptionsDialog = function() {
     $(".options-text").text("Microstocks");
-    $(".options-subtext").text("Version 1.0.5");
+    $(".options-subtext").text(microstocksVersion);
     $(".options-author").html("Author: <a href=\"https://github.com/evangipson\">Evan Gipson</a>");
     // Initialize the options-dialog modal
     $(".options").dialog({
