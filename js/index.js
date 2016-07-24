@@ -47,6 +47,10 @@ var MICROSTOCKS = (function () {
       "phi",
       "pha",
       "phe",
+      "pe",
+      "pfa",
+      "pfe",
+      "pa",
       "neh",
       "ni",
       "mu",
@@ -59,7 +63,7 @@ var MICROSTOCKS = (function () {
       "ip",
       "iq",
       "ikk",
-      "s'sa",
+      "sa",
       "tik",
       "theo",
       "thra",
@@ -71,7 +75,19 @@ var MICROSTOCKS = (function () {
       "yom",
       "clo",
       "clat",
-      "nar"
+      "nar",
+      "lay",
+      "lin",
+      "ler",
+      "la",
+      "mab",
+      "mob",
+      "my",
+      "myk",
+      "mey",
+      "t'ka",
+      "s'sa",
+      "s'se",
     ];
     // List all the syllables that could be
     // used after the first syllable
@@ -89,10 +105,9 @@ var MICROSTOCKS = (function () {
       "mar",
       "ler",
       "lar",
-      "llar",
+      "lar",
       "end",
       "in",
-      "inn",
       "oui",
       "wi",
       "when",
@@ -111,11 +126,31 @@ var MICROSTOCKS = (function () {
       "rra",
       "to",
       "tin",
-      "tar"
+      "tar",
+      "in",
+      "il",
+      "ot",
+      "cite",
+      "bin",
+      "k",
+      "aj",
+      "ej",
+      "oj",
+      "it",
+      "sei",
+      "icron",
+      "ycite",
+      "cite",
+      "ust",
+      "oz",
+      "aez",
+      "aer",
     ];
-    // TODO: Make thirdSyllable more diverse instead
-    // of setting it as a copy of firstSyllable
-    thirdSyllable = firstSyllable;
+    // thirdSyllable is made up of both arrays!
+    // NOTE: Can't use "+" on arrays! That's not defined
+    // in javascript (maybe try to augment the array
+    // prototype and add some + functionality!)
+    thirdSyllable = firstSyllable.concat(secondSyllable);
 
     // Assemble the word
     // 33% the word will have 3 syllables
@@ -149,6 +184,30 @@ var MICROSTOCKS = (function () {
       // fill it out, while stopping when there are
       // more than 2-3 words
       createPlanetName(localPlanetName);
+    }
+    // There's a small chance to append
+    // a planet suffix
+    var planetSuffixes = [
+      "II",
+      "III",
+      "IV",
+      "V",
+      "VI",
+      "VII",
+      "VIII",
+      "IX",
+      "X",
+      "XI",
+      "XII",
+      "Prime",
+      "Beta",
+      "Alpha",
+      "Omega"
+    ];
+    // Small chance that the suffix
+    // actually gets appended
+    if(randomNum(100) < 30) {
+      localPlanetName += " " + planetSuffixes[randomNum(0,planetSuffixes.length - 1)];
     }
     // Give back the planet name
     return localPlanetName;
@@ -368,7 +427,7 @@ var MICROSTOCKS = (function () {
   // This will be referenced by playerObjects.stats.location
   var locations = [];
   // We'll have 15-20 planets to start
-  for (var l = 0; l < randomNum(15,20); l++) {
+  for (var l = 0; l < randomNum(30,40); l++) {
     locations.push({
       "name": createPlanetName(),
       "location": placePlanet(),
