@@ -690,15 +690,15 @@ var MICROSTOCKS = (function () {
     // We need to display our total worth
     if(parseInt(oldNetWorth[1]) < portfolioTotal + parseInt(player.money)) {
         // If our total value has increased, show it!
-        changeListElement("net-worth-button", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Up!");
+        changeListElement("net-worth-button", "$" + player.money + "/Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Up!");
     }
     else if (parseInt(oldNetWorth[1]) === portfolioTotal + parseInt(player.money)) {
         // No increase!
-        changeListElement("net-worth-button", "Net Worth: $" + (portfolioTotal + parseInt(player.money)));
+        changeListElement("net-worth-button", "$" + player.money + "/Net Worth: $" + (portfolioTotal + parseInt(player.money)));
     }
     else {
         // We lost money!
-        changeListElement("net-worth-button", "Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
+        changeListElement("net-worth-button", "$" + player.money + "/Net Worth: $" + (portfolioTotal + parseInt(player.money)) + " --- Down!");
     }
     // Tell the player where they are
     changeListElement("location", "Location: " + locations[parseInt(player.location)].name);
@@ -1379,7 +1379,7 @@ var MICROSTOCKS = (function () {
       portfolioTotal += player.resources[i].amount * player.resources[i].cost;
     }
     // We need to display our total worth
-    addListElement(invList, "Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth-button under-hover");
+    addListElement(invList, "$" + player.money + "/Net Worth: $" + (portfolioTotal + parseInt(player.money)), "money net-worth-button under-hover");
     // Our location
     addListElement(invList, "Location: " + locations[parseInt(player.location)].name, "location under-hover");
     // Then draw the resources
