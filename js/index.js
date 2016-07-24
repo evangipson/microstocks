@@ -521,7 +521,8 @@ var MICROSTOCKS = (function () {
     var displayMonth = month > 9 ? "" + month : "0" + month;
     // Need to also reset the history for the graph
     // so re-init the gameData.resourceList at the current index
-    gameData.resourceList[playerBankruptResource.name] = [
+    // using the PLAYEROBJECT, not the playerBankruptResource
+    gameData.resourceList[playerObject.stats.resources[theResourceIndex].name] = [
       ["Date", "Cost"],
       [year + "-" + displayMonth, playerBankruptResource.cost]
     ];
