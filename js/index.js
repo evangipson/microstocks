@@ -239,12 +239,12 @@ var MICROSTOCKS = (function () {
   var setPlanetTemp = function() {
     // Determine the minimum temperature first
     // by selecting a random number
-    var minTemp = randomNum(-120,700);
+    var minTemp = randomNum(-120,200);
     // Set maximum temperature based off of minimum
-    // temperature up to 150-250% of the minimum temperature
+    // temperature up to 150-235% of the minimum temperature
     // unless minTemp is negative, in which case just
     // use a range of up to 300 degrees away from that min temp
-    var maxTemp = minTemp > 0 ? randomNum(minTemp, (minTemp + (minTemp * (randomNum(15,25) * 0.1)))) : randomNum(minTemp, minTemp + randomNum(50,300));
+    var maxTemp = minTemp > 0 ? randomNum(minTemp, (minTemp * (randomNum(150,235) * 0.1))) : randomNum(minTemp, minTemp + randomNum(50,300));
     return {
       "min": minTemp,
       "max": maxTemp
@@ -252,16 +252,32 @@ var MICROSTOCKS = (function () {
   };
   // This function will return a planet type as a 
   // string and takes in no parameters
-  var determinePlanetType = function() {
-    var planetTypes = [
+  var determinePlanetType = function(planetTemp) {
+    // Create arrays filled with a bunch
+    // of descriptive words for planets
+    var hotPlanetTypes = [
       "volcanic",
       "lava",
-      "temperate",
-      "ice",
-      "ocean",
       "gas giant",
+      "desert",
+      "sand"
+    ];
+    var temperatePlanetType = [
+      "ocean",
       "swamp",
-      "desert"
+      "temperate",
+      "cave",
+      "archipelago",
+      "forest",
+      "stone",
+      "rock"
+    ];
+    var coldPlanetTypes = [
+      "ice",
+      "tiaga",
+      "blizzard",
+      "snow",
+      "stone"
     ];
     var planetAdjectives = [
       "silica-based",
@@ -271,14 +287,31 @@ var MICROSTOCKS = (function () {
       "uninhabited",
       "gusty",
       "quiet",
-      "tempest",
+      "tempestous",
       "perpetually dark",
       "helium-based",
       "magnesium-based",
       "aluminum-based"
     ];
     return {
-      "base": planetTypes[randomNum(0,planetTypes.length - 1)],
+      "base": (function() {
+        // Depending on the planet's
+        // min and max temperature,
+        // we can determine the "type"
+        // of planet it can be.
+        if(planetTemp.min > 100) {
+          // Pick from the hot planet types
+          return hotPlanetTypes[randomNum(0,hotPlanetTypes.length-1)];
+        }
+        else if(planetTemp.min > 0) {
+          // Pick from the temperate planet types
+          return temperatePlanetType[randomNum(0,temperatePlanetType.length-1)];
+        }
+        else {
+         // Pick from the cold planet types 
+          return coldPlanetTypes[randomNum(0,coldPlanetTypes.length-1)];
+        }
+      })(), // Execute this function right away to return the type
       "adjective" : (function() {
         var extraArray = [];
         // 45% chance we'll have two adjective
@@ -326,7 +359,7 @@ var MICROSTOCKS = (function () {
         }
         // Then make sure to return the array
         return extraArray;
-      })() // Execute this function right away to return the array
+      })() // Execute this function right away to return the adjective(s)
     };
   };
   // Function used to create a new name for a resource
@@ -510,13 +543,20 @@ var MICROSTOCKS = (function () {
   var moveFee = 10;
   // This will be referenced by playerObjects.stats.location
   var locations = [];
+  // This is used for initializing the locations
+  var tempPlanetTemp = 0;
   // We'll have 30-40 planets to start
   for (var l = 0; l < randomNum(30,40); l++) {
+    // Get our temperature object that will
+    // be used for both temp and type
+    tempPlanetTemp = setPlanetTemp();
+    // Create the planet and push
+    // to the locations array
     locations.push({
       "name": createPlanetName(),
       "location": placePlanet(),
-      "temp": setPlanetTemp(),
-      "type": determinePlanetType()
+      "temp": tempPlanetTemp,
+      "type": determinePlanetType(tempPlanetTemp)
     });
   }
   // Create the player object
