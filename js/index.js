@@ -704,7 +704,7 @@ var MICROSTOCKS = (function () {
     // using the PLAYEROBJECT, not the playerBankruptResource
     gameData.resourceList[playerObject.stats.resources[theResourceIndex].name] = [
       ["Date", "Cost"],
-      [year + "-" + displayMonth, playerBankruptResource.cost]
+      [year + "-" + displayMonth, playerObject.stats.resources[theResourceIndex].cost]
     ];
   };
   // Function to modify a voatile resource
