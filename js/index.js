@@ -1168,7 +1168,7 @@ var MICROSTOCKS = (function () {
   var launchTravelDialog = function() {
     // Greet the player with a message,
     // reminding them where they are
-    $(".travel-text").text("Where would you like to go? Currently on " + locations[parseInt(playerObject.stats.location)].name + ".");
+    $(".travel-text").html("<p>Where would you like to go? Currently on <b>" + locations[parseInt(playerObject.stats.location)].name + "</b>.</p>");
     // Initialize the travel dropdown
     var travelSelect = $(".travel-select")[0];
     // Get rid of all the contents
@@ -1314,8 +1314,18 @@ var MICROSTOCKS = (function () {
   // as well as an optional resourceName if you pass the
   // type "resourceList"
   var launchGraphDialog = function(type, resourceName) {
-    // Set up the content of the modal
-    $(".graph-type").text(type);
+    // Take the type and generate a player-friendly
+    // "displayType" that will be a little easier
+    // to read
+    var displayType = "";
+    if(type === "resourceList") {
+      displayType = resourceName + "'s value.";
+    }
+    if(type === "totalMoney") {
+      displayType = "your cash on hand, portfolio, and total net worth.";
+    }
+    // Introduce the graph to the player
+    $(".graph-type").text("Here's the historical data of " + displayType);
     // Set up the Google Chart with the new data
     var options = {
       title: type === "resourceList" ? resourceName : type,
