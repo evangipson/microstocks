@@ -793,7 +793,7 @@ var MICROSTOCKS = (function () {
       // Change the text of that specific thing to an updated string
       theText = "<p><span class=\"fa " + player.resources[i].type.icon + " fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p>";
       if(player.resources[i].amount > 0) {
-        theText += "<p><span class=\"fa fa-shopping-cart fa-fw\"></span>" + player.resources[i].amount + "</p>";
+        theText += "<p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
       }
       // Create a node to append to listElement
       theResource.innerHTML = theText;
@@ -1583,7 +1583,7 @@ var MICROSTOCKS = (function () {
         // Create the HTML string for each resource
         theText = "<p><span class=\"fa " + player.resources[i].type.icon + " fa-fw\"></span>" + player.resources[i].name + "</p><p><span class=\"fa fa-dollar fa-fw\"></span>" + player.resources[i].cost + "</p>";
         if(player.resources[i].amount > 0) {
-          theText += "<p><span class=\"fa fa-shopping-cart fa-fw\"></span>" + player.resources[i].amount + "</p>";
+          theText += "<p><span class=\"fa fa-briefcase fa-fw\"></span>" + player.resources[i].amount + "</p>";
         }
         // Append message to <li> node
         listElement.innerHTML = theText;
