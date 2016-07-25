@@ -299,7 +299,7 @@ var MICROSTOCKS = (function () {
         // min and max temperature,
         // we can determine the "type"
         // of planet it can be.
-        if(planetTemp.min > 100) {
+        if(planetTemp.max > 100) {
           // Pick from the hot planet types
           return hotPlanetTypes[randomNum(0,hotPlanetTypes.length-1)];
         }
