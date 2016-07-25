@@ -353,8 +353,8 @@ var MICROSTOCKS = (function () {
             extraArray.push(planetAdjectives[newRandomIndex]);
           }
         }
-        // 95% chance we'll have one
-        else if(randomNum(100) < 95) {
+        // 100% chance we'll have at least one
+        else {
           extraArray.push(planetAdjectives[randomNum(0, planetAdjectives.length - 1)]);
         }
         // Then make sure to return the array
