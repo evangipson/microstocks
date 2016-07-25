@@ -863,12 +863,14 @@ var MICROSTOCKS = (function () {
     var oldNetWorth = netBlock.textContent;
     // Grab the net worth amount off of the textContent
     oldNetWorth = oldNetWorth.split("\$");
+    // Take the first value if there is an "UP" or "DOWN" attached
+    oldNetWorth[2] = oldNetWorth[2].split(" ")[0];
     // We need to display our total worth
-    if(parseInt(oldNetWorth[1]) < portfolioTotal + parseInt(player.money)) {
+    if(parseInt(oldNetWorth[2]) < portfolioTotal + parseInt(player.money)) {
         // If our total value has increased, show it!
         changeListElement("net-worth-button", "<span class=\"fa fa-money fa-fw\"></span>$" + player.money + " <span class=\"fa fa-bank fa-fw\"></span>$" + (portfolioTotal + parseInt(player.money)) + " - Up!");
     }
-    else if (parseInt(oldNetWorth[1]) === portfolioTotal + parseInt(player.money)) {
+    else if (parseInt(oldNetWorth[2]) === portfolioTotal + parseInt(player.money)) {
         // No increase!
         changeListElement("net-worth-button", "<span class=\"fa fa-money fa-fw\"></span>$" + player.money + " <span class=\"fa fa-bank fa-fw\"></span>$" + (portfolioTotal + parseInt(player.money)));
     }
