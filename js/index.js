@@ -154,8 +154,8 @@ var MICROSTOCKS = (function () {
     thirdSyllable = firstSyllable.concat(secondSyllable);
 
     // Assemble the word
-    // 33% the word will have 3 syllables
-    if(randomNum(1,100) < 33) {
+    // 20% the word will have 3 syllables
+    if(randomNum(1,100) < 20) {
       theWord = firstSyllable[randomNum(0,firstSyllable.length)] + secondSyllable[randomNum(0,secondSyllable.length)] + thirdSyllable[randomNum(0,thirdSyllable.length)];
     }
     // Otherwise 90% chance it'll have two syllables
