@@ -1463,8 +1463,8 @@ var MICROSTOCKS = (function () {
           "History": function() {
             launchGraphDialog("resourceList",resourceName);
           },
-          // Or they can just exit the dialog with cancel
-          Cancel: function() {
+          // Or they can just exit the dialog with close
+          "Close": function() {
             $(this).dialog("close");
           }
         }
@@ -1502,8 +1502,6 @@ var MICROSTOCKS = (function () {
                 $(this).dialog('close');
             },
             Cancel: function() {
-                // Close up the buy-sell dialog too
-                $(".buy-sell").dialog("close");
                 $(this).dialog('close');
             }
         }
@@ -1541,8 +1539,6 @@ var MICROSTOCKS = (function () {
                 $(this).dialog('close');
             },
             Cancel: function() {
-                // Close up the buy-sell dialog too
-                $(".buy-sell").dialog("close");
                 $(this).dialog("close");
             }
         }
