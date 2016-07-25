@@ -422,12 +422,19 @@ nav.options-button {
     font-weight: 300;
     font-family: $googleFont, sans-serif;
   }
+  // Override the whole modal window
+  &.ui-widget-content {
+    @include respond($phoneBreakpoint) {
+      border: 0.5rem $blue solid;
+    }
+  }
   // override modal title text
   .ui-dialog-title {
     margin: .1rem 0 0 1rem!important;
     color: white;
     width: calc(90% - 2.2rem)!important;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+    font-weight: 300;
   }
   .ui-widget-content {
     // further override the slider, because it's
@@ -450,13 +457,17 @@ nav.options-button {
     border-radius: 0;
     background: $blue;
     width: 100%;
-    // have to adjust .ui-dialog-titlebar's
-    // override if you adjust this left value
-    left: -1.5rem;
-    top: -.2rem;
+    top: 0.7rem;
+    left: -0.2rem;
     // Override padding-bottom so the custom close
     // button doesn't look weird with blue under it
     padding-bottom: .25rem;
+    // have to adjust .ui-dialog-titlebar's
+    // override if you adjust this left value
+    @include respond($phoneBreakpoint) {
+      left: -1.5rem;
+      top: -0.3rem;
+    }
     .ui-icon {
       background-image: none;
     }
@@ -471,6 +482,11 @@ nav.options-button {
       float: none;
     } 
   }
+}
+// Override overlay created when
+// modal shows (the darkening around it)
+.ui-widget-overlay.ui-front {
+  background: darken($blue, 25%);
 }
 // override jquery-ui buttons
 // and the close icon for modals
@@ -490,8 +506,8 @@ button{
       width: 2.2rem;
       height: 2.2rem;
       padding-top: .3rem;
-      top: 0.2rem;
-      left: 1.4rem;
+      top: 0.6rem;
+      left: -0.6rem;
       border-radius: 0;
       border: none;
       transform: rotate(0deg);
