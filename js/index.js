@@ -879,7 +879,7 @@ var MICROSTOCKS = (function () {
     // Make time pass
     tick();
     // Tell the player where they are
-    changeListElement("planet-info-button", "Location: " + locations[parseInt(player.location)].name + " (" + displayMonth + "/" + year + ")");
+    changeListElement("planet-info-button", "<span class=\"fa fa-home fa-fw\"></span>" + locations[parseInt(player.location)].name + " <span class=\"fa fa-calendar fa-fw\"></span>" + displayMonth + "/" + year);
     // Then update the resource boxes!
     updateResourceBoxes();
   };
@@ -1621,7 +1621,7 @@ var MICROSTOCKS = (function () {
     // We need to display our total worth
     addListElement(invList, "<span class=\"fa fa-money fa-fw\"></span>$" + player.money + " <span class=\"fa fa-bank fa-fw\"></span>$" + (portfolioTotal + parseInt(player.money)), "money net-worth-button under-hover");
     // Our location
-    addListElement(invList, "Location: " + locations[parseInt(player.location)].name + " (" + displayMonth + "/" + year + ")", "planet-info-button under-hover");
+    addListElement(invList, "<span class=\"fa fa-home fa-fw\"></span>" + locations[parseInt(player.location)].name + " <span class=\"fa fa-calendar fa-fw\"></span>" + displayMonth + "/" + year, "planet-info-button under-hover");
     // Then draw the resources
     createResourceBoxes();
   };
