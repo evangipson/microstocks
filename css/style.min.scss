@@ -419,7 +419,6 @@ nav.options-button {
     border: none;
     background: white;
     color: black;
-    font-size: 16px;
     font-weight: 300;
     font-family: $googleFont, sans-serif;
   }
@@ -474,6 +473,7 @@ nav.options-button {
   }
 }
 // override jquery-ui buttons
+// and the close icon for modals
 button{
   &.ui-button {
     font-weight: bold;
@@ -504,6 +504,7 @@ button{
       }
       @include respond($phoneBreakpoint) {
         left: 4.5rem;
+        display: none;
       }
     }
   }
@@ -527,6 +528,10 @@ button{
     }
     &.ui-state-hover {
       background: darken($blue, 10%);
+    }
+    .ui-button-text {
+      padding: .5rem 1rem;
+      font-weight: 300;
     }
   }
 }
