@@ -9,7 +9,7 @@ $blue: #53bbf4;
 $orange: #ffac00;
 $red: #ff432e;
 $grey: #ededed;
-$googleFont: "Athiti";
+$googleFont: "Rajdhani";
 // mixins
 // use this for mobile queries
 @mixin respond($size) {
@@ -29,7 +29,7 @@ body {
   @include respond($phoneBreakpoint) {
     font-size: 20px;
   }
-  font-weight: 300;
+  font-weight: 400;
   font-family: $googleFont, sans-serif;
   background-color: $grey;
 }
@@ -209,6 +209,9 @@ section {
     width: 75%;
     background: white;
   }
+  @include respond($desktopBreakpoint) {
+    height: 20%;
+  }
 }
 // Style the log
 .log {
@@ -256,6 +259,9 @@ section {
   max-height: 23rem;
   @include respond($phoneBreakpoint) {
     max-height: 32rem;
+  }
+  @include respond($desktopBreakpoint) {
+    min-height: 65%;
   }
 }
 .resource {
@@ -422,7 +428,6 @@ nav.options-button {
     border: none;
     background: white;
     color: black;
-    font-weight: 300;
     font-family: $googleFont, sans-serif;
   }
   // Override the whole modal window
