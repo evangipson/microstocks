@@ -401,7 +401,7 @@ var MICROSTOCKS = (function () {
     return resourceTypes[randomNum(0,resourceTypes.length)];
   };
   // Function to determine a trend for the resource
-  var determineResourceTrend = function(theType) {
+  var determineResourceTrend = function() {
     // Variable for resource's trend's string representation
     var trend = "";
     // Set up the trend arrays, filled with
@@ -410,47 +410,42 @@ var MICROSTOCKS = (function () {
     var resourceStableTrends = [
       {
         "name": "stable-up",
-        "maxFlux" : randomNum(0, 3)
+        "minFlux": -1,
+		"maxFlux": 3
       },
       {
         "name": "stable",
-        "maxFlux" : randomNum(-1, 2)
+        "minFlux": -2,
+		"maxFlux": 2
       },
       {
         "name": "stable-down",
-        "maxFlux" : randomNum(-2, 0)
+        "minFlux": -2,
+		"maxFlux": 2
       }
     ];
     var resourceVolatileTrends = [
       {
         "name": "volatile-up",
-        "maxFlux" : randomNum(0, 6)
+        "minFlux": -3,
+		"maxFlux": 6
       },
       {
         "name": "volatile",
-        "maxFlux" : randomNum(-3,4)
+        "minFlux": -4,
+		"maxFlux": 4
       },
       {
         "name": "volatile-down",
-        "maxFlux" : randomNum(-5,-1)
+        "minFlux": -6,
+		"maxFlux": 3
       }
     ];
-    // Determine type of resource
-    // If we have a health or natural resource
-    if (theType.name == "Health" || theType.name == "Natural") {
-      // It will be stable-up, which is the first item
-      // in the resourceStableTrends array
-      trend = resourceStableTrends[0];
+    if (randomNum(100) > 70) {
+      trend = resourceStableTrends[randomNum(0, resourceStableTrends.length)];
     }
-    // Otherwise, we could have a mineral
-    else if (theType.name == "Mineral") {
-      // Which would be stable, but could be stable=up, stable, or stable-down.
-      trend = resourceStableTrends[randomNum(0,resourceStableTrends.length)];
-    }
-    // Furthermore, we could have a tech or rare resource
     else {
-      // Which I imagine would be volatile
-      trend = resourceVolatileTrends[randomNum(0,resourceVolatileTrends.length)];
+      trend = resourceVolatileTrends[randomNum(0, resourceVolatileTrends.length)];
     }
     // Now let's return the object containing the name and amount
     return trend;
@@ -469,7 +464,7 @@ var MICROSTOCKS = (function () {
       retArray[i].cost = randomNum(randomNum(2, 5), randomNum(20, randomNum(20,110)));
       retArray[i].name = createResourceName();
       retArray[i].type = theType;
-      retArray[i].trend = determineResourceTrend(theType);
+      retArray[i].trend = determineResourceTrend();
     }
     return retArray;
   };
@@ -562,7 +557,7 @@ var MICROSTOCKS = (function () {
   // Create the player object
   var playerObject = {
     "stats": {
-      "money": randomNum(350,500),
+      "money": randomNum(500, 2000),
       "location": randomNum(0,locations.length-1),
       // Resources is taken care of by
       // an anonymous function that only does
@@ -672,7 +667,7 @@ var MICROSTOCKS = (function () {
     var playerBankruptResource = playerObject.stats.resources[theResourceIndex];
     // Pull in the variant before resetting the resource and
     // take 20% as the payout value for the company failing
-    var initialPayout = Math.floor(Math.abs(playerBankruptResource.variant) * 0.2);
+    var initialPayout = Math.floor(playerBankruptResource.cost * 0.2);
     // If initial payout is more than a dollar, just pay it out,
     // otherwise give the player between 5 and 10 dollars.
     var payoutValue = initialPayout > 1 ? initialPayout : randomNum(5,15);
@@ -690,7 +685,7 @@ var MICROSTOCKS = (function () {
       "cost": randomNum(randomNum(2, 5), randomNum(20, randomNum(20,110))),
       "name": createResourceName(),
       "type": theType,
-      "trend": determineResourceTrend(theType),
+      "trend": determineResourceTrend(),
       "amount": 0
     };
     // Give the player a "payout" of the resource
@@ -707,25 +702,49 @@ var MICROSTOCKS = (function () {
   };
   // Function to modify a voatile resource
   var modifyResourceCost = function(playerResources, resourceMax, variant, resourceName, i, modifyChance) {
+	  var boom = false;
+	  var crash = false;
       // Check against chance to modify
       if(randomNum(100) <= modifyChance) {
         // Now check if the cost is too high or too low
         // If the cost is less than the max resource value
         // AND the cost is more than the absolute value of variant
         // in case we are removing cost.
-        if(playerResources[i].cost < resourceMax && playerResources[i].cost > Math.abs(variant)) {
+        if(playerResources[i].cost < resourceMax) {
           // Actually modify the playerObject resource cost
-          playerObject.stats.resources[i].cost += variant;
+          playerObject.stats.resources[i].cost += variant > 0 ? randomNum(0, variant) : randomNum(variant, 0);
+		  // super small percent chance for stocks to boom or fall
+		  if(randomNum(100) <= 1) {
+			var boomAmount = randomNum(0, variant * randomNum(3, 7));
+			var crashAmount = randomNum(variant * randomNum(2, 5), 0);
+			playerObject.stats.resources[i].cost += variant > 0 ? boomAmount : crashAmount;
+			if(variant < 0) {
+				crash = true;
+			}
+			else {
+				boom = true;
+			}
+		  }
           if(variant > 0) {
             // Show the increase in value on the log
-            addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
+			if(boom) {
+				addListElement(logList, resourceName + " has boomed and risen $" + boomAmount + " dollars!", "resource-increase");
+			}
+			else {
+				addListElement(logList, resourceName + " has risen $" + variant + " dollars.", "resource-increase");
+			}
           }
           // Using an else if here so nothing
           // shows if variant === 0, because
           // that's not very interesting.
           else if (variant < 0) {
             // Show the decrease in value on the log
-            addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
+			if(crash) {
+				addListElement(logList, resourceName + " has crashed and fallen $" + Math.abs(crashAmount) + " dollars!", "resource-decrease");
+			}
+			else {
+				addListElement(logList, resourceName + " has fallen $" + Math.abs(variant) + " dollars.", "resource-decrease");
+			}
           }
         }
         // Check if the resource is too low
@@ -751,11 +770,11 @@ var MICROSTOCKS = (function () {
       // Amount resources should be flucuating
       var variant = 0;
       // Max $ amount resources can be
-      var resourceMax = 250;
+      var resourceMax = 1000;
       // We'd like to evaluate every resource per update
       for (var i = 0; i < playerResources.length; i++) {
         // Get the necessary info for each resource & variant
-        variant = randomNum(0,playerResources[i].trend.maxFlux);
+        variant = randomNum(playerResources[i].trend.minFlux, playerResources[i].trend.maxFlux);
         resourceName = playerResources[i].name;
         resourceType = playerResources[i].trend.name;
         // Stable resources won't be modified as much
@@ -763,15 +782,19 @@ var MICROSTOCKS = (function () {
         if(resourceType === "stable-up" || resourceType === "stable" || resourceType === "stable-down") {
           // The last value passed in this function is the chance
           // the resource's cost will modify out of 100
-          modifyResourceCost(playerResources, resourceMax, variant, resourceName, i, 10);
+          modifyResourceCost(playerResources, resourceMax, variant, resourceName, i, 85);
         }
-        // It's a volatile resource, so 30% chance
+        // It's a volatile resource, so 90% chance
         // to modify the cost
         else {
           // The last value passed in this function is the chance
           // the resource's cost will modify out of 100
-          modifyResourceCost(playerResources, resourceMax, variant, resourceName, i, 30);
+          modifyResourceCost(playerResources, resourceMax, variant, resourceName, i, 95);
         }
+	    // small chance to "re-trend" the stock
+	    if(randomNum(100) <= 30) {
+		    playerResources[i].trend = determineResourceTrend();
+	    }
       }
   };
   // This function updates the resource boxes
@@ -846,6 +869,7 @@ var MICROSTOCKS = (function () {
   // Function to update the inventory box.
   // Called when controls are interacted with.
   var updateInventory = function() {
+	  console.info("calling updateInventory");
     // Bring player in locally
     var player = playerObject.stats;
     // Get the updated resource prices
@@ -853,9 +877,11 @@ var MICROSTOCKS = (function () {
     // Reset portfolioTotal
     portfolioTotal = 0;
     // Recalculate portfolio total
-    for (var i = 0; i < player.resources.length; i++) {
-      portfolioTotal += player.resources[i].amount * player.resources[i].cost;
-    }
+	if(player.resources.length) {
+		for (var i = 0; i < player.resources.length; i++) {
+		  portfolioTotal += player.resources[i].amount * player.resources[i].cost;
+		}
+	}
     // Pull in old net worth value and see if we've gone up
     // (Usually from travelling)
     var netBlock = document.getElementsByClassName("net-worth-button")[0];
@@ -1038,10 +1064,8 @@ var MICROSTOCKS = (function () {
       playerObject.stats.money = player.money - (player.resources[resourceIndex].cost * resourceAmount);
       // Update the player's resource amount
       playerObject.stats.resources[resourceIndex].amount += parseInt(resourceAmount);
-    } else {
-      console.error("buyAction exception: Not enough money to make purchase.");
+	  updateInventory();
     }
-    updateInventory();
   };
   // Sell button needs to populate the log,
   // and this function does that. Returns null
@@ -1671,7 +1695,7 @@ var MICROSTOCKS = (function () {
 // and google charts somewhere in there.
 // -------------------------------------
 var scriptTag = document.createElement('script');
-scriptTag.src = "http://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js";
+scriptTag.src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js";
 // When the script loads, let's call MICROSTOCKS.init!
 scriptTag.onload = scriptTag.onreadystatechange = MICROSTOCKS.init; 
 // Append our jQuery script to the <body>
