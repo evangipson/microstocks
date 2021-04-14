@@ -461,7 +461,7 @@ var MICROSTOCKS = (function () {
             // Determine the type of resource we're going to have
             theType = determineResourceType();
             // And we'll fill it with stuff
-            retArray[i].cost = randomNum(randomNum(2, 5), randomNum(20, randomNum(20, 110)));
+            retArray[i].cost = randomNum(randomNum(2, 5), randomNum(20, randomNum(21, 110)));
             retArray[i].name = createResourceName();
             retArray[i].type = theType;
             retArray[i].trend = determineResourceTrend();
@@ -470,22 +470,13 @@ var MICROSTOCKS = (function () {
     };
     // Initialize resources array with this function
     var givePlayerResources = function (resources, resourceAmount) {
-        // Ensure player gets at least 1 resource to play with
-        var atLeastOne = false;
         for (var i = 0; i < resourceAmount; i++) {
-            // 30% chance the player will own that resource
-            if (randomNum(100) > 70) {
-                resources[i].amount = randomNum(randomNum(1, 4), randomNum(5, 20));
-                atLeastOne = true;
+            if(randomNum() > 80) {
+                resources[i].amount = randomNum(randomNum(1, 4), randomNum(5, 10));
             }
             else {
                 resources[i].amount = 0;
             }
-        }
-        // If the player didn't even get one resource
-        if (atLeastOne === false) {
-            // Give the player a random resource
-            resources[randomNum(0, resources.length)].amount = randomNum(randomNum(1, 4), randomNum(5, 20));
         }
     };
     // This function initializes the google graph that is
@@ -499,15 +490,15 @@ var MICROSTOCKS = (function () {
         // When the script loads, let's call initialize the graphs!
         scriptTag.onload = scriptTag.onreadystatechange = function () {
             // Bring in player's resources to the function
-            var playerResources = playerObject.stats.resources;
+            var playerResources = playerObject.resources;
             // Load up google charts so everyone can access it
             google.charts.load('current', { 'packages': ['corechart'] });
             // Fill up our global gameData variable
             gameData = { "netWorth": [], "resourceAmounts": [], "totalMoney": [], "resourceList": [] };
             gameData.netWorth.push(["Date", "Net Worth"]);
-            gameData.netWorth.push([year + "-" + displayMonth, portfolioTotal + playerObject.stats.money]);
+            gameData.netWorth.push([year + "-" + displayMonth, portfolioTotal + playerObject.money]);
             gameData.totalMoney.push(["Date", "Cash", "Portfolio", "Net Worth"]);
-            gameData.totalMoney.push([year + "-" + displayMonth, playerObject.stats.money, portfolioTotal, portfolioTotal + playerObject.stats.money]);
+            gameData.totalMoney.push([year + "-" + displayMonth, playerObject.money, portfolioTotal, portfolioTotal + playerObject.money]);
             // For each resource, I need to create a gameData entry
             for (var i = 0; i < playerResources.length; i++) {
                 gameData.resourceList[playerResources[i].name] = [["Date", "Cost"], [year + "-" + displayMonth, playerResources[i].cost]];
@@ -536,7 +527,7 @@ var MICROSTOCKS = (function () {
     // This is used in both travelMessage and travelAction,
     // so it can be scoped to the whole MICROSTOCKS module.
     var moveFee = 10;
-    // This will be referenced by playerObjects.stats.location
+    // This will be referenced by playerObject.location
     var locations = [];
     // This is used for initializing the locations
     var tempPlanetTemp = 0;
@@ -556,32 +547,30 @@ var MICROSTOCKS = (function () {
     }
     // Create the player object
     var playerObject = {
-        "stats": {
-            "money": randomNum(500, 2000),
-            "location": randomNum(0, locations.length - 1),
-            // Resources is taken care of by
-            // an anonymous function that only does
-            // a couple things before returning a
-            // resources array. The reason for doing this
-            // is I don't need resourceAmount or resources
-            // to be scoped to this whole MICROSTOCKS function.
-            "resources": (function () {
-                // Change this variable to modify the amount of resources generated
-                var resourceAmount = randomNum(20, 30);
-                // Create some variables to fill up player JSON with
-                var resources = createResources(resourceAmount);
-                // Fill up the playerObject resource array w/ amounts for the player
-                givePlayerResources(resources, resourceAmount);
-                // Sort out the array before we return it.
-                return resources.sort(function (a, b) { return b.amount - a.amount; });
-            })() // Execute this anonymous function immediately
-        }
+        "money": randomNum(500, 2000),
+        "location": randomNum(0, locations.length - 1),
+        // Resources is taken care of by
+        // an anonymous function that only does
+        // a couple things before returning a
+        // resources array. The reason for doing this
+        // is I don't need resourceAmount or resources
+        // to be scoped to this whole MICROSTOCKS function.
+        "resources": (function () {
+            // Change this variable to modify the amount of resources generated
+            var resourceAmount = randomNum(20, 30);
+            // Create some variables to fill up player JSON with
+            var resources = createResources(resourceAmount);
+            // Fill up the playerObject resource array w/ amounts for the player
+            givePlayerResources(resources, resourceAmount);
+            // Sort out the array before we return it.
+            return resources.sort(function (a, b) { return b.amount - a.amount; });
+        })() // Execute this anonymous function immediately
     };
     // Variable to display the total amount of the portfolio
     var portfolioTotal = 0;
     // Calculate portfolio total
-    for (var i = 0; i < playerObject.stats.resources.length; i++) {
-        portfolioTotal += playerObject.stats.resources[i].amount * playerObject.stats.resources[i].cost;
+    for (var i = 0; i < playerObject.resources.length; i++) {
+        portfolioTotal += playerObject.resources[i].amount * playerObject.resources[i].cost;
     }
     // We need a date for gameData
     // and multiple things need to access
@@ -664,7 +653,7 @@ var MICROSTOCKS = (function () {
     // Function to handle bankrupty
     var bankruptResource = function (theResourceIndex) {
         // Variabl-ize the resource we're going to operate on
-        var playerBankruptResource = playerObject.stats.resources[theResourceIndex];
+        var playerBankruptResource = playerObject.resources[theResourceIndex];
         // Pull in the variant before resetting the resource and
         // take 20% as the payout value for the company failing
         var initialPayout = Math.floor(playerBankruptResource.cost * 0.2);
@@ -680,7 +669,7 @@ var MICROSTOCKS = (function () {
         // Note i'm using the playerObject array here
         // and not the variable representation (playerBankruptResource)
         // because of the shallow copying of javascript
-        playerObject.stats.resources[theResourceIndex] = {
+        playerObject.resources[theResourceIndex] = {
             // Create another resource in it's place
             "cost": randomNum(randomNum(2, 5), randomNum(20, randomNum(20, 110))),
             "name": createResourceName(),
@@ -689,15 +678,15 @@ var MICROSTOCKS = (function () {
             "amount": 0
         };
         // Give the player a "payout" of the resource
-        playerObject.stats.money += payoutValue;
+        playerObject.money += payoutValue;
         // Let the player about the payout know via the log
         addListElement(logList, "Player paid out $" + payoutValue + " during the liquidation!");
         // Need to also reset the history for the graph
         // so re-init the gameData.resourceList at the current index
         // using the PLAYEROBJECT, not the playerBankruptResource
-        gameData.resourceList[playerObject.stats.resources[theResourceIndex].name] = [
+        gameData.resourceList[playerObject.resources[theResourceIndex].name] = [
             ["Date", "Cost"],
-            [year + "-" + displayMonth, playerObject.stats.resources[theResourceIndex].cost]
+            [year + "-" + displayMonth, playerObject.resources[theResourceIndex].cost]
         ];
     };
     // Function to modify a voatile resource
@@ -712,12 +701,12 @@ var MICROSTOCKS = (function () {
             // in case we are removing cost.
             if (playerResources[i].cost < resourceMax) {
                 // Actually modify the playerObject resource cost
-                playerObject.stats.resources[i].cost += variant > 0 ? randomNum(0, variant) : randomNum(variant, 0);
+                playerObject.resources[i].cost += variant > 0 ? randomNum(0, variant) : randomNum(variant, 0);
                 // super small percent chance for stocks to boom or fall
                 if (randomNum(100) <= 1) {
                     var boomAmount = randomNum(0, variant * randomNum(3, 7));
                     var crashAmount = randomNum(variant * randomNum(2, 5), 0);
-                    playerObject.stats.resources[i].cost += variant > 0 ? boomAmount : crashAmount;
+                    playerObject.resources[i].cost += variant > 0 ? boomAmount : crashAmount;
                     if (variant < 0) {
                         crash = true;
                     }
@@ -762,7 +751,7 @@ var MICROSTOCKS = (function () {
     // called everytime inventory is updated.
     var updateResourcePrices = function () {
         // Pull playerObject's resources in locally
-        var playerResources = playerObject.stats.resources;
+        var playerResources = playerObject.resources;
         // Also the resourceName & resourceType for readability
         // in the for loop below
         var resourceName = "";
@@ -800,7 +789,7 @@ var MICROSTOCKS = (function () {
     // This function updates the resource boxes
     var updateResourceBoxes = function () {
         // Bring in playerObject to a local variable
-        var player = playerObject.stats;
+        var player = playerObject;
         // Sort out the player's resource array 
         player.resources.sort(function (a, b) {
             return b.amount - a.amount;
@@ -832,8 +821,8 @@ var MICROSTOCKS = (function () {
     // data!!! Yay!!!
     var updateGameData = function () {
         // Bring player and the resources in locally
-        var player = playerObject.stats;
-        var playerResources = playerObject.stats.resources;
+        var player = playerObject;
+        var playerResources = playerObject.resources;
         // update the gameData object for
         // the graph
         gameData.netWorth.push([year + "-" + displayMonth, portfolioTotal + player.money]);
@@ -871,7 +860,7 @@ var MICROSTOCKS = (function () {
     var updateInventory = function () {
         console.info("calling updateInventory");
         // Bring player in locally
-        var player = playerObject.stats;
+        var player = playerObject;
         // Get the updated resource prices
         updateResourcePrices();
         // Reset portfolioTotal
@@ -916,9 +905,9 @@ var MICROSTOCKS = (function () {
     var playerOwnsResource = function () {
         var ownedResources = [];
         // For every resource we have
-        for (var i = 0; i < playerObject.stats.resources.length; i++) {
+        for (var i = 0; i < playerObject.resources.length; i++) {
             // If we own that resource
-            if (playerObject.stats.resources[i].amount > 0) {
+            if (playerObject.resources[i].amount > 0) {
                 // Push the index into that ownedResources array
                 ownedResources.push(i);
             }
@@ -934,11 +923,11 @@ var MICROSTOCKS = (function () {
         // Empty array holding resources index's that we own
         var ownedResourcesIndex = [];
         // If we have more than 1 resource
-        if (playerObject.stats.resources.length > 1) {
+        if (playerObject.resources.length > 1) {
             // For every resource we have
-            for (var i = 0; i < playerObject.stats.resources.length; i++) {
+            for (var i = 0; i < playerObject.resources.length; i++) {
                 // If we own that resource
-                if (playerObject.stats.resources[i].amount > 0) {
+                if (playerObject.resources[i].amount > 0) {
                     // Push the index into that ownedResourcesIndex array
                     ownedResourcesIndex.push(i);
                 }
@@ -948,28 +937,28 @@ var MICROSTOCKS = (function () {
         // now set playerObject's resourceIndex for permanence
         // And let's default this value to 0 if there are no owned resource
         // so we'll just try and sell the first resource on the list.
-        playerObject.stats.resourceIndex = (ownedResourcesIndex.length === 0) ? 0 : ownedResourcesIndex[randomNum(0, ownedResourcesIndex.length)];
+        playerObject.resourceIndex = (ownedResourcesIndex.length === 0) ? 0 : ownedResourcesIndex[randomNum(0, ownedResourcesIndex.length)];
     };
     // Update resource index globally
     var updateResourceIndex = function (resourceIndex) {
         // Pull in playerObject to this method
-        var player = playerObject.stats;
+        var player = playerObject;
         // If we have a resourceIndex, let's set it accordingly (the click came from resource button)
         if (typeof resourceIndex !== "undefined" && typeof resourceIndex !== "object") {
             if (resourceIndex < player.resources.length) {
-                playerObject.stats.resourceIndex = resourceIndex;
+                playerObject.resourceIndex = resourceIndex;
             } else {
                 console.error("updateResourceIndex exception: Incoming resourceIndex outside of bounds of resources array.");
             }
         }
         // We don't have a suitable resource index, so let's randomly shuffle the resource index
         else {
-            playerObject.stats.resourceIndex = randomNum(0, player.resources.length);
+            playerObject.resourceIndex = randomNum(0, player.resources.length);
         }
     };
     // Update location index globally
     var updateLocationIndex = function (newLocation) {
-        playerObject.stats.location = newLocation;
+        playerObject.location = newLocation;
     };
     // Add button event listener function, takes 2 optional functions 
     // (logMessage and moreBehavior)
@@ -1032,7 +1021,7 @@ var MICROSTOCKS = (function () {
         if (typeof resourceIndex === "undefined" || resourceIndex === null) {
             // if we are null or empty, make one up.
             updateResourceIndex();
-            resourceIndex = playerObject.stats.resourceIndex;
+            resourceIndex = playerObject.resourceIndex;
         } else {
             // Pull in resourceIndex
             updateResourceIndex(resourceIndex);
@@ -1042,18 +1031,18 @@ var MICROSTOCKS = (function () {
         var resourceAmount = (amount === undefined) ? 1 : amount;
 
         // If they can't buy the resource, fuck them.
-        if (playerObject.stats.money < (playerObject.stats.resources[resourceIndex].cost * resourceAmount)) {
-            addListElement(logList, "Can't afford unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".");
+        if (playerObject.money < (playerObject.resources[resourceIndex].cost * resourceAmount)) {
+            addListElement(logList, "Can't afford unit(s) of " + playerObject.resources[resourceIndex].name + ".");
             addListElement(logList, "(Attempted to purchase " + resourceAmount + ".)");
         }
         // If the player can afford it, let's buy it!
         else {
-            addListElement(logList, "You bought " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".");
+            addListElement(logList, "You bought " + resourceAmount + " unit(s) of " + playerObject.resources[resourceIndex].name + ".");
         }
     };
     var buyAction = function (amount) {
         // Pull in playerObject to this method
-        var player = playerObject.stats;
+        var player = playerObject;
         // Check amount
         var resourceAmount = (amount === undefined) ? 1 : amount;
         // Pull in resourceIndex
@@ -1061,9 +1050,9 @@ var MICROSTOCKS = (function () {
         // If the player can afford the resource
         if (player.money >= (player.resources[resourceIndex].cost * resourceAmount)) {
             // Update the player's money
-            playerObject.stats.money = player.money - (player.resources[resourceIndex].cost * resourceAmount);
+            playerObject.money = player.money - (player.resources[resourceIndex].cost * resourceAmount);
             // Update the player's resource amount
-            playerObject.stats.resources[resourceIndex].amount += parseInt(resourceAmount);
+            playerObject.resources[resourceIndex].amount += parseInt(resourceAmount);
             updateInventory();
         }
     };
@@ -1086,7 +1075,7 @@ var MICROSTOCKS = (function () {
             // set a new random resource index.
             setRandomResourceIndex();
             // Set resourceIndex for this function
-            resourceIndex = playerObject.stats.resourceIndex;
+            resourceIndex = playerObject.resourceIndex;
         } else {
             // Pull in resourceIndex
             updateResourceIndex(resourceIndex);
@@ -1095,19 +1084,19 @@ var MICROSTOCKS = (function () {
         var resourceAmount = (amount === undefined) ? 1 : amount;
 
         // If you have the resource amount, go ahead and sell it!
-        if (playerObject.stats.resources[resourceIndex].amount >= resourceAmount) {
-            addListElement(logList, "You sold " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".");
+        if (playerObject.resources[resourceIndex].amount >= resourceAmount) {
+            addListElement(logList, "You sold " + resourceAmount + " unit(s) of " + playerObject.resources[resourceIndex].name + ".");
         }
         // If the player can't afford it, fuck off!
         else {
-            addListElement(logList, "You don't have " + resourceAmount + " unit(s) of " + playerObject.stats.resources[resourceIndex].name + ".");
+            addListElement(logList, "You don't have " + resourceAmount + " unit(s) of " + playerObject.resources[resourceIndex].name + ".");
         }
     };
     var sellAction = function (amount) {
         // If the player owns resources, continue on with this action
         if (playerOwnsResource()) {
             // Pull in playerObject to this method
-            var player = playerObject.stats;
+            var player = playerObject;
             // Check amount
             var resourceAmount = (amount === undefined) ? 1 : amount;
             // Pull in resourceIndex
@@ -1115,9 +1104,9 @@ var MICROSTOCKS = (function () {
             // If you have the resource amount, go ahead and sell it!
             if (player.resources[tmpResourceIndex].amount >= resourceAmount) {
                 // Update players resource
-                playerObject.stats.resources[tmpResourceIndex].amount -= parseInt(resourceAmount);
+                playerObject.resources[tmpResourceIndex].amount -= parseInt(resourceAmount);
                 // Update player's money
-                playerObject.stats.money = player.money + (player.resources[tmpResourceIndex].cost * resourceAmount);
+                playerObject.money = player.money + (player.resources[tmpResourceIndex].cost * resourceAmount);
                 // Update the inventory box
                 updateInventory();
             }
@@ -1131,7 +1120,7 @@ var MICROSTOCKS = (function () {
     // this function will return null.
     var travelMessage = function (newIndex) {
         // Pull in playerObject to this method
-        var player = playerObject.stats;
+        var player = playerObject;
         // Pull in newIndex or set it to a random
         // element of the planetsArray we
         // aren't currently on
@@ -1179,11 +1168,11 @@ var MICROSTOCKS = (function () {
     };
     var travelAction = function () {
         // Pull in playerObject to this method
-        var player = playerObject.stats;
+        var player = playerObject;
         // if the player has $10 (he should, we just checked this in travelMessage).
         if (player.money >= moveFee) {
             // Remove the money from the player's inventory
-            playerObject.stats.money = parseInt(player.money) - moveFee;
+            playerObject.money = parseInt(player.money) - moveFee;
             updateInventory();
         }
     };
@@ -1192,7 +1181,7 @@ var MICROSTOCKS = (function () {
     var launchTravelDialog = function () {
         // Greet the player with a message,
         // reminding them where they are
-        $(".travel-text").html("<p>Where would you like to go? Currently on <b>" + locations[parseInt(playerObject.stats.location)].name + "</b>.</p>");
+        $(".travel-text").html("<p>Where would you like to go? Currently on <b>" + locations[parseInt(playerObject.location)].name + "</b>.</p>");
         // Initialize the travel dropdown
         var travelSelect = $(".travel-select")[0];
         // Get rid of all the contents
@@ -1204,9 +1193,9 @@ var MICROSTOCKS = (function () {
         for (var i = 0; i < locations.length; i++) {
             // Create an option for every planet
             // except the one we are on
-            if (parseInt(playerObject.stats.location) !== i) {
+            if (parseInt(playerObject.location) !== i) {
                 var opt = document.createElement('option');
-                opt.value = opt.innerHTML = locations[i].name + ", " + Math.ceil(distanceBetween(locations[i], locations[playerObject.stats.location])) + " LY";
+                opt.value = opt.innerHTML = locations[i].name + ", " + Math.ceil(distanceBetween(locations[i], locations[playerObject.location])) + " LY";
                 travelSelect.appendChild(opt);
             }
         }
@@ -1275,7 +1264,7 @@ var MICROSTOCKS = (function () {
     // the planet
     var launchPlanetInfoDialog = function () {
         // Pull in the player's location index
-        var locationIndex = playerObject.stats.location;
+        var locationIndex = playerObject.location;
         var planetName = locations[locationIndex].name;
         var planetType = locations[locationIndex].type.base;
         var planetTemp = locations[locationIndex].temp;
@@ -1388,7 +1377,7 @@ var MICROSTOCKS = (function () {
     // what the user can do, as well as an index
     var buySellDialogueMessage = function (theIndex, finalStatement) {
         // pull in playerObject to this method
-        var player = playerObject.stats;
+        var player = playerObject;
         // Bring in index from buySellDialogue
         var index = theIndex;
         // Pull in some variables for stats about resource
@@ -1414,7 +1403,7 @@ var MICROSTOCKS = (function () {
     // buyAction, sellAction, buyMessage & sellMessage
     var buySellDialogue = function (index) {
         // pull in playerObject to this method
-        var player = playerObject.stats;
+        var player = playerObject;
         // instantiate variables needed for jquery-ui elements
         var maxResources = 0;
         var sliderStep = 0;
@@ -1591,7 +1580,7 @@ var MICROSTOCKS = (function () {
     // This function creates the display of the resources
     var createResourceBoxes = function () {
         // Bring in playerObject to a local variable
-        var player = playerObject.stats;
+        var player = playerObject;
         // variables for display resources
         var className = "";
         var theText = "";
@@ -1634,8 +1623,8 @@ var MICROSTOCKS = (function () {
     // This function creates the initial display of the inventory box
     var createInventory = function () {
         // Bring in playerObject to a local variable
-        var player = playerObject.stats;
-        var resources = playerObject.stats.resources;
+        var player = playerObject;
+        var resources = playerObject.resources;
         // Get the player's inventory list, since we are adding elements to it.
         var invList = document.getElementsByClassName("inventory-list")[0];
         // Variable to display the total amount of the portfolio
@@ -1656,7 +1645,7 @@ var MICROSTOCKS = (function () {
         // Initialize modals by loading jquery-ui javascript,
         // and when the script load is successful, initialize
         // MICROSTOCKS!
-        $.getScript("https://code.jquery.com/ui/1.11.4/jquery-ui.min.js", function () {
+        $.getScript("./js/jquery-ui.min.js", function () {
             // Get the Controls
             // ----------------
             // Now lets pull in the buttons
@@ -1672,7 +1661,7 @@ var MICROSTOCKS = (function () {
             // Now let's create the inventory panel!
             createInventory();
             // Display a welcome message for the player
-            addListElement(logList, "You arrive on " + locations[parseInt(playerObject.stats.location)].name + " with a few resources and $" + playerObject.stats.money + " to your name.");
+            addListElement(logList, "You arrive on " + locations[parseInt(playerObject.location)].name + " with a few resources and $" + playerObject.money + " to your name.");
             // Initialize our google graph
             initializeGraph();
             // And let's pull the inventory buttons
@@ -1695,7 +1684,7 @@ var MICROSTOCKS = (function () {
 // and google charts somewhere in there.
 // -------------------------------------
 var scriptTag = document.createElement('script');
-scriptTag.src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js";
+scriptTag.src = "./js/jquery.min.js";
 // When the script loads, let's call MICROSTOCKS.init!
 scriptTag.onload = scriptTag.onreadystatechange = MICROSTOCKS.init;
 // Append our jQuery script to the <body>
