@@ -677,10 +677,12 @@ var MICROSTOCKS = (function () {
             "trend": determineResourceTrend(),
             "amount": 0
         };
-        // Give the player a "payout" of the resource
-        playerObject.money += payoutValue;
-        // Let the player about the payout know via the log
-        addListElement(logList, "Player paid out $" + payoutValue + " during the liquidation!");
+        // Give the player a "payout" of the resource if they had stock in the resource
+        if(playerObject.resources[theResourceIndex].amount) {
+            playerObject.money += payoutValue;
+            // Let the player about the payout know via the log
+            addListElement(logList, "Player paid out $" + payoutValue + " during the liquidation!");
+        }
         // Need to also reset the history for the graph
         // so re-init the gameData.resourceList at the current index
         // using the PLAYEROBJECT, not the playerBankruptResource
